@@ -42,7 +42,7 @@ claude.ai artifact'lerini sadece Yasin'in kendi Claude hesabındaki bir oturum g
 ## Ek özellikler
 - Takma ad: `root.profile.name` (kayıtta seçilir, ana sayfada ✏️). Kayıtta dil de seçilir.
 - Rozetler: `BADGES`, `root.badges={id:tarih}`; Bugünün özeti `renderTodaySum()`. Rozet tablosu `api/board.js` (hash `board`, takma ad + rozet sayısı), `syncBoard()`.
-- Takma ad zorunlu (yoksa açılışta kapatılamaz pencere). Ana ekrana ekle rehberi `maybeA2HS()` bir kez (`root.settings.a2hs`). SSS'de 3. eleman true = ⭐.
+- Takma ad zorunlu ve **benzersiz** (`api/name.js`: `names` hash küçük harfli ad → sahip; `claimName()`). Yoksa ya da başkasınınsa açılışta kapatılamaz pencere. Ana ekrana ekle rehberi `maybeA2HS()` bir kez (`root.settings.a2hs`). SSS'de 3. eleman true = ⭐.
 - Haftalık istatistik: `root.studyLog = {"YYYY-MM-DD": saat}`; `logStudy(t, Δ%)` ilerleme değişince yazar (✓ çalıştım, geri al, Hiç/Az/…). Ana sayfa `renderStats()`.
 - Takvime ekle: `downloadIcs(state)` (Program sekmesi → 📅 Takvime ekle) → .ics (dersler + sınav günü, 1 gün önce hatırlatma).
 - PWA: `manifest.webmanifest`, `sw.js` (önce internet, yoksa önbellek; /api hariç), `icon-*.png`. Netlify build bunları `dist/`e kopyalar (netlify.toml). Ayarlar → Uygulama.
