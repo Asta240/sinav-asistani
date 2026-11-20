@@ -279,6 +279,8 @@
   body.hide-count .count{display:none !important}
   body.no-prio .pill{display:none}
   body.hide-quote #heroQuote{display:none}
+  .arch-banner{flex-basis:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--warn-soft);color:var(--warn);border-radius:10px;padding:8px 12px;font-size:13.5px;font-weight:600}
+  .arch-banner button{padding:5px 10px;font-size:12.5px}
   .add-topic{background:transparent;color:var(--accent);padding:6px 0;font-size:14px}
   .add label.f{font-size:11px}
   .two{grid-template-columns:1.25fr 1fr;align-items:start}
@@ -456,11 +458,13 @@
 <div id="drawerBg" class="drawer-bg"></div>
 <aside id="drawer" class="drawer" aria-hidden="true">
   <div class="drawer-h"><span class="drawer-title">Sınav Haftası Asistanı</span><button class="icon" id="drawerClose" title="Kapat">✕</button></div>
+  <button class="nav-item" data-navset="1">Ayarlar</button>
   <button class="nav-item" data-nav="home">Ana sayfa</button>
   <button class="nav-item" data-nav="add">Kurul ekle</button>
   <button class="nav-item" id="navTrack" data-navtoggle="1"><span>Sınav takibi</span><span class="chev">▸</span></button>
   <div id="navKurullar" class="nav-sub" style="display:none"></div>
-  <button class="nav-item" data-navset="1">Ayarlar</button>
+  <button class="nav-item" id="navArch" data-navarch="1" style="display:none"><span>Arşiv <span class="muted" id="archCount"></span></span><span class="chev">▸</span></button>
+  <div id="navArchList" class="nav-sub" style="display:none"></div>
   <div class="drawer-sig">Sınav Haftası Asistanı<br><b>CardiacAI</b> · 2026</div>
 </aside>
 
@@ -661,7 +665,7 @@ async function startSync(){
 function switchTo(id){ view="kurul"; $("homeView").style.display="none"; $("addView").style.display="none"; $("kurulView").style.display=""; window.scrollTo({top:0}); state = root.folders.find(f=>f.id===id); root.activeId=id; weekOff=null; openForm=null; folderForm=null; confirmDel=false; $("aiOut").textContent=""; save(); render(); }
 
 // ---- Görünüm: ana sayfa / kurul sayfası + yan menü ----
-let view = "home", navOpen = true, tab = "today";
+let view = "home", navOpen = false, archOpen = false, tab = "today";
 function showTab(t){ tab=t; document.querySelectorAll("#kTabs [data-tab]").forEach(b=>b.classList.toggle("on", b.dataset.tab===t));
   document.querySelectorAll(".tabpane").forEach(p=>p.style.display = p.dataset.pane===t ? "" : "none"); }
 document.getElementById("kTabs").addEventListener("click", e=>{ const b=e.target.closest("[data-tab]"); if(b) showTab(b.dataset.tab); });
@@ -673,9 +677,15 @@ function renderDrawer(){
   document.querySelectorAll("[data-nav]").forEach(b=>b.classList.toggle("on", view===b.dataset.nav));
   $("navTrack").classList.toggle("open", navOpen); $("navTrack").classList.toggle("on", view==="kurul");
   $("navKurullar").style.display = navOpen ? "" : "none";
-  $("navKurullar").innerHTML = `<button class="new" data-navnew="1">+ Yeni kurul</button>` + sortedFolders().map(f=>{
+  const item = f=>{
     const d = f.examDate ? `Sınav: ${new Date(f.examDate+"T00:00:00").toLocaleDateString("tr-TR",{day:"numeric",month:"short"})}` : (f.courses.length?`${f.courses.length} ders`:"boş");
-    return `<button class="${view==="kurul" && f.id===state.id?"on":""}" data-navk="${f.id}">${esc(f.name)}<small>${d}</small></button>`; }).join("");
+    return `<button class="${view==="kurul" && f.id===state.id?"on":""}" data-navk="${f.id}">${esc(f.name)}<small>${d}</small></button>`; };
+  const act = sortedFolders().filter(f=>!f.archived), arch = sortedFolders().filter(f=>f.archived);
+  $("navKurullar").innerHTML = `<button class="new" data-navnew="1">+ Yeni kurul</button>` + act.map(item).join("");
+  $("navArch").style.display = arch.length ? "" : "none"; $("archCount").textContent = arch.length ? `(${arch.length})` : "";
+  $("navArch").classList.toggle("open", archOpen);
+  $("navArchList").style.display = arch.length && archOpen ? "" : "none";
+  $("navArchList").innerHTML = arch.map(item).join("");
 }
 // ---- Saat başı değişen söz (CardiacAI) ----
 const QUOTES = [
@@ -780,6 +790,7 @@ $("drawer").addEventListener("click", e=>{
   if(d.nav){ openDrawer(false); showView(d.nav); }
   else if(d.navset){ openDrawer(false); openSettings(); }
   else if(d.navtoggle){ navOpen=!navOpen; renderDrawer(); }
+  else if(d.navarch){ archOpen=!archOpen; renderDrawer(); }
   else if(d.navnew){ openDrawer(false); showView("kurul"); folderForm="new"; renderFolders(); }
   else if(d.navk){ openDrawer(false); switchTo(d.navk); }
 });
@@ -788,9 +799,10 @@ function renderFolders(){
   const d = state.examDate ? new Date(state.examDate+"T00:00:00").toLocaleDateString("tr-TR",{day:"numeric",month:"long"}) : "";
   const title = folderForm ? `<form class="folder-form" id="folderForm"><input id="fName" placeholder="${folderForm==="new"?"Yeni kurul adı, ör. Dönem 2 – 3. Kurul":""}" value="${folderForm==="rename"?esc(state.name):""}" required><button type="submit">${folderForm==="rename"?"Kaydet":"Kurulu oluştur"}</button><button type="button" class="ghost" data-fcancel="1">Vazgeç</button></form>`
     : `<h2>${esc(state.name)}</h2>${d?`<span class="muted">Sınav: ${d}</span>`:""}`;
-  const tools = folderForm ? "" : `<div class="folder-tools">${SA && state.courses.length ? `<button class="ghost" data-fpub="1">🌍 Kütüphaneye paylaş</button>` : ""}<button class="ghost" data-fshare="1">🔗 Paylaş</button><button class="ghost" data-fcode="1">Kod ile ekle</button><button class="ghost" data-frename="1">Adını değiştir</button>${
+  const tools = folderForm ? "" : `<div class="folder-tools">${SA && state.courses.length ? `<button class="ghost" data-fpub="1">🌍 Kütüphaneye paylaş</button>` : ""}<button class="ghost" data-fshare="1">🔗 Paylaş</button><button class="ghost" data-fcode="1">Kod ile ekle</button><button class="ghost" data-frename="1">Adını değiştir</button><button class="ghost" data-farch="1">${state.archived?"Arşivden çıkar":"Arşivle"}</button>${
     root.folders.length>1 ? `<button class="ghost" data-fdel="1">Kurulu sil</button>`:""}</div>`;
-  $("folders").innerHTML = `<div class="kurul-title" style="flex:1">${title}</div>` + tools;
+  const banner = state.archived && !folderForm ? `<div class="arch-banner">Bu kurul arşivde — menüde "Sınav takibi" yerine "Arşiv" altında duruyor. <button class="ghost" data-farch="1">Arşivden çıkar</button></div>` : "";
+  $("folders").innerHTML = `<div class="kurul-title" style="flex:1">${title}</div>` + tools + banner;
   if(folderForm){ const i=$("fName"); i.focus(); i.select(); }
 }
 
@@ -1245,6 +1257,7 @@ $("folders").addEventListener("click", e=>{
   else if(d.fnew){ folderForm="new"; confirmDel=false; renderFolders(); }
   else if(d.fshare) openShare();
   else if(d.fpub) openPublish();
+  else if(d.farch){ state.archived = !state.archived; if(!state.archived) navOpen=true; else archOpen=true; save(); render(); }
   else if(d.fcode) openCodeImport();
   else if(d.frename){ folderForm="rename"; confirmDel=false; renderFolders(); }
   else if(d.fcancel){ folderForm=null; renderFolders(); }
