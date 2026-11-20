@@ -49,7 +49,8 @@ const isAdmin = code => !!code && adminCodes().includes(cleanCode(code));
 async function indexUser(code, json) {
   let name = "", k = 0;
   try { const d = JSON.parse(json || "null"); name = String((d && d.profile && d.profile.name) || "").slice(0, 24); k = ((d && d.folders) || []).filter(f => f.courses && f.courses.length).length; } catch (e) {}
-  await redis("HSET", "users", code, JSON.stringify({ name, at: Date.now(), k }));
+  const prev = JSON.parse((await redis("HGET", "users", code)) || "{}");
+  await redis("HSET", "users", code, JSON.stringify({ name, at: Date.now(), k, ...(prev.warned && prev.name === name ? { warned: prev.warned } : {}) }));
 }
 
 module.exports = { redis, newCode, CODE_RE, cleanCode, ipOf, overLimit, send, today, isAdmin, indexUser };

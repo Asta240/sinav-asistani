@@ -429,15 +429,17 @@
   .upd-filter .sortbar button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
   .upd-cur{font-size:11px;font-weight:700;color:var(--good);background:var(--good-soft);border-radius:999px;padding:2px 8px;margin-left:6px;vertical-align:2px}
   #updView .upd-ver{margin-bottom:12px;border-radius:16px}
+  .w-taken{background:var(--warn-soft);color:var(--ink);border-radius:10px;padding:10px 12px;font-size:13.5px;margin:12px 0 0}
   .nm-err{color:var(--bad);font-size:13px;font-weight:600}
   .a2-box{max-width:420px}
   .link-btn{background:none;border:0;padding:0;margin:8px 0 0;color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
   .contact-box{border:1px solid var(--accent);background:var(--accent-soft);border-radius:12px;padding:12px 14px;font-weight:700;font-size:16px;word-break:break-word}
-  .adm-head,.adm-row{display:grid;grid-template-columns:1fr 80px 130px 90px;gap:8px;align-items:center}
+  .adm-btns{display:flex;gap:6px;align-items:center;justify-content:flex-end;flex-wrap:wrap} .warn-btn{color:var(--warn)!important;border-color:var(--warn)!important} .adm-warned{font-size:11.5px}
+  .adm-head,.adm-row{display:grid;grid-template-columns:1fr 80px 130px 170px;gap:8px;align-items:center}
   .adm-head{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:700;padding:4px 0 6px;border-bottom:1px solid var(--line)}
   .adm-row{padding:7px 0;border-bottom:1px solid var(--line)} .adm-row .ghost{padding:5px 10px;font-size:12.5px}
   .adm-code{font-size:15px;font-weight:800;letter-spacing:.12em} .adm-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .adm-at{font-size:12px}
-  @media (max-width:600px){ .adm-head,.adm-row{grid-template-columns:1fr 70px 80px} .adm-at,.adm-head span:nth-child(3){display:none} }
+  @media (max-width:600px){ .adm-head,.adm-row{grid-template-columns:1fr 60px 130px} .adm-at,.adm-head span:nth-child(3){display:none} }
   .a2-hero{display:flex;gap:14px;align-items:center} .a2-hero img{border-radius:14px;flex:none}
   .a2-steps{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
   .a2-steps li{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
@@ -531,7 +533,7 @@
 
   <!-- ===== SSS SAYFASI ===== -->
   <div id="adminView" style="display:none">
-    <div class="page-h"><h2>🛡️ Yönetici</h2><p class="muted">Sadece yöneticiler görür: kullanıcı kodları, iletişim bilgisi ve yasaklılar.</p></div>
+    <div class="page-h"><h2>Yönetici</h2><p class="muted">Sadece yöneticiler görür: kullanıcı kodları, iletişim bilgisi ve yasaklılar.</p></div>
     <div id="adminBody"></div>
   </div>
   <div id="notesView" style="display:none">
@@ -602,8 +604,8 @@
     <label class="f">1 saat ders = kaç saat çalışma?
       <input type="number" id="perLec" min="0.5" max="6" step="0.5" value="2" title="1 saatlik dersi kendi başına çalışman ortalama kaç saat sürüyor?">
     </label>
-    <label class="f">Son günü genel tekrara ayır
-      <select id="reviewDay"><option value="1">Evet</option><option value="0">Hayır</option></select>
+    <label class="f">Sınavdan önce kaç gün tekrar?
+      <select id="reviewDay"><option value="0">Yok</option><option value="1">1 gün</option><option value="2">2 gün</option><option value="3">3 gün</option><option value="4">4 gün</option><option value="5">5 gün</option><option value="6">6 gün</option><option value="7">7 gün</option></select>
     </label>
   </section>
   </div>
@@ -613,7 +615,7 @@
   <section class="grid stats">
     <div class="card stat count"><div class="k">Kalan süre</div><div class="v" id="sDays">–</div><div class="d" id="sDaysD">Sınav tarihini gir</div></div>
     <div class="card stat"><div class="k">Genel ilerleme</div><div class="v" id="sProg">0%</div><div class="bar"><i id="sProgBar" style="width:0"></i></div></div>
-    <div class="card stat"><div class="k">Kalan iş</div><div class="v" id="sNeed">0 sa</div><div class="d" id="sNeedD">Elindeki süre: –</div></div>
+    <div class="card stat"><div class="k">Kalan iş</div><div class="v" id="sNeed">0 sa</div><div class="d" id="sNeedD">Elindeki süre: –</div><div class="d" id="sSlides" style="display:none"></div></div>
   </section>
 
   <div id="verdict"></div>
@@ -685,7 +687,7 @@
   <button class="nav-item nav-faq" data-nav="faq">Sık sorulan sorular</button>
   
   <button class="nav-item" id="navUpd" data-nav="updates">Sürüm notları</button>
-  <button class="nav-item" id="navAdmin" data-nav="admin" style="display:none">🛡️ Yönetici</button>
+  <button class="nav-item" id="navAdmin" data-nav="admin" style="display:none">Yönetici</button>
   <div class="nav-row" id="navArchRow" style="display:none"><button class="nav-item" id="navArch" data-navarch="1"><span>Arşiv <span class="muted" id="archCount"></span></span><span class="chev">▸</span></button><button class="nav-edit" id="navArchEdit" data-navedit="arch" title="Sırala / düzenle"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>
   <div id="navArchList" class="nav-sub" style="display:none"></div>
   <div class="drawer-sig">Sınav Haftası Asistanı<br><b>CardiacAI</b> · 2026 · <span id="verSig">v1.0.0</span></div>
@@ -783,7 +785,7 @@ const EN = {
 "Kütüphaneden kaldırılsın mı?":"Remove from the library?","Başkalarının daha önce eklediği kopyalar silinmez; senin kurulun da sende kalır.":"Copies others already added are not deleted; your block stays with you.",
 "Başkalarının eklediği kopyalar silinmez.":"Copies others added are not deleted.","✓ Kütüphaneden kaldırıldı":"✓ Removed from the library","İstersen tekrar paylaşabilirsin":"You can share it again if you like",
 "Kurul tekrar kütüphanede":"The block is back in the library","Paylaşım geri geldi, yasak kaldırıldı":"The share is back and the ban is lifted",
-"🛡️ Yönetici modu — tüm paylaşımları kaldırabilir, kötü paylaşanı yasaklayabilirsin.":"🛡️ Admin mode — you can remove any share and ban abusive sharers.",
+"Yönetici modu — tüm paylaşımları kaldırabilir, kötü paylaşanı yasaklayabilirsin.":"Admin mode — you can remove any share and ban abusive sharers.",
 "🚫 Yasaklılar":"🚫 Banned","🚫 Yasaklılar ({*})":"🚫 Banned ({*})","🚫 Kaldır + yasakla":"🚫 Remove + ban","🚫 Kaldırıldı ve yasaklandı":"🚫 Removed and banned","Paylaşan artık paylaşım yapamaz":"The sharer can no longer share",
 "\"{*}\" kaldırılıp paylaşan yasaklansın mı?":"Remove \"{*}\" and ban the sharer?","Bu paylaşım silinir ve o kişi bir daha kütüphaneye paylaşım yapamaz.":"This share is deleted and that person can no longer share to the library.",
 "Yasaklı kimse yok.":"Nobody is banned.","Yasağı kaldır":"Lift ban","✓ Yasak kaldırıldı":"✓ Ban lifted","Bu kişi tekrar paylaşım yapabilir":"This person can share again","Liste alınamadı.":"Could not load the list.",
@@ -893,6 +895,24 @@ const EN = {
 // --- yönlendirme / boş durum
 "Tümü":"All","boş":"empty","Bu cihazda":"On this device","Yeni bir cihazda":"On a new device","AB12":"AB12",
 "Çok sık istek gönderildi, biraz sonra tekrar dene.":"Too many requests, try again shortly.",
+"Slayt sayacı":"Slide counter","“Kalan iş” kartında, işaretlenen ilerlemeye göre bitirilen ve kalan slayt sayısı gösterilir.":"The “Work left” card shows how many slides are done and left, based on the progress you've marked.",
+"Bitirdiğin slayt: {#} · Kalan: {#}":"Slides done: {#} · Left: {#}",
+"Bu takma ad kullanılamaz.":"This nickname can't be used.","✅ Kişisel kodun oluşturuldu — kaydet!":"✅ Your personal code has been created — save it!",
+"⚠️ Uyar":"⚠️ Warn","uyarıldı":"warned","Uygunsuz takma ad uyarısı gönder":"Send an inappropriate-nickname warning","⚠️ Uyarı gönder":"⚠️ Send warning","Uyarıyı gönder":"Send warning",
+"takma adı serbest bırakılır ve bir daha seçilemez. Kişi siteyi açınca bu mesajı görür ve yeni bir takma ad seçmek zorunda kalır.":"— this nickname is released and can't be chosen again. The person sees this message when they open the site and must choose a new nickname.",
+"⚠️ Uyarı gönderildi":"⚠️ Warning sent","Kişi siteyi açınca uyarıyı görüp yeni takma ad seçecek":"They'll see the warning and choose a new nickname when they open the site",
+"⚠️ Yönetici uyarısı: {*}":"⚠️ Admin warning: {*}","Takma adın uygunsuz bulundu. Lütfen yeni bir takma ad seç.":"Your nickname was found inappropriate. Please choose a new nickname.",
+"Yönetici":"Admin","Yönetici modu — tüm paylaşımları kaldırabilir, kötü paylaşanı yasaklayabilirsin.":"Admin mode — you can remove any share and ban abusive sharers.","Yönetici modu — her paylaşımı kaldırabilir, kötü paylaşanı yasaklayabilirsin.":"Admin mode — you can remove any share and ban abusive sharers.",
+"Alınmış takma ad":"Taken nickname","Kayıt sırasında başka bir hesaba ait takma ad yazılırsa, o hesabın kodu istenir; böylece kullanıcı kendi hesabına girebilir.":"If a nickname that belongs to another account is entered during sign-up, that account's code is requested so the user can sign in to their own account.",
+"Takma ad uyarısı":"Nickname warning","Yöneticiler uygunsuz takma adı olan kullanıcılara uyarı gönderebilir; uyarılan kullanıcı siteyi açtığında yeni bir takma ad seçer.":"Admins can send a warning to users with inappropriate nicknames; the warned user chooses a new nickname when they open the site.",
+"Kişisel kod ekranı":"Personal code screen","Yeni kayıtta kişisel kodun gösterildiği ve kaydedilmesinin hatırlatıldığı ekran bir kez gösterilir.":"On sign-up, a screen showing the personal code and reminding the user to save it is shown once.",
+"takma adı bir hesaba ait. Bu hesap seninse":"belongs to an account. If it's yours,","kodunu gir":"enter its code",". Değilse aşağıdan geri dönüp başka bir takma ad seç.":". If not, go back below and choose another nickname.",
+"Kolay başlangıç":"Easy start","Siteye ilk kez girenler için hesap otomatik oluşturulur; yalnızca dil ve takma ad seçilir. Başka cihazdaki hesapla girmek için giriş ekranında kodla giriş bağlantısı bulunur.":"An account is created automatically for first-time visitors; they only choose a language and a nickname. To use an account from another device, there is a sign-in-with-code link on the welcome screen.",
+"Hesap değiştir":"Switch account","Ana sayfadaki hesap kartına “Hesap değiştir” düğmesi eklendi; başka bir hesabın koduyla giriş yapılabilir.":"A “Switch account” button was added to the account card on the home page; you can sign in with another account's code.",
+"Tekrar günü sayısı":"Number of review days","Sınavdan önce kaç günün genel tekrara ayrılacağı (0–7 gün) seçilebilir; plan buna göre hesaplanır.":"You can choose how many days (0–7) before the exam are reserved for general review; the plan is calculated accordingly.",
+"Sınavdan önce kaç gün tekrar?":"Review days before the exam","Yok":"None","1 gün":"1 day","{#} gün":"{#} days","tekrar günü":"review day","+ {#} gün tekrar":"+ {#} review days","{#} çalışma günü + {#} gün tekrar":"{#} study days + {#} review days",
+"✨ Yeni hesap aç":"✨ Create a new account","Sadece takma adını yaz, gerisini biz hallederiz":"Just enter a nickname, we'll handle the rest","Başla →":"Start →","Başka cihazda hesabım var — kodumla gir":"I have an account on another device — sign in with my code",
+"🔄 Hesap değiştir":"🔄 Switch account","Başka bir hesabın kodunu yaz. Şu anki hesabın":"Enter the code of another account. Your current account","kodu:":"code:","— geri dönmek için bunu not al.":"— note it down so you can come back.","Giriş":"Sign in",
 "Benzersiz takma ad":"Unique nicknames","Aynı takma ad birden fazla kişi tarafından alınamaz. Takma adı başka bir kullanıcıya ait olan hesaplardan yeni bir takma ad seçmeleri istenir.":"The same nickname can't be taken by more than one person. Accounts whose nickname belongs to another user are asked to choose a new one.",
 "Bu takma ad zaten alınmış.":"This nickname is already taken.","Kontrol ediliyor…":"Checking…","Bağlantı yok, tekrar dene.":"No connection, try again.",
 "“{*}” takma adı başka birine ait. Lütfen yeni bir takma ad seç.":"The nickname “{*}” belongs to someone else. Please choose a new nickname.",
@@ -900,7 +920,7 @@ const EN = {
 "Giriş ekranı":"Sign-in screen","Dil seçimi giriş ekranının en üstüne taşındı. Ana ekrana ekleme rehberi, yeni kayıt olanlara ve bu sürümü ilk açanlara sürüm notlarından önce bir kez gösterilir.":"The language choice moved to the top of the sign-in screen. The add-to-home-screen guide is shown once to new users and to everyone opening this version, before the release notes.",
 "Kodumu unuttum":"I forgot my code","🔑 Kodumu unuttum":"🔑 I forgot my code","Yöneticiye ulaş;":"Contact an admin;","takma adını":"tell them your nickname","söyle, kodunu bulup sana iletsin.":"and they'll find your code and send it to you.",
 "Yönetici henüz iletişim bilgisi eklemedi. Siteyi sana gönderen kişiye sor.":"The admin hasn't added contact details yet. Ask the person who sent you the site.","İpucu: kodunu WhatsApp'a gönderdiysen oradaki mesajda yazıyor.":"Tip: if you sent your code to WhatsApp, it's in that message.","Tamam":"OK",
-"🛡️ Yönetici":"🛡️ Admin","Sadece yöneticiler görür: kullanıcı kodları, iletişim bilgisi ve yasaklılar.":"Only admins see this: user codes, contact details and bans.","Bu sayfa sadece yöneticiler için.":"This page is for admins only.",
+"Yönetici":"Admin","Sadece yöneticiler görür: kullanıcı kodları, iletişim bilgisi ve yasaklılar.":"Only admins see this: user codes, contact details and bans.","Bu sayfa sadece yöneticiler için.":"This page is for admins only.",
 "📞 İletişim bilgisi":"📞 Contact details","Kodunu unutanlar giriş ekranında “Kodumu unuttum”a basınca bunu görür (ör. Instagram: @kullanici, WhatsApp: 05xx…).":"People who forgot their code see this when they tap “I forgot my code” on the sign-in screen (e.g. Instagram: @user, WhatsApp: 05xx…).",
 "ör. Instagram: @cardiacai":"e.g. Instagram: @cardiacai","👥 Kullanıcılar":"👥 Users","↻ Yenile":"↻ Refresh",
 "Kodunu kaybeden biri takma adını söylerse buradan bulup kodunu ilet. ⚠️ Kodlar hesabın şifresidir; sadece sahibine ver.":"If someone who lost their code tells you their nickname, find it here and send them the code. ⚠️ Codes are account passwords; only give them to the owner.",
@@ -946,7 +966,7 @@ const EN = {
 "Henüz paylaşım yok. İlk paylaşan sen ol: yukarıdan “+ Paylaş”.":"Nothing shared yet. Be the first: “+ Share” above.","Başlık yaz.":"Enter a title.","Geçerli bir link yapıştır (https://…).":"Paste a valid link (https://…).","Önce takma ad seç.":"Choose a nickname first.",
 "✓ Paylaşıldı":"✓ Shared","Herkes “Notlar & slaytlar”da görebilir":"Everyone can see it in “Notes & slides”","Paylaşım kaldırılsın mı?":"Remove this share?","Link listeden kalkar; dosyanın kendisi Drive'ında kalır.":"The link is removed from the list; the file itself stays in your Drive.",
 "✓ Paylaşım kaldırıldı":"✓ Share removed","Paylaşım geri geldi":"The share is back","🚫 Yasakla":"🚫 Ban","Bu paylaşım silinir ve o kişi bir daha paylaşım yapamaz (kütüphane dahil).":"This share is deleted and that person can no longer share (including the library).",
-"🛡️ Yönetici modu — her paylaşımı kaldırabilir, kötü paylaşanı yasaklayabilirsin.":"🛡️ Admin mode — you can remove any share and ban abusive sharers.","Paylaşım yapman yönetici tarafından engellendi.":"An admin has blocked you from sharing.",
+"Yönetici modu — her paylaşımı kaldırabilir, kötü paylaşanı yasaklayabilirsin.":"Admin mode — you can remove any share and ban abusive sharers.","Paylaşım yapman yönetici tarafından engellendi.":"An admin has blocked you from sharing.",
 "Notlar ve slaytlar":"Notes and slides","Menüye “Notlar & slaytlar” bölümü eklendi. Slayt, not ve soru dosyalarının linkleri paylaşanın takma adıyla birlikte herkesle paylaşılabilir; ders, kurul ve türe göre aranabilir.":"A “Notes & slides” section was added to the menu. Links to slides, notes and question files can be shared with everyone along with the sharer's nickname, and searched by course, block and type.",
 "Hesap oluştururken takma ad ve dil seçilir; takma ad ana sayfada selamlamada ve hesap kartında görünür. Ana sayfadaki ✏️ düğmesiyle değiştirilebilir.":"A nickname and language are chosen when creating an account; the nickname appears in the greeting and on the account card on the home page. It can be changed with the ✏️ button on the home page.",
 "· 👤":"· 👤",
@@ -1095,6 +1115,19 @@ document.addEventListener("click", e=>{ const u=e.target.closest("#verFoot"); if
 // KURALLAR: yeni sürüm EN ÜSTE eklenir · bir sürümde en fazla 3 madde (4. madde yeni yama sürümü açar: v1.0.1, v1.0.2…)
 // Kullanıcı görmediği sürümü açılışta bir kez görür; "Anladım" deyince root.settings.seenVer kaydedilir (cihazlar arası).
 const UPDATE_LOG = [
+  { ver:"v1.0.9", date:"2026-11-20", items:[
+    ["YENİ","Slayt sayacı","“Kalan iş” kartında, işaretlenen ilerlemeye göre bitirilen ve kalan slayt sayısı gösterilir."],
+  ]},
+  { ver:"v1.0.8", date:"2026-11-20", items:[
+    ["DEĞİŞİKLİK","Alınmış takma ad","Kayıt sırasında başka bir hesaba ait takma ad yazılırsa, o hesabın kodu istenir; böylece kullanıcı kendi hesabına girebilir."],
+    ["YENİ","Takma ad uyarısı","Yöneticiler uygunsuz takma adı olan kullanıcılara uyarı gönderebilir; uyarılan kullanıcı siteyi açtığında yeni bir takma ad seçer."],
+    ["DEĞİŞİKLİK","Kişisel kod ekranı","Yeni kayıtta kişisel kodun gösterildiği ve kaydedilmesinin hatırlatıldığı ekran bir kez gösterilir."],
+  ]},
+  { ver:"v1.0.7", date:"2026-11-20", items:[
+    ["DEĞİŞİKLİK","Kolay başlangıç","Siteye ilk kez girenler için hesap otomatik oluşturulur; yalnızca dil ve takma ad seçilir. Başka cihazdaki hesapla girmek için giriş ekranında kodla giriş bağlantısı bulunur."],
+    ["YENİ","Hesap değiştir","Ana sayfadaki hesap kartına “Hesap değiştir” düğmesi eklendi; başka bir hesabın koduyla giriş yapılabilir."],
+    ["YENİ","Tekrar günü sayısı","Sınavdan önce kaç günün genel tekrara ayrılacağı (0–7 gün) seçilebilir; plan buna göre hesaplanır."],
+  ]},
   { ver:"v1.0.6", date:"2026-11-20", items:[
     ["YENİ","Kodumu unuttum","Giriş ekranına “Kodumu unuttum” bağlantısı eklendi; kodunu kaybeden kullanıcılar yöneticinin iletişim bilgisine buradan ulaşabilir."],
     ["DEĞİŞİKLİK","Giriş ekranı","Dil seçimi giriş ekranının en üstüne taşındı. Ana ekrana ekleme rehberi, yeni kayıt olanlara ve bu sürümü ilk açanlara sürüm notlarından önce bir kez gösterilir."],
@@ -1216,7 +1249,7 @@ function renderNotes(fromLoad){
     </section>
     <input id="ntQ" placeholder="Ara: başlık, ders, kurul, kişi…" value="${esc(notesQ)}" style="margin:14px 0 8px">
     <div class="sortbar nt-kinds"><button class="${notesKind==="all"?"on":""}" data-ntk="all">Tümü</button>${NOTE_KINDS.map(([v,ic,l])=>`<button class="${notesKind===v?"on":""}" data-ntk="${v}">${ic} ${l}</button>`).join("")}</div>
-    ${notesAdmin?`<div class="admin-note"><span>🛡️ Yönetici modu — her paylaşımı kaldırabilir, kötü paylaşanı yasaklayabilirsin.</span></div>`:""}
+    ${notesAdmin?`<div class="admin-note"><span>Yönetici modu — her paylaşımı kaldırabilir, kötü paylaşanı yasaklayabilirsin.</span></div>`:""}
     <div id="ntList"><div class="empty">Yükleniyor…</div></div>`;
   if(notesLoaded) drawNotes(); if(!fromLoad) loadNotes();
   $("ntQ").oninput=e=>{ notesQ=e.target.value; drawNotes(); };
@@ -1274,6 +1307,9 @@ document.addEventListener("click", async e=>{
 async function maybeWhatsNew(){
   if(!root || !root.settings || $("welcome") || $("whatsNew") || $("forceName") || (SA && !CUR)) return;
   // takma ad zorunlu: eski hesaplarda yoksa önce isim sorulur (kapatılamaz)
+  if(SA && CUR){ try{ const wr=await fetch("/api/admin?warnme="+encodeURIComponent(CUR),{cache:"no-store"}); const wj=await wr.json();
+      if(wj.warn){ const v=await askName(true, "⚠️ Yönetici uyarısı: "+wj.warn.msg); (root.profile=root.profile||{}).name=v; root.profile.nameOk=v; save(); try{ renderHome(); }catch(e){} syncBoard();
+        fetch("/api/admin",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"ackwarn",code:CUR})}).catch(()=>{}); } }catch(e){} }
   if(SA && !myName()){ const v=await askName(true); (root.profile=root.profile||{}).name=v; save(); try{ renderHome(); }catch(e){} }
   else if(SA && myName() && root.profile.nameOk!==myName()){
     const c=await claimName(myName());
@@ -1591,7 +1627,7 @@ function askName(force, msg){
     const el=document.createElement("div"); el.className="modal-bg"; el.style.zIndex=80;
     el.innerHTML=`<div class="modal confirm-box"><h2>${force?"👋 Takma adını seç":"Takma adın"}</h2><p class="muted" style="margin:0 0 10px">${force?"Devam etmek için bir takma ad seçmen gerekiyor. Sitede bu isimle görünürsün; sonra değiştirebilirsin.":"Sitede bu isimle görünürsün."}</p>
       ${msg?`<p class="nm-err" style="margin:0 0 8px">${esc(msg)}</p>`:""}
-      <input id="nmIn" maxlength="24" value="${esc(myName())}" placeholder="ör. Yasin" style="font:inherit;width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)">
+      <input id="nmIn" maxlength="24" value="${msg && msg.startsWith("⚠️") ? "" : esc(myName())}" placeholder="ör. Yasin" style="font:inherit;width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)">
       <div class="row" style="justify-content:flex-end;margin-top:14px">${force?"":`<button class="ghost" data-a="0">Vazgeç</button>`}<button data-a="1">Kaydet</button></div><p class="nm-err" id="nmErr" style="margin:8px 0 0"></p></div>`;
     if(force) el.id="forceName";
     const done=v=>{ el.remove(); res(v); };
@@ -1724,7 +1760,7 @@ function renderHome(){
   let body="", btns="";
   if(SA){
     body = codeBox();
-    btns = CUR ? `<a class="wa" href="https://wa.me/?text=${encodeURIComponent(saMsg())}" target="_blank" rel="noopener">WhatsApp'a gönder</a><button class="ghost" id="hCopy">Kopyala</button><button class="ghost" id="hOut">Çıkış</button><span class="muted" id="hSt"></span>` : "";
+    btns = CUR ? `<a class="wa" href="https://wa.me/?text=${encodeURIComponent(saMsg())}" target="_blank" rel="noopener">WhatsApp'a gönder</a><button class="ghost" id="hCopy">Kopyala</button><button class="ghost" id="hSwitch">🔄 Hesap değiştir</button><button class="ghost" id="hOut">Çıkış</button><span class="muted" id="hSt"></span>` : "";
   } else if(claudeMode){
     body = `<div><div class="lbl">Hesabım</div><b>Claude hesabınla giriş yaptın</b> <span class="muted">· verilerin otomatik kaydediliyor</span></div>`;
   } else {
@@ -1747,6 +1783,7 @@ function renderHome(){
       <button data-continue="${last.id}">Devam et →</button>`;
   } else hc.style.display="none";
   if($("hCopy")) $("hCopy").onclick = async ()=>{ try{ await navigator.clipboard.writeText(CUR); $("hSt").textContent="Kopyalandı ✓"; }catch(e){ $("hSt").textContent=CUR; } };
+  if($("hSwitch")) $("hSwitch").onclick = openSwitchAccount;
   if($("hOut")) $("hOut").onclick = async ()=>{ if(!await askConfirm("Çıkış yapılsın mı?", `Tekrar girmek için ${CUR} koduna ihtiyacın olacak.`)) return; lsSet(CUR_KEY,""); location.reload(); };
 }
 document.addEventListener("click", e=>{ if(e.target.closest("[data-goadd]")) showView("add"); const c=e.target.closest("[data-continue]"); if(c) switchTo(c.dataset.continue); if(e.target.closest("[data-gofaq]")) showView("faq"); });
@@ -2057,13 +2094,15 @@ function prioLabel(t, rank, n){
   return ["p3","Normal"];
 }
 
+// Sınavdan önceki tekrar günü sayısı (kullanıcı seçer, 0–7). En az 2 çalışma günü bırakılır.
+const revDays = days => (days==null || days<3) ? 0 : Math.max(0, Math.min(+state.reviewDay||0, days-2));
 function compute(){
   computeEstimates();
   const days = daysLeft();
   const total = state.topics.reduce((a,t)=>a+topicHours(t),0);
   const need = state.topics.reduce((a,t)=>a+remHours(t),0);
   const progress = total? Math.round((1 - need/total)*100) : 0;
-  const studyDays = days==null? 0 : Math.max(0, days - (state.reviewDay && days>=3 ? 1 : 0));
+  const studyDays = days==null? 0 : Math.max(0, days - revDays(days));
   const capacity = studyDays * state.dailyHours;
   const sim = days!=null && days>0 ? simulate(studyDays) : null;
   const untaught = state.topics.filter(t=>t.done<100 && notTaught(t));
@@ -2084,11 +2123,17 @@ function render(){
   // Özet
   if(c.days==null){ $("sDays").textContent="–"; $("sDaysD").textContent="Sınav tarihini gir"; }
   else if(c.days<0){ $("sDays").textContent="Geçti"; $("sDaysD").textContent="Yeni bir tarih seç"; }
-  else { $("sDays").textContent = c.days + " gün"; $("sDaysD").textContent = c.studyDays + " çalışma günü" + (state.reviewDay && c.days>=3 ? " + 1 gün tekrar":""); }
+  else { $("sDays").textContent = c.days + " gün"; $("sDaysD").textContent = c.studyDays + " çalışma günü" + (revDays(c.days) ? ` + ${revDays(c.days)} gün tekrar`:""); }
   $("sProg").textContent = c.progress + "%";
   $("sProgBar").style.width = c.progress + "%";
   $("sNeed").textContent = fmtH(c.need);
   $("sNeedD").textContent = "Elindeki süre: " + (c.days==null? "–" : fmtH(c.capacity));
+  // slayt: her dersin slaytı, o dersin konularındaki ilerlemeye (süre ağırlıklı) göre bitmiş sayılır
+  let slT=0, slD=0;
+  state.courses.forEach(co=>{ const n=+co.slides||0; if(!n) return; const ts=state.topics.filter(t=>t.courseId===co.id); const tot=ts.reduce((a,t)=>a+topicHours(t),0);
+    const fr = tot ? ts.reduce((a,t)=>a+topicHours(t)*Math.min(100,t.done)/100,0)/tot : 0; slT+=n; slD+=Math.round(n*fr); });
+  $("sSlides").style.display = slT ? "" : "none";
+  if(slT) $("sSlides").textContent = `Bitirdiğin slayt: ${slD} · Kalan: ${slT-slD}`;
 
   // Karar
   const v = $("verdict");
@@ -2446,8 +2491,9 @@ function renderPlan(c){
   }
   if(days.length>show) html += `<button class="ghost" id="planMore" style="width:100%;margin-bottom:10px">Kalan ${days.length-show} günü göster</button>`;
   else if(planAll && days.length>8) html += `<button class="ghost" id="planMore" style="width:100%;margin-bottom:10px">Daha az göster</button>`;
-  if(state.reviewDay && c.days>=3){
-    html += `<div class="day review"><div class="day-h">${fmtD(c.days-1)}<span>sınavdan önceki gün</span></div><ul><li>Genel tekrar: özetler, kendi notların, çıkmış sorular</li><li>Erken yat 😴</li></ul></div>`;
+  for(let k=c.days-revDays(c.days); k<c.days; k++){
+    const last=k===c.days-1;
+    html += `<div class="day review"><div class="day-h">${fmtD(k)}<span>${last?"sınavdan önceki gün":"tekrar günü"}</span></div><ul><li>Genel tekrar: özetler, kendi notların, çıkmış sorular</li>${last?"<li>Erken yat 😴</li>":""}</ul></div>`;
   }
   if(leftover.length){
     html += `<div class="verdict no" style="margin:10px 0 0">Süreye sığmayan: ${leftover.map(q=>esc(q.name)+" ("+fmtH(q.left)+")").join(", ")}</div>`;
@@ -2820,7 +2866,7 @@ async function showForgot(){
   el.onclick=e=>{ if(e.target===el || e.target.closest("[data-x]")) el.remove(); };
   document.body.append(el);
 }
-// ===== 🛡️ Yönetici sayfası (sadece ADMIN_CODE'daki kodlar) =====
+// ===== Yönetici sayfası (sadece ADMIN_CODE'daki kodlar) =====
 let IS_ADMIN=false, admUsers=null, admQ="";
 async function checkAdmin(){
   if(!SA || !CUR) return;
@@ -2852,7 +2898,19 @@ function drawAdmUsers(){
   L.innerHTML = list.length ? `<div class="adm-head"><span>Takma ad</span><span>Kod</span><span>Son kayıt</span><span></span></div>`+list.slice(0,300).map(u=>`<div class="adm-row">
       <b class="adm-name">${u.name?esc(u.name):`<span class="muted">(adsız)</span>`}</b><code class="adm-code">${esc(u.code)}</code>
       <span class="muted adm-at">${u.at?new Date(u.at).toLocaleDateString(LOC(),{day:"numeric",month:"short",year:"2-digit"}):"–"}${u.k?` · ${u.k} kurul`:""}</span>
-      <button class="ghost" data-admcopy="${esc(u.code)}">Kopyala</button></div>`).join("") : `<div class="empty">Bulunamadı.</div>`;
+      <span class="adm-btns"><button class="ghost" data-admcopy="${esc(u.code)}">Kopyala</button>${u.name?`<button class="ghost warn-btn" data-admwarn="${esc(u.code)}" data-admname="${esc(u.name)}" title="Uygunsuz takma ad uyarısı gönder">⚠️ Uyar</button>`:""}${u.warned?`<span class="muted adm-warned">uyarıldı</span>`:""}</span></div>`).join("") : `<div class="empty">Bulunamadı.</div>`;
+}
+function askWarn(name){
+  return new Promise(res=>{
+    const el=document.createElement("div"); el.className="modal-bg"; el.style.zIndex=85;
+    el.innerHTML=`<div class="modal confirm-box"><h2>⚠️ Uyarı gönder</h2>
+      <p class="muted" style="margin:0 0 8px"><b>${esc(name)}</b> takma adı serbest bırakılır ve bir daha seçilemez. Kişi siteyi açınca bu mesajı görür ve yeni bir takma ad seçmek zorunda kalır.</p>
+      <textarea id="warnMsg" maxlength="300" style="width:100%;min-height:80px;font:inherit;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)">Takma adın uygunsuz bulundu. Lütfen yeni bir takma ad seç.</textarea>
+      <div class="row" style="justify-content:flex-end;margin-top:12px"><button class="ghost" data-w="0">Vazgeç</button><button data-w="1" style="background:var(--warn)">Uyarıyı gönder</button></div></div>`;
+    const done=v=>{ el.remove(); res(v); };
+    el.onclick=e=>{ if(e.target===el) return done(null); const b=e.target.closest("[data-w]"); if(!b) return; done(b.dataset.w==="1" ? $("warnMsg").value.trim() : null); };
+    document.body.append(el);
+  });
 }
 async function loadAdmBans(){
   const B=$("admBans"); if(!B) return;
@@ -2862,6 +2920,10 @@ async function loadAdmBans(){
 }
 document.addEventListener("click", async e=>{
   const c=e.target.closest("[data-admcopy]"); if(c){ try{ await navigator.clipboard.writeText(c.dataset.admcopy); toast("✓ Kod kopyalandı", c.dataset.admcopy); }catch(err){ toast("Kod: "+c.dataset.admcopy); } return; }
+  const w=e.target.closest("[data-admwarn]");
+  if(w){ const msg=await askWarn(w.dataset.admname); if(msg==null) return;
+    const r=await fetch("/api/admin",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({code:CUR,action:"warn",target:w.dataset.admwarn,msg})});
+    if(r.ok){ toast("⚠️ Uyarı gönderildi", "Kişi siteyi açınca uyarıyı görüp yeni takma ad seçecek"); const x=admUsers.find(u=>u.code===w.dataset.admwarn); if(x){ x.warned=1; x.name=""; } drawAdmUsers(); } else toast("Olmadı"); return; }
   const u=e.target.closest("[data-admunban]"); if(u){ u.disabled=true; const r=await fetch("/api/library",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"unban",code:CUR,by:u.dataset.admunban})}); if(r.ok){ toast("✓ Yasak kaldırıldı"); loadAdmBans(); } else u.disabled=false; }
 });
 function openWelcomeSA(){
@@ -2870,21 +2932,24 @@ function openWelcomeSA(){
   const box="font:inherit;width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)";
   el.innerHTML=`<div class="modal"><h2>👋 Sınav Haftası Asistanı</h2>
       <div class="w-lang-row" style="margin-top:12px"><span>Dil / Language</span><div class="seg3 w-lang" data-noi18n><button type="button" data-wlang="tr">Türkçe</button><button type="button" data-wlang="en">English</button></div></div>
-    <div id="wStep1">
+    <div id="wStep1" style="display:none">
+      <p class="w-taken" id="wTaken" style="display:none"></p>
       <label class="f" style="margin-top:10px">Kodunla giriş yap<input id="wCode" maxlength="6" autocapitalize="characters" autocomplete="off" placeholder="AB12" style="${box};font-size:30px;letter-spacing:.4em;text-align:center;text-transform:uppercase"></label>
       <div class="row" style="margin-top:8px"><button id="wGo" style="flex:1">Giriş</button></div>
       <p class="muted" id="wSt" style="margin:8px 0 0"></p>
       <button class="link-btn" id="wForgot" type="button">Kodumu unuttum</button>
-      <button class="choice" id="wNew" style="margin-top:14px">✨ İlk kez kullanıyorum<small>Sana 4 haneli kişisel bir kod verelim — her cihazda onunla girersin</small></button>
+      <button class="choice" id="wNew" style="margin-top:14px">✨ Yeni hesap aç<small>Sadece takma adını yaz, gerisini biz hallederiz</small></button>
     </div>
-    <div id="wStepName" style="display:none">
+    <div id="wStepName">
       <label class="f" style="margin-top:10px">Takma adın<input id="wName" maxlength="24" autocomplete="nickname" placeholder="ör. Yasin" style="${box};font-size:20px"></label>
       <p class="muted" style="margin:6px 0 0;font-size:13px">Sitede bu isimle görünürsün (ör. paylaştıklarında). Sonra değiştirebilirsin.</p>
-      <div class="row" style="margin-top:10px"><button class="ghost" id="wNameBack">← Geri</button><button id="wNameGo" style="flex:1">Kodumu oluştur →</button></div>
+      <div class="row" style="margin-top:10px"><button id="wNameGo" style="flex:1">Başla →</button></div>
       <p class="muted" id="wSt2" style="margin:8px 0 0"></p>
+      <button class="link-btn" id="wNameBack" type="button">Başka cihazda hesabım var — kodumla gir</button>
     </div>
     <div id="wStep2" style="display:none;text-align:center">
-      <p class="muted">Kişisel kodun:</p>
+      <p style="margin:14px 0 0;font-weight:700">✅ Kişisel kodun oluşturuldu — kaydet!</p>
+      <p class="muted" style="margin:4px 0 0">Kişisel kodun:</p>
       <div style="font-size:44px;font-weight:800;letter-spacing:.18em;margin:4px 0 10px" id="wNewCode"></div>
       <p class="muted" style="text-align:left">Telefonda, bilgisayarda, tablette bu kodla giriş yaparsın; verilerin hep kaldığı yerden devam eder. <b>Kaybetme</b> — kendine WhatsApp'tan at.</p>
       <div class="row" style="justify-content:center;margin-top:10px"><a class="wa" id="wWa" target="_blank" rel="noopener">🟢 Kodumu WhatsApp'a gönder</a><button class="ghost" id="wDone">Başla →</button></div>
@@ -2899,15 +2964,20 @@ function openWelcomeSA(){
   };
   $("wForgot").onclick=showForgot;
   $("wGo").onclick=go; $("wCode").onkeydown=e=>{ if(e.key==="Enter") go(); };
-  $("wNew").onclick = ()=>{ $("wStep1").style.display="none"; $("wStepName").style.display=""; setTimeout(()=>$("wName").focus(),30); };
+  $("wNew").onclick = ()=>{ $("wStep1").style.display="none"; $("wTaken").style.display="none"; $("wStepName").style.display=""; setTimeout(()=>{ $("wName").focus(); $("wName").select(); },30); };
   const wl=()=>el.querySelectorAll("[data-wlang]").forEach(b=>b.classList.toggle("on", b.dataset.wlang===LANG));
   el.querySelectorAll("[data-wlang]").forEach(b=>b.onclick=()=>{ setLang(b.dataset.wlang); wl(); }); wl();
-  $("wNameBack").onclick = ()=>{ $("wStepName").style.display="none"; $("wStep1").style.display=""; };
+  $("wNameBack").onclick = ()=>{ $("wStepName").style.display="none"; $("wStep1").style.display=""; setTimeout(()=>$("wCode").focus(),30); };
   $("wName").onkeydown = e=>{ if(e.key==="Enter") $("wNameGo").click(); };
   $("wNameGo").onclick = async ()=>{
     const nm=cleanName($("wName").value); if(!nm){ $("wSt2").textContent="Bir takma ad yaz."; $("wName").focus(); return; }
     $("wNameGo").disabled=true; $("wSt2").textContent="Kontrol ediliyor…";
-    try{ const ar=await fetch("/api/name?name="+encodeURIComponent(nm),{cache:"no-store"}); const aj=await ar.json(); if(ar.ok && aj.available===false){ $("wSt2").textContent="Bu takma ad zaten alınmış."; $("wNameGo").disabled=false; $("wName").focus(); $("wName").select(); return; } }catch(e){}
+    try{ const ar=await fetch("/api/name?name="+encodeURIComponent(nm),{cache:"no-store"}); const aj=await ar.json(); if(ar.ok && aj.blocked){ $("wNameGo").disabled=false; $("wSt2").textContent="Bu takma ad kullanılamaz."; $("wName").focus(); $("wName").select(); return; }
+      if(ar.ok && aj.available===false){ $("wNameGo").disabled=false; $("wSt2").textContent="";
+      // bu ad bir hesaba ait → o hesabın kodunu iste
+      $("wStepName").style.display="none"; $("wStep1").style.display="";
+      $("wTaken").innerHTML=`<b>“${esc(nm)}”</b> takma adı bir hesaba ait. Bu hesap seninse <b>kodunu gir</b>. Değilse aşağıdan geri dönüp başka bir takma ad seç.`; $("wTaken").style.display="";
+      setTimeout(()=>$("wCode").focus(),30); return; } }catch(e){}
     $("wSt2").textContent="Kod oluşturuluyor…";
     (root.profile=root.profile||{}).name=nm;
     (root.settings=root.settings||{}).lang=LANG;
@@ -2918,12 +2988,33 @@ function openWelcomeSA(){
       try{ const pr=await fetch("/api/data",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({code:CUR, json:JSON.stringify(root), base:0})});
         if(pr.ok){ const pj=await pr.json(); root._ver=pj.updatedAt; root._dirty=false; persist(); } }catch(e){}
       claimName(nm);
+      // bir kerelik: "kişisel kodun oluşturuldu, kaydet" ekranı
       $("wStepName").style.display="none"; $("wStep2").style.display=""; $("wNewCode").textContent=CUR;
       $("wWa").href = "https://wa.me/?text="+encodeURIComponent(saMsg());
       $("wDone").onclick = ()=>location.reload();
     }catch(e){ $("wSt2").textContent=String(e); $("wNameGo").disabled=false; }
   };
-  setTimeout(()=>$("wCode").focus(),50);
+  setTimeout(()=>$("wName").focus(),50);
+}
+// Hesap değiştir: başka bir kodla giriş (şu anki hesabın kodu gösterilir ki geri dönebilsin)
+function openSwitchAccount(){
+  const el=document.createElement("div"); el.className="modal-bg"; el.style.zIndex=85;
+  el.innerHTML=`<div class="modal confirm-box"><h2>🔄 Hesap değiştir</h2>
+    <p class="muted" style="margin:0 0 10px">Başka bir hesabın kodunu yaz. Şu anki hesabın ${myName()?`(<b>${esc(myName())}</b>) `:""}kodu: <b class="code-inline">${esc(CUR||"")}</b> — geri dönmek için bunu not al.</p>
+    <input id="swCode" maxlength="6" autocapitalize="characters" autocomplete="off" placeholder="AB12" style="font:inherit;width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:24px;letter-spacing:.35em;text-align:center;text-transform:uppercase">
+    <p class="nm-err" id="swSt" style="margin:8px 0 0"></p>
+    <button class="link-btn" id="swForgot" type="button">Kodumu unuttum</button>
+    <div class="row" style="justify-content:flex-end;margin-top:14px"><button class="ghost" data-sw="0">Vazgeç</button><button data-sw="1">Giriş</button></div></div>`;
+  document.body.append(el);
+  const go=async()=>{ const v=$("swCode").value.toUpperCase();
+    if(v.length!==4 && v.length!==6){ $("swSt").textContent="Kod 4 karakter olmalı (harf ve rakam)."; return; }
+    if(v===CUR){ el.remove(); return; }
+    $("swSt").textContent="Giriş yapılıyor…"; try{ await saLogin(v); }catch(e){ $("swSt").textContent=String(e); } };
+  $("swCode").oninput=e=>{ e.target.value=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,6); };
+  $("swCode").onkeydown=e=>{ if(e.key==="Enter") go(); if(e.key==="Escape") el.remove(); };
+  $("swForgot").onclick=showForgot;
+  el.onclick=e=>{ if(e.target===el) return el.remove(); const b=e.target.closest("[data-sw]"); if(!b) return; if(b.dataset.sw==="0") el.remove(); else go(); };
+  setTimeout(()=>$("swCode").focus(),30);
 }
 function openAccountPanel(){
   const P=$("sharePanel"); showPanel();
@@ -2975,7 +3066,7 @@ async function openLibrary(){
   try{ const r=await fetch("/api/library?me="+encodeURIComponent(CUR||""),{cache:"no-store"}); const j=await r.json(); items=j.items||[]; admin=!!j.admin; }
   catch(e){ $("libList").innerHTML=`<div class="empty">Kütüphaneye ulaşılamadı.</div>`; return; }
   if(admin){
-    $("libList").insertAdjacentHTML("beforebegin",`<div class="admin-note"><span>🛡️ Yönetici modu — tüm paylaşımları kaldırabilir, kötü paylaşanı yasaklayabilirsin.</span><button class="ghost" id="bansBtn">🚫 Yasaklılar</button></div><div id="bansBox" style="display:none"></div>`);
+    $("libList").insertAdjacentHTML("beforebegin",`<div class="admin-note"><span>Yönetici modu — tüm paylaşımları kaldırabilir, kötü paylaşanı yasaklayabilirsin.</span><button class="ghost" id="bansBtn">🚫 Yasaklılar</button></div><div id="bansBox" style="display:none"></div>`);
     let bansOpen=false;
     const loadBans=async()=>{
       const B=$("bansBox"); if(!B) return; B.innerHTML=`<div class="empty">Yükleniyor…</div>`;

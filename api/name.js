@@ -14,6 +14,7 @@ module.exports = async (req, res) => {
     if (await overLimit(`rl:name:${ipOf(req)}:${new Date().toISOString().slice(0, 13)}`, 120, 3600)) return send(res, 429, { error: "Çok sık denendi, biraz sonra tekrar dene." });
     if (req.method === "GET") {
       const n = norm(q.name); if (!n) return send(res, 400, { error: "Takma ad boş." });
+      if (await redis("SISMEMBER", "names:blocked", n)) return send(res, 200, { available: false, blocked: true });
       const cur = await redis("HGET", "names", n), me = q.me ? owner(cleanCode(q.me)) : null;
       return send(res, 200, { available: !cur || cur === me });
     }
@@ -21,6 +22,7 @@ module.exports = async (req, res) => {
       const code = cleanCode(b.code);
       if (!CODE_RE.test(code) || !(await redis("GET", `u:${code}`))) return send(res, 403, { error: "Giriş yapmalısın." });
       const n = norm(b.name); if (!n) return send(res, 400, { error: "Takma ad boş." });
+      if (await redis("SISMEMBER", "names:blocked", n)) return send(res, 409, { error: "Bu takma ad kullanılamaz.", blocked: true });
       const me = owner(code), cur = await redis("HGET", "names", n);
       if (cur && cur !== me) return send(res, 409, { error: "Bu takma ad zaten alınmış." });
       const old = await redis("GET", `nameof:${me}`);
