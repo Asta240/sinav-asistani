@@ -236,7 +236,8 @@
   .nav-sub button:hover{background:var(--bg)} .nav-sub button.on{background:var(--accent-soft);color:var(--accent);font-weight:700}
   .nav-sub button small{display:block;color:var(--muted);font-weight:500;font-size:12px}
   .nav-sub .new{color:var(--accent);font-weight:700}
-  .drawer-sig{margin-top:auto;padding:14px 8px 4px;color:var(--muted);font-size:12px;border-top:1px solid var(--line)}
+  .nav-faq{margin-top:auto}
+  .drawer-sig{padding:14px 8px 4px;color:var(--muted);font-size:12px;border-top:1px solid var(--line)}
   .drawer-sig b{color:var(--bad)}
   /* ana sayfa */
   .account .code-big{font-size:34px;font-weight:800;letter-spacing:.16em}
@@ -335,6 +336,14 @@
   .dayatt-row .att{float:none;margin:0}
   .dayatt-row .att button{width:auto;padding:0 10px;height:26px;font-size:12px}
   body.no-attend .dayatt, body.no-attend .dayatt-row{display:none !important}
+  .toast-undo{border-left-color:var(--accent);position:relative;overflow:hidden;padding-bottom:15px}
+  .toast-undo b{color:var(--ink)}
+  .undo-btn{background:var(--accent);color:#fff;border:0;border-radius:9px;padding:7px 12px;font-weight:700;cursor:pointer;white-space:nowrap}
+  .undo-n{opacity:.75;font-weight:600;margin-left:2px}
+  .undo-bar{position:absolute;left:0;bottom:0;height:3px;width:100%;background:var(--accent);transform-origin:left;animation:undoBar linear forwards}
+  @keyframes undoBar{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+  .ban-btn{color:var(--bad)!important;border-color:var(--bad)!important}
+  .admin-note{background:var(--warn-soft);color:var(--warn);border-radius:10px;padding:8px 12px;font-size:13px;margin-bottom:10px;font-weight:600}
   .pub-on{color:var(--good)!important;border-color:var(--good)!important}
   .add-topic{background:transparent;color:var(--accent);padding:6px 0;font-size:14px}
   .add label.f{font-size:11px}
@@ -532,11 +541,11 @@
   <button class="nav-item" data-nav="settings">Ayarlar</button>
   <button class="nav-item" data-nav="home">Ana sayfa</button>
   <button class="nav-item" data-nav="add">Kurul ekle</button>
-  <button class="nav-item" data-nav="faq">Sık sorulan sorular</button>
   <div class="nav-row"><button class="nav-item" id="navTrack" data-navtoggle="1"><span>Sınav takibi</span><span class="chev">▸</span></button><button class="nav-edit" id="navEdit" data-navedit="track" title="Sırala / düzenle"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>
   <div id="navKurullar" class="nav-sub" style="display:none"></div>
   <div class="nav-row" id="navArchRow" style="display:none"><button class="nav-item" id="navArch" data-navarch="1"><span>Arşiv <span class="muted" id="archCount"></span></span><span class="chev">▸</span></button><button class="nav-edit" id="navArchEdit" data-navedit="arch" title="Sırala / düzenle"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>
   <div id="navArchList" class="nav-sub" style="display:none"></div>
+  <button class="nav-item nav-faq" data-nav="faq">Sık sorulan sorular</button>
   <div class="drawer-sig">Sınav Haftası Asistanı<br><b>CardiacAI</b> · 2026</div>
 </aside>
 
@@ -558,12 +567,22 @@ let folderForm = null; // null | "new" | "rename"
 let confirmDel = false;
 let openForm = null;
 const openCourses = new Set(); // açık (konuları görünen) dersler
+// Açılan panel, butonuna basılan kutunun hemen ALTINA yerleşir (yukarıda değil)
+let lastBtn=null;
+document.addEventListener("click", e=>{ const b=e.target.closest("button, a"); if(b && !b.closest("#sharePanel")) lastBtn=b; }, true);
+function showPanel(){
+  const P=$("sharePanel");
+  const a = lastBtn && document.contains(lastBtn) && lastBtn.closest(".card, section, header, nav.folders");
+  if(a && a!==P && !a.contains(P) && !a.closest("#drawer")) a.after(P);
+  P.style.display="";
+  requestAnimationFrame(()=>P.scrollIntoView({block:"nearest", behavior:"smooth"}));
+}
 // Küçük Evet/Hayır penceresi (tarayıcının confirm'ü bu sayfada çalışmıyor)
-function askConfirm(title, sub){
+function askConfirm(title, sub, yes, color){
   return new Promise(res=>{
     const el=document.createElement("div"); el.className="modal-bg"; el.style.zIndex=80;
     el.innerHTML=`<div class="modal confirm-box"><h2>${esc(title)}</h2>${sub?`<p class="muted" style="margin:0">${esc(sub)}</p>`:""}
-      <div class="row" style="justify-content:flex-end;margin-top:18px"><button class="ghost" data-a="0">Hayır</button><button data-a="1" style="background:var(--bad)">Evet, sil</button></div></div>`;
+      <div class="row" style="justify-content:flex-end;margin-top:18px"><button class="ghost" data-a="0">Hayır</button><button data-a="1" style="background:${color||"var(--bad)"}">${esc(yes||"Evet, sil")}</button></div></div>`;
     const done=v=>{ el.remove(); document.removeEventListener("keydown",key); res(v); };
     const key=e=>{ if(e.key==="Escape") done(false); if(e.key==="Enter") done(true); };
     el.onclick=e=>{ if(e.target===el) return done(false); const a=e.target.closest("[data-a]"); if(a) done(a.dataset.a==="1"); };
@@ -1645,7 +1664,9 @@ function afterImport(added, updated, bad){
   if(hasReal){ root.folders = root.folders.filter(f=>f.courses.length || f.archived); if(!root.folders.includes(state)){ state = sortedFolders().find(f=>!f.archived) || root.folders[0]; root.activeId=state.id; } }
   $("sharePanel").style.display="none"; save(); render();
   const parts=[]; if(added) parts.push(`${added} kurul eklendi`); if(updated) parts.push(`${updated} kurul güncellendi`);
-  toast(`✓ Başarıyla ${parts.join(", ") || "eklendi"}`, bad ? `${bad} kod okunamadı` : `Menüde "Sınav takibi" altında`);
+  const where = archHit && !added ? `Menüde "📦 Arşiv" altında` : archHit ? `Yeniler "Sınav takibi", güncellenen arşivdeki "📦 Arşiv" altında` : `Menüde "Sınav takibi" altında`;
+  archHit=false;
+  toast(`✓ Başarıyla ${parts.join(", ") || "eklendi"}`, bad ? `${bad} kod okunamadı` : where);
 }
 function toast(title, sub){
   let box=$("toasts"); if(!box){ box=document.createElement("div"); box.id="toasts"; document.body.append(box); }
@@ -1653,8 +1674,25 @@ function toast(title, sub){
   box.append(t); requestAnimationFrame(()=>t.classList.add("in"));
   setTimeout(()=>{ t.classList.remove("in"); setTimeout(()=>t.remove(),300); }, 3500);
 }
+// Sağ altta 10 sn duran "Geri al" bildirimi
+function toastUndo(title, sub, onUndo, ms=10000){
+  let box=$("toasts"); if(!box){ box=document.createElement("div"); box.id="toasts"; document.body.append(box); }
+  const t=document.createElement("div"); t.className="toast toast-undo";
+  t.innerHTML=`<div class="row" style="justify-content:space-between;gap:14px;flex-wrap:nowrap"><div><b>${esc(title)}</b>${sub?`<small>${esc(sub)}</small>`:""}</div><button class="undo-btn">↶ Geri al <span class="undo-n">${Math.round(ms/1000)}</span></button></div><i class="undo-bar" style="animation-duration:${ms}ms"></i>`;
+  box.append(t); requestAnimationFrame(()=>t.classList.add("in"));
+  let left=Math.round(ms/1000), gone=false;
+  const close=()=>{ if(gone) return; gone=true; clearInterval(iv); t.classList.remove("in"); setTimeout(()=>t.remove(),300); };
+  const iv=setInterval(()=>{ left--; const n=t.querySelector(".undo-n"); if(n) n.textContent=left; if(left<=0) close(); },1000);
+  t.querySelector(".undo-btn").onclick=async ()=>{ if(gone) return; close(); try{ await onUndo(); }catch(e){ toast("Geri alınamadı", String(e)); } };
+}
+async function libRestore(id){
+  const r=await fetch("/api/library",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"restore",code:CUR,id})});
+  const j=await r.json().catch(()=>({})); if(!r.ok) throw (j.error||"Olmadı"); return true;
+}
 // Gelen kurulu (src) mevcut kurula (dst) işle: ilerleme, elle süreler korunur
+let archHit=false;
 function mergeFolderInto(dst, src){
+  if(dst.archived) archHit=true;
   if(src.startDate) dst.startDate=src.startDate; if(src.examDate) dst.examDate=src.examDate;
   const cmap={};
   src.courses.forEach(sc=>{
@@ -1679,9 +1717,9 @@ function mergeFolderInto(dst, src){
 }
 async function openShare(){
   const P=$("sharePanel");
-  if(!state.courses.length){ P.style.display=""; P.innerHTML=`<div class="row" style="justify-content:space-between"><b>Paylaşmak için önce bu kurula ders ekle.</b><button class="ghost" data-pclose="1">Kapat</button></div>`; return; }
+  if(!state.courses.length){ showPanel(); P.innerHTML=`<div class="row" style="justify-content:space-between"><b>Paylaşmak için önce bu kurula ders ekle.</b><button class="ghost" data-pclose="1">Kapat</button></div>`; return; }
   const code = await encodeFolder(state);
-  P.style.display="";
+  showPanel();
   P.innerHTML = `<div class="row" style="justify-content:space-between"><div><h2 style="margin:0">🔗 "${esc(state.name)}" kurulunu paylaş</h2>
     <p class="muted" style="margin:4px 0 0">Bu kodu sınıf grubuna at. Arkadaşların "Kod ile ekle"ye yapıştırınca dersler ve konular hazır gelir. Senin ilerlemen paylaşılmaz.</p></div>
     <button class="ghost" data-pclose="1">Kapat</button></div>
@@ -1694,7 +1732,7 @@ async function openShare(){
   };
 }
 function openCodeImport(){
-  const P=$("sharePanel"); P.style.display="";
+  const P=$("sharePanel"); showPanel();
   P.innerHTML = `<div class="row" style="justify-content:space-between"><h2 style="margin:0">Kurul kodunu yapıştır</h2><button class="ghost" data-pclose="1">Kapat</button></div>
     <textarea id="codeIn" placeholder="KRL1.…  (mesajın tamamını yapıştırsan da olur — birden fazla kurul kodu olabilir)"></textarea>
     <div class="row"><button id="codeAdd">Kurulu ekle</button><span class="muted" id="codeStatus"></span></div>`;
@@ -1706,7 +1744,7 @@ function openCodeImport(){
     for(const code of codes){
       let f; try{ f = await decodeFolder(code); }catch(e){ bad++; continue; }
       const ex = matchFolder({kurul_adi:f.name});
-      if(ex && await askConfirm(`"${ex.name}" kurulun zaten var. Güncelleyeyim mi?`, "Evet: program, konular ve tarihler güncellenir, ilerlemen korunur. Hayır: ayrı bir kurul olarak eklenir.")){
+      if(ex && await askConfirm(`"${ex.name}" kurulun zaten var${ex.archived?" (📦 arşivde)":""}. Güncelleyeyim mi?`, "Evet: program, konular ve tarihler güncellenir, ilerlemen korunur"+(ex.archived?"; kurul arşivde kalır":"")+". Hayır: ayrı bir kurul olarak eklenir.", "Evet, güncelle", "var(--accent)")){
         mergeFolderInto(ex, f); firstId = firstId || ex.id; updated++;
       } else { root.folders.push(f); firstId = firstId || f.id; added++; }
     }
@@ -1746,7 +1784,7 @@ $("deviceBtn").onclick = async ()=>{
   const P=$("sharePanel"); const code = await encodeAll(); const cs={sure:false};
   const when = new Date().toLocaleString("tr-TR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
   const msg = waMessage(code, when);
-  P.style.display="";
+  showPanel();
   P.innerHTML = `<div class="row" style="justify-content:space-between"><h2 style="margin:0">👤 Kodum: <span style="font-size:28px;letter-spacing:.12em">${CUR}</span></h2><div class="row"><button class="ghost" id="logoutBtn">Başka kodla gir</button><button class="ghost" data-pclose="1">Kapat</button></div></div>
     <p class="muted" style="margin:6px 0 0"><b>Bu cihazda</b> girişte <b>${CUR}</b> yazman yeterli. <b>Yeni bir cihazda</b> ise WhatsApp'taki son mesajın tamamını yapıştırman gerekir — mesaj gönderdiğin anki halini taşır, o yüzden çalıştıktan sonra yenisini gönder (değişiklik varsa butonda turuncu nokta çıkar).</p>
     ${remoteRef && !syncOff ? `<p class="muted">☁️ Claude hesabınla girdiğin için verilerin ayrıca hesabına da otomatik kaydediliyor.</p>` : ""}
@@ -1863,7 +1901,7 @@ function openWelcomeSA(){
   setTimeout(()=>$("wCode").focus(),50);
 }
 function openAccountPanel(){
-  const P=$("sharePanel"); P.style.display="";
+  const P=$("sharePanel"); showPanel();
   P.innerHTML=`<div class="row" style="justify-content:space-between"><h2 style="margin:0">👤 Kodum: <span style="font-size:28px;letter-spacing:.14em">${CUR}</span></h2><button class="ghost" data-pclose="1">Kapat</button></div>
     <p class="muted" style="margin:6px 0 0">Verilerin bu koda kayıtlı ve her değişiklikte otomatik kaydediliyor. Başka cihazda girişte bu kodu yazman yeterli.</p>
     <div class="row" style="margin-top:12px"><a class="wa" href="https://wa.me/?text=${encodeURIComponent(saMsg())}" target="_blank" rel="noopener">🟢 Kodumu WhatsApp'a gönder</a>
@@ -1876,9 +1914,11 @@ function openAccountPanel(){
 }
 // ---- Hazır kurul kütüphanesi (SA) ----
 async function unpublish(f){
-  if(!await askConfirm("Kütüphaneden kaldırılsın mı?","Başkalarının daha önce eklediği kopyalar silinmez; senin kurulun da sende kalır.")) return;
-  try{ await fetch("/api/library",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({code:CUR,id:f.publishedId})}); }catch(e){}
-  clearPublished(f.publishedId); toast("✓ Kütüphaneden kaldırıldı", "İstersen tekrar paylaşabilirsin");
+  if(!await askConfirm("Kütüphaneden kaldırılsın mı?","Başkalarının daha önce eklediği kopyalar silinmez; senin kurulun da sende kalır.","Evet, kaldır")) return;
+  const id=f.publishedId;
+  try{ await fetch("/api/library",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({code:CUR,id})}); }catch(e){}
+  clearPublished(id);
+  toastUndo("✓ Kütüphaneden kaldırıldı", "Yanlışlıkla mı bastın?", async()=>{ await libRestore(id); f.publishedId=id; pubChecked.delete(id); save(); render(); toast("↶ Geri alındı", "Kurul tekrar kütüphanede"); });
 }
 function clearPublished(id){ root.folders.forEach(f=>{ if(f.publishedId===id) delete f.publishedId; }); save(); render(); }
 // Kütüphaneden başka yoldan silindiyse (ör. yönetici) paylaş butonu geri gelsin
@@ -1890,42 +1930,54 @@ async function checkPublished(f){
 async function importFolderObj(f, libId){
   if(libId) f.fromLib = libId;   // kütüphaneden gelen kurul tekrar paylaşılamaz
   const ex = matchFolder({kurul_adi:f.name});
-  if(ex && await askConfirm(`"${ex.name}" kurulun zaten var. Güncelleyeyim mi?`, "Evet: program, konular ve tarihler güncellenir, ilerlemen korunur. Hayır: ayrı bir kurul olarak eklenir.")){ mergeFolderInto(ex, f); if(libId) ex.fromLib = libId; return ex.id; }
+  if(ex && await askConfirm(`"${ex.name}" kurulun zaten var${ex.archived?" (📦 arşivde)":""}. Güncelleyeyim mi?`, "Evet: program, konular ve tarihler güncellenir, ilerlemen korunur"+(ex.archived?"; kurul arşivde kalır":"")+". Hayır: ayrı bir kurul olarak eklenir.", "Evet, güncelle", "var(--accent)")){ mergeFolderInto(ex, f); if(libId) ex.fromLib = libId; return ex.id; }
   root.folders.push(f); return f.id;
 }
 async function openLibrary(){
-  const P=$("sharePanel"); P.style.display="";
+  const P=$("sharePanel"); showPanel();
   P.innerHTML=`<div class="row" style="justify-content:space-between"><h2 style="margin:0">📚 Hazır kurullar</h2><button class="ghost" data-pclose="1">Kapat</button></div>
     <p class="muted" style="margin:6px 0 10px">Başkalarının PDF'ten ayıklayıp paylaştığı kurullar. Seç, ekle — kendi ilerlemen sende kalır.</p>
     <input id="libQ" placeholder="Ara: kurul, okul, dönem…" style="margin-bottom:10px"><div id="libList"><div class="empty">Yükleniyor…</div></div>`;
-  let items=[];
+  let items=[], admin=false;
   const draw=()=>{
     const q=norm($("libQ").value); const list=items.filter(it=>!q || norm(it.name+" "+it.school).includes(q));
     $("libList").innerHTML = list.length ? list.map(it=>`<div class="day" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
         <div style="flex:1;min-width:200px"><b>${esc(it.name)}</b>${it.school?` <span class="muted">· ${esc(it.school)}</span>`:""}
           <div class="muted">${it.courses} ders · ${it.topics} konu${it.sessions?` · ${it.sessions} saatlik program`:""} · ${new Date(it.createdAt).toLocaleDateString("tr-TR",{day:"numeric",month:"short"})}${it.mine?" · <b>senin paylaşımın</b>":""}</div></div>
-        <button data-libadd="${it.id}">Ekle</button>${it.mine?`<button class="ghost" data-libdel="${it.id}">Paylaşımımı kaldır</button>`:""}</div>`).join("")
+        <button data-libadd="${it.id}">Ekle</button>${it.mine?`<button class="ghost" data-libdel="${it.id}">Paylaşımımı kaldır</button>`:admin?`<button class="ghost" data-libdel="${it.id}">Kaldır</button><button class="ghost ban-btn" data-libban="${it.id}">🚫 Kaldır + yasakla</button>`:""}</div>`).join("")
       : `<div class="empty">${items.length?"Aramaya uyan kurul yok.":"Henüz paylaşılmış kurul yok. İlk paylaşan sen ol: kurulunu ekle → 🌍 Kütüphaneye paylaş."}</div>`;
   };
-  try{ const r=await fetch("/api/library?me="+encodeURIComponent(CUR||""),{cache:"no-store"}); items=(await r.json()).items||[]; }
+  try{ const r=await fetch("/api/library?me="+encodeURIComponent(CUR||""),{cache:"no-store"}); const j=await r.json(); items=j.items||[]; admin=!!j.admin; }
   catch(e){ $("libList").innerHTML=`<div class="empty">Kütüphaneye ulaşılamadı.</div>`; return; }
+  if(admin) $("libList").insertAdjacentHTML("beforebegin",`<div class="admin-note">🛡️ Yönetici modu — tüm paylaşımları kaldırabilir, kötü paylaşanı yasaklayabilirsin.</div>`);
   draw(); $("libQ").oninput=draw;
   $("libList").onclick=async e=>{
-    const add=e.target.dataset.libadd, del=e.target.dataset.libdel;
+    const add=e.target.dataset.libadd, del=e.target.dataset.libdel, ban=e.target.dataset.libban;
     if(add){ e.target.disabled=true; e.target.textContent="Ekleniyor…";
       try{ const r=await fetch("/api/library?id="+add); const j=await r.json(); if(!r.ok) throw j.error;
         const before=root.folders.length; await importFolderObj(await decodeFolder(j.data), add);
         const isNew = root.folders.length>before; afterImport(isNew?1:0, isNew?0:1, 0);
       }catch(err){ e.target.textContent="Olmadı"; } }
-    if(del && await askConfirm("Kütüphaneden kaldırılsın mı?","Başkalarının eklediği kopyalar silinmez.")){
-      await fetch("/api/library",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({code:CUR,id:del})});
-      items=items.filter(it=>it.id!==del); draw(); clearPublished(del); toast("✓ Kütüphaneden kaldırıldı"); }
+    const id=del||ban; if(!id) return;
+    const it=items.find(x=>x.id===id); if(!it) return;
+    const ok = ban ? await askConfirm(`"${it.name}" kaldırılıp paylaşan yasaklansın mı?`,"Bu paylaşım silinir ve o kişi bir daha kütüphaneye paylaşım yapamaz.","Evet, yasakla")
+                   : await askConfirm("Kütüphaneden kaldırılsın mı?","Başkalarının eklediği kopyalar silinmez.","Evet, kaldır");
+    if(!ok) return;
+    const r=await fetch("/api/library",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({code:CUR,id,ban:!!ban})});
+    if(!r.ok){ const j=await r.json().catch(()=>({})); toast("Olmadı", j.error||""); return; }
+    const pos=items.indexOf(it); items=items.filter(x=>x!==it); draw();
+    const mineF=root.folders.find(f=>f.publishedId===id); clearPublished(id);
+    toastUndo(ban?"🚫 Kaldırıldı ve yasaklandı":"✓ Kütüphaneden kaldırıldı", ban?"Paylaşan artık paylaşım yapamaz":"Yanlışlıkla mı bastın?", async()=>{
+      await libRestore(id); items.splice(Math.max(0,pos),0,it); if(document.contains($("libList"))) draw();
+      if(mineF){ mineF.publishedId=id; save(); render(); }
+      toast("↶ Geri alındı", ban?"Paylaşım geri geldi, yasak kaldırıldı":"Kurul tekrar kütüphanede");
+    });
   };
 }
 function openPublish(){
   if(state.publishedId){ toast("Bu kurul zaten kütüphanede", "Önce kütüphaneden kaldırman gerekir"); return; }
   if(state.fromLib){ toast("Bu kurul zaten kütüphaneden geldi", "Kütüphanedeki kurullar tekrar paylaşılamaz"); return; }
-  const P=$("sharePanel"); P.style.display="";
+  const P=$("sharePanel"); showPanel();
   P.innerHTML=`<div class="row" style="justify-content:space-between"><h2 style="margin:0">🌍 Kütüphaneye paylaş</h2><button class="ghost" data-pclose="1">Kapat</button></div>
     <p class="muted" style="margin:6px 0 10px">Kurulun dersleri, konuları, tarihleri ve ders programı herkese açık "Hazır kurullar" listesine eklenir. <b>Senin ilerlemen ve kodun paylaşılmaz.</b></p>
     <div class="row"><label class="f" style="flex:2">Kurul adı<input id="pubName" value="${esc(state.name)}"></label>
