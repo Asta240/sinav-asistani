@@ -32,7 +32,7 @@
   h2{font-size:16px;margin:0 0 14px;letter-spacing:-.01em}
   .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px}
   .grid{display:grid;gap:16px}
-  .g-setup{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+  .g-setup{grid-template-columns:repeat(auto-fit,minmax(180px,1fr));align-items:end}
   label.f{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
   input,select{font:inherit;font-size:15px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 11px;width:100%;text-transform:none;letter-spacing:0}
   input:focus,select:focus{outline:2px solid var(--accent);outline-offset:-1px}
@@ -286,6 +286,27 @@
   .btn-code{background:var(--good);color:#fff}
   .btn-pdf{display:inline-flex;align-items:center;padding:10px 16px;border-radius:10px;font-weight:700;color:#fff;text-decoration:none;background:linear-gradient(135deg,#9c36b5,#e03131)}
   .btn-pdf:hover,.btn-code:hover{filter:brightness(1.08)}
+  #toasts{position:fixed;right:18px;bottom:18px;z-index:90;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+  .toast{background:var(--card);color:var(--ink);border:1px solid var(--line);border-left:4px solid var(--good);border-radius:12px;padding:12px 16px;min-width:240px;box-shadow:0 10px 30px rgba(0,0,0,.25);transform:translateY(16px);opacity:0;transition:all .25s}
+  .toast.in{transform:none;opacity:1} .toast b{display:block;font-size:14.5px;color:var(--good)} .toast small{color:var(--muted);font-size:12.5px}
+  .nav-row{display:flex;align-items:center;gap:4px} .nav-row .nav-item{flex:1}
+  .nav-edit{background:transparent;color:var(--muted);width:34px;height:34px;padding:0;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:none}
+  .nav-edit:hover,.nav-edit.on{background:var(--accent-soft);color:var(--accent)}
+  .sortbar{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0}
+  .nav-sub .sortbar button{display:inline-block;width:auto;padding:5px 9px;font-size:12px;border:1px solid var(--line);border-radius:99px}
+  .nav-sub .sortbar button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .dragi{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;border:1px solid var(--line);margin-bottom:5px;background:var(--bg);cursor:grab;font-size:13.5px}
+  .dragi .grip{color:var(--muted);font-size:16px} .dragi .nm{flex:1;line-height:1.3}
+  .dragi.dragging{opacity:.4} .dragi.over{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+  .nav-sub .dragi .arrows button{display:inline-block;width:26px;height:26px;padding:0;text-align:center;border-radius:6px;font-size:13px}
+  .nav-sub .dragi .arrows button:disabled{opacity:.3}
+  .set-card h3{margin:0 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+  .set-card{margin-bottom:14px}
+  .eye{background:transparent;color:var(--muted);padding:4px;border-radius:8px;display:flex}
+  .eye:hover{color:var(--accent);background:var(--accent-soft)}
+  .code-warn{margin-top:6px;font-size:12.5px;color:var(--warn);background:var(--warn-soft);padding:6px 10px;border-radius:8px;max-width:520px}
+  .alldone{background:transparent;color:var(--muted);border:1px solid var(--line);padding:5px 10px;font-size:12px;border-radius:99px;white-space:nowrap}
+  .alldone:hover{border-color:var(--good);color:var(--good)} .alldone.on{background:var(--good-soft);color:var(--good);border-color:transparent}
   .add-topic{background:transparent;color:var(--accent);padding:6px 0;font-size:14px}
   .add label.f{font-size:11px}
   .two{grid-template-columns:1.25fr 1fr;align-items:start}
@@ -335,6 +356,12 @@
   <section class="card" id="homeEmpty" style="display:none">
     <div class="row" style="justify-content:space-between"><div><h2 style="margin:0">Henüz kurulun yok</h2><p class="muted" style="margin:4px 0 0">Kurul kitapçığından ya da hazır kurullardan başla.</p></div><button data-goadd="1">Kurul ekle →</button></div>
   </section>
+  </div>
+
+  <!-- ===== AYARLAR SAYFASI ===== -->
+  <div id="settingsView" style="display:none">
+    <div class="page-h"><h2>Ayarlar</h2><p class="muted">Ayarların hesabına kaydedilir, her cihazda aynı olur.</p></div>
+    <div id="settingsBody"></div>
   </div>
 
   <!-- ===== KURUL EKLE SAYFASI ===== -->
@@ -463,10 +490,10 @@
 <div id="drawerBg" class="drawer-bg"></div>
 <aside id="drawer" class="drawer" aria-hidden="true">
   <div class="drawer-h"><span class="drawer-title">Sınav Haftası Asistanı</span><button class="icon" id="drawerClose" title="Kapat">✕</button></div>
-  <button class="nav-item" data-navset="1">Ayarlar</button>
+  <button class="nav-item" data-nav="settings">Ayarlar</button>
   <button class="nav-item" data-nav="home">Ana sayfa</button>
   <button class="nav-item" data-nav="add">Kurul ekle</button>
-  <button class="nav-item" id="navTrack" data-navtoggle="1"><span>Sınav takibi</span><span class="chev">▸</span></button>
+  <div class="nav-row"><button class="nav-item" id="navTrack" data-navtoggle="1"><span>Sınav takibi</span><span class="chev">▸</span></button><button class="nav-edit" id="navEdit" data-navedit="1" title="Sırala / düzenle"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>
   <div id="navKurullar" class="nav-sub" style="display:none"></div>
   <button class="nav-item" id="navArch" data-navarch="1" style="display:none"><span>Arşiv <span class="muted" id="archCount"></span></span><span class="chev">▸</span></button>
   <div id="navArchList" class="nav-sub" style="display:none"></div>
@@ -667,7 +694,7 @@ async function startSync(){
     }, ()=>{ syncOff=true; setSync(""); resolveSync(false); });
   }catch(e){ resolveSync(false); }
 }
-function switchTo(id){ view="kurul"; $("homeView").style.display="none"; $("addView").style.display="none"; $("kurulView").style.display=""; window.scrollTo({top:0}); state = root.folders.find(f=>f.id===id); root.activeId=id; weekOff=null; openForm=null; folderForm=null; confirmDel=false; $("aiOut").textContent=""; save(); render(); }
+function switchTo(id){ view="kurul"; $("sharePanel").style.display="none"; $("homeView").style.display="none"; $("addView").style.display="none"; $("settingsView").style.display="none"; $("kurulView").style.display=""; window.scrollTo({top:0}); state = root.folders.find(f=>f.id===id); root.activeId=id; weekOff=null; openForm=null; folderForm=null; confirmDel=false; $("aiOut").textContent=""; save(); render(); }
 
 // ---- Görünüm: ana sayfa / kurul sayfası + yan menü ----
 let view = "home", navOpen = false, archOpen = false, tab = "today";
@@ -675,8 +702,17 @@ function showTab(t){ tab=t; document.querySelectorAll("#kTabs [data-tab]").forEa
   document.querySelectorAll(".tabpane").forEach(p=>p.style.display = p.dataset.pane===t ? "" : "none"); }
 document.getElementById("kTabs").addEventListener("click", e=>{ const b=e.target.closest("[data-tab]"); if(b) showTab(b.dataset.tab); });
 const createdOf = f => f.createdAt || +String(f.id).slice(0,13) || 0;
-const sortedFolders = () => [...root.folders].sort((a,b)=>createdOf(a)-createdOf(b));
-function showView(v){ view=v; $("homeView").style.display = v==="home"?"":"none"; $("addView").style.display = v==="add"?"":"none"; $("kurulView").style.display = v==="kurul"?"":"none"; renderDrawer(); if(v==="home") renderQuote(); window.scrollTo({top:0}); }
+// Kurul sıralaması: eklenme / isim / sınav tarihi / elle (sürükle-bırak)
+let navEdit=false;
+function sortedFolders(){
+  const mode=root.kurulSort||"created", arr=[...root.folders].sort((a,b)=>createdOf(a)-createdOf(b));
+  if(mode==="name") arr.sort((a,b)=>a.name.localeCompare(b.name,"tr",{numeric:true}));
+  else if(mode==="date") arr.sort((a,b)=>(a.examDate||"9999").localeCompare(b.examDate||"9999"));
+  else if(mode==="manual"){ const o=root.kurulOrder||[]; const ix=f=>{ const i=o.indexOf(f.id); return i<0?1e6:i; }; arr.sort((a,b)=>ix(a)-ix(b)); }
+  return arr;
+}
+function setManualOrder(ids){ const rest=sortedFolders().map(f=>f.id).filter(id=>!ids.includes(id)); root.kurulOrder=[...ids, ...rest]; root.kurulSort="manual"; save(); renderDrawer(); }
+function showView(v){ view=v; $("sharePanel").style.display="none"; $("homeView").style.display = v==="home"?"":"none"; $("addView").style.display = v==="add"?"":"none"; $("settingsView").style.display = v==="settings"?"":"none"; if(v==="settings") renderSettings(); $("kurulView").style.display = v==="kurul"?"":"none"; renderDrawer(); if(v==="home") renderQuote(); window.scrollTo({top:0}); }
 function openDrawer(o){ document.body.classList.toggle("drawer-open", o); $("drawer").setAttribute("aria-hidden", o?"false":"true"); if(o) renderDrawer(); }
 function renderDrawer(){
   document.querySelectorAll("[data-nav]").forEach(b=>b.classList.toggle("on", view===b.dataset.nav));
@@ -687,6 +723,15 @@ function renderDrawer(){
     if(f.grade!=null) d = `Notum: ${String(f.grade).replace(".",",")}`; else if(examPassed(f)) d += " · not girilmedi";
     return `<button class="${view==="kurul" && f.id===state.id?"on":""}" data-navk="${f.id}">${esc(f.name)}<small>${d}</small></button>`; };
   const act = sortedFolders().filter(f=>!f.archived), arch = sortedFolders().filter(f=>f.archived);
+  $("navEdit").classList.toggle("on", navEdit);
+  if(navEdit){
+    const mode=root.kurulSort||"created";
+    $("navKurullar").innerHTML = `<div class="sortbar">${[["created","Eklenme"],["name","İsim"],["date","Sınav tarihi"],["manual","Elle"]].map(([v,l])=>`<button class="${mode===v?"on":""}" data-sort="${v}">${l}</button>`).join("")}</div>
+      <div class="muted" style="font-size:12px;margin:4px 0 6px">Sürükle ya da ok tuşlarıyla sırala</div>`
+      + act.map((f,i)=>`<div class="dragi" draggable="true" data-dragid="${f.id}"><span class="grip">⠿</span><span class="nm">${esc(f.name)}</span>
+          <span class="arrows"><button data-mv="-1" data-mvid="${f.id}" ${i===0?"disabled":""}>↑</button><button data-mv="1" data-mvid="${f.id}" ${i===act.length-1?"disabled":""}>↓</button></span></div>`).join("")
+      + `<button class="new" data-navedit="1" style="margin-top:6px">✓ Bitti</button>`;
+  } else
   $("navKurullar").innerHTML = `<button class="new" data-navnew="1">+ Yeni kurul</button>` + act.map(item).join("");
   $("navArch").style.display = arch.length ? "" : "none"; $("archCount").textContent = arch.length ? `(${arch.length})` : "";
   $("navArch").classList.toggle("open", archOpen);
@@ -736,16 +781,27 @@ function renderQuote(){
   lastQuoteHour=h;
 }
 setInterval(()=>{ if(view==="home" && !document.hidden) renderQuote(); }, 60000);
+let codeShown=false;
+const EYE='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+const EYE_OFF='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><path d="M1 1l22 22"/></svg>';
+function codeBox(){
+  const c=CUR||"—";
+  return `<div><div class="lbl">Hesabım · kişisel kodun</div>
+    <div class="row" style="gap:6px;align-items:center"><span class="code">${codeShown?esc(c):"•".repeat(c.length)}</span>
+    <button class="eye" data-eye="1" title="${codeShown?"Gizle":"Göster"}">${codeShown?EYE_OFF:EYE}</button></div>
+    ${codeShown?`<div class="code-warn">⚠️ Kodunu unutma — kodun olmadan verilerine başka cihazdan ulaşamazsın. WhatsApp'a gönderip sakla.</div>`:""}</div>`;
+}
+document.addEventListener("click", e=>{ if(e.target.closest("[data-eye]")){ codeShown=!codeShown; renderHome(); } });
 function renderHome(){
   renderQuote();
   let body="", btns="";
   if(SA){
-    body = `<div><div class="lbl">Hesabım · kişisel kodun</div><span class="code">${esc(CUR||"—")}</span></div>`;
+    body = codeBox();
     btns = CUR ? `<a class="wa" href="https://wa.me/?text=${encodeURIComponent(saMsg())}" target="_blank" rel="noopener">WhatsApp'a gönder</a><button class="ghost" id="hCopy">Kopyala</button><button class="ghost" id="hOut">Çıkış</button><span class="muted" id="hSt"></span>` : "";
   } else if(claudeMode){
     body = `<div><div class="lbl">Hesabım</div><b>Claude hesabınla giriş yaptın</b> <span class="muted">· verilerin otomatik kaydediliyor</span></div>`;
   } else {
-    body = `<div><div class="lbl">Hesabım · kişisel kodun</div><span class="code">${esc(CUR||"—")}</span></div>`;
+    body = codeBox();
   }
   $("accountBody").innerHTML = body;
   $("acctExtra").innerHTML = btns;
@@ -764,29 +820,39 @@ function applySettings(){
   B.toggle("hide-verdict", !st.verdict); B.toggle("hide-count", !st.count); B.toggle("no-prio", !st.prio); B.toggle("hide-quote", !st.quote);
   if(st.theme==="auto") document.documentElement.removeAttribute("data-theme"); else document.documentElement.setAttribute("data-theme", st.theme);
 }
-function openSettings(){
-  const el=document.createElement("div"); el.className="modal-bg"; el.id="settingsModal";
-  const row=(k,t,sub)=>`<div class="set-row"><div><b>${t}</b><small>${sub}</small></div><button class="sw ${settings()[k]?"on":""}" data-sw="${k}" aria-label="${t}"></button></div>`;
-  const draw=()=>{ const st=settings();
-    el.innerHTML=`<div class="modal" style="max-width:480px"><div class="row" style="justify-content:space-between;margin-bottom:6px"><h2 style="margin:0">Ayarlar</h2><button class="icon" data-close="1">✕</button></div>
-      <p class="muted" style="margin:0 0 6px">Sınav stresini artıran şeyleri kapatabilirsin; plan arkada aynı şekilde çalışmaya devam eder.</p>
+// Ayarlar artık ayrı bir sayfa
+function renderSettings(){
+  const st=settings();
+  const row=(k,t,sub)=>`<div class="set-row"><div><b>${t}</b><small>${sub}</small></div><button class="sw ${st[k]?"on":""}" data-sw="${k}" aria-label="${t}"></button></div>`;
+  $("settingsBody").innerHTML=`
+    <section class="card set-card"><h3>Görünüm</h3>
+      <div class="set-row"><div><b>Tema</b><small>Açık, koyu ya da cihazına göre</small></div><div class="seg3">${[["auto","Otomatik"],["light","Açık"],["dark","Koyu"]].map(([v,l])=>`<button class="${st.theme===v?"on":""}" data-theme-set="${v}">${l}</button>`).join("")}</div></div>
+      ${row("quote","Motivasyon sözü","Ana sayfadaki saatlik söz")}
+    </section>
+    <section class="card set-card"><h3>Sınav stresi</h3>
+      <p class="muted" style="margin:-4px 0 4px">Gerginlik yaratan şeyleri kapatabilirsin; plan arkada aynı şekilde çalışmaya devam eder.</p>
       ${row("verdict","Yetişir mi uyarısı","“Yetişir / sıkı / yetişmez” kutusu")}
       ${row("count","Geri sayım","Sınava kalan gün sayısı")}
       ${row("prio","Öncelik etiketleri","Konulardaki “Acil / Yüksek” etiketleri")}
-      ${row("quote","Motivasyon sözü","Ana sayfadaki saatlik söz")}
-      <div class="set-row"><div><b>Tema</b><small>Açık, koyu ya da cihazına göre</small></div><div class="seg3">${[["auto","Otomatik"],["light","Açık"],["dark","Koyu"]].map(([v,l])=>`<button class="${st.theme===v?"on":""}" data-theme-set="${v}">${l}</button>`).join("")}</div></div>
-    </div>`; };
-  draw(); document.body.append(el);
-  el.onclick=e=>{
-    if(e.target===el || e.target.closest("[data-close]")) return el.remove();
-    const sw=e.target.closest("[data-sw]"), th=e.target.closest("[data-theme-set]");
-    if(sw){ const st=settings(); st[sw.dataset.sw]=!st[sw.dataset.sw]; root.settings=st; }
-    else if(th){ const st=settings(); st.theme=th.dataset.themeSet; root.settings=st; }
-    else return;
-    applySettings(); save(); draw();
-  };
+    </section>`;
 }
+function openSettings(){ showView("settings"); }
+document.getElementById("settingsBody").addEventListener("click", e=>{
+  const sw=e.target.closest("[data-sw]"), th=e.target.closest("[data-theme-set]");
+  if(sw){ const st=settings(); st[sw.dataset.sw]=!st[sw.dataset.sw]; root.settings=st; }
+  else if(th){ const st=settings(); st.theme=th.dataset.themeSet; root.settings=st; }
+  else return;
+  applySettings(); save(); renderSettings();
+});
 $("gearBtn").onclick = openSettings;
+// sürükle-bırak (fare); telefonda ↑↓ butonları
+let dragId=null;
+$("drawer").addEventListener("dragstart", e=>{ const it=e.target.closest("[data-dragid]"); if(!it) return; dragId=it.dataset.dragid; it.classList.add("dragging"); e.dataTransfer.effectAllowed="move"; try{ e.dataTransfer.setData("text/plain", dragId); }catch(_){} });
+$("drawer").addEventListener("dragend", e=>{ e.target.closest?.("[data-dragid]")?.classList.remove("dragging"); document.querySelectorAll(".dragi.over").forEach(x=>x.classList.remove("over")); });
+$("drawer").addEventListener("dragover", e=>{ const it=e.target.closest("[data-dragid]"); if(!it||!dragId) return; e.preventDefault(); document.querySelectorAll(".dragi.over").forEach(x=>x.classList.remove("over")); it.classList.add("over"); });
+$("drawer").addEventListener("drop", e=>{ const it=e.target.closest("[data-dragid]"); if(!it||!dragId) return; e.preventDefault();
+  const ids=sortedFolders().filter(f=>!f.archived).map(f=>f.id).filter(id=>id!==dragId); const at=ids.indexOf(it.dataset.dragid);
+  const r=it.getBoundingClientRect(); ids.splice(e.clientY>r.top+r.height/2 ? at+1 : at, 0, dragId); dragId=null; setManualOrder(ids); });
 $("menuBtn").onclick = ()=>openDrawer(true);
 $("drawerClose").onclick = ()=>openDrawer(false);
 $("drawerBg").onclick = ()=>openDrawer(false);
@@ -794,9 +860,12 @@ document.addEventListener("keydown", e=>{ if(e.key==="Escape") openDrawer(false)
 $("drawer").addEventListener("click", e=>{
   const b=e.target.closest("button"); if(!b) return; const d=b.dataset;
   if(d.nav){ openDrawer(false); showView(d.nav); }
-  else if(d.navset){ openDrawer(false); openSettings(); }
+  else if(d.navset){ openDrawer(false); showView("settings"); }
   else if(d.navtoggle){ navOpen=!navOpen; renderDrawer(); }
   else if(d.navarch){ archOpen=!archOpen; renderDrawer(); }
+  else if(d.navedit){ navEdit=!navEdit; if(navEdit) navOpen=true; renderDrawer(); }
+  else if(d.sort){ root.kurulSort=d.sort; if(d.sort==="manual" && !root.kurulOrder) root.kurulOrder=sortedFolders().map(f=>f.id); save(); renderDrawer(); }
+  else if(d.mv){ const ids=sortedFolders().filter(f=>!f.archived).map(f=>f.id); const i=ids.indexOf(d.mvid), j=i+(+d.mv); if(j<0||j>=ids.length) return; [ids[i],ids[j]]=[ids[j],ids[i]]; setManualOrder(ids); }
   else if(d.navnew){ openDrawer(false); showView("kurul"); folderForm="new"; renderFolders(); }
   else if(d.navk){ openDrawer(false); switchTo(d.navk); }
 });
@@ -1058,6 +1127,7 @@ function renderTopics(){
         <span class="chev">▸</span>
         <h3 style="--h:${hueOf(c.id)};display:flex;align-items:center"><span class="dot"></span>${esc(c.name)}<span class="cnt">${doneN}/${ts.length} konu</span></h3>
         <span class="muted"><b>${prog}%</b> · ${c.lectureH||0} saat ders · ${c.slides||0} slayt${c.questions?` · ${c.questions} soru`:""} · ~${fmtH(courseHours(c))} çalışma${lecInfo}</span>
+        <button class="alldone ${ts.length && doneN===ts.length?"on":""}" data-alldone="${c.id}" title="${ts.length && doneN===ts.length?"Geri al":"Bu dersin bütün konularını bitti işaretle"}">${ts.length && doneN===ts.length?"✓ Hepsi bitti":"Hepsini bitir"}</button>
         <button class="icon" data-delc="${c.id}" title="Dersi sil">✕</button></div>
       <div class="bar" style="margin:0 0 ${open?10:0}px"><i style="width:${prog}%"></i></div>
       ${open ? rows+form : ""}</div>`;
@@ -1267,6 +1337,11 @@ box.addEventListener("click", e=>{
   const d=e.target.dataset;
   // ders başlığına tıklayınca konuları aç/kapat (✕ hariç)
   const tg=e.target.closest("[data-toggle]");
+  const ad=e.target.closest("[data-alldone]");
+  if(ad){ const cid=ad.dataset.alldone, ts=state.topics.filter(t=>t.courseId===cid), c=state.courses.find(x=>x.id===cid);
+    if(ts.length && ts.every(t=>t.done>=100)){ const prev=c._prevDone||{}; ts.forEach(t=>t.done = prev[t.id]!=null ? prev[t.id] : 0); delete c._prevDone; }
+    else { c._prevDone={}; ts.forEach(t=>{ c._prevDone[t.id]=t.done; t.done=100; }); }
+    save(); render(); return; }
   if(tg && !e.target.closest("[data-delc]")){ const id=tg.dataset.toggle; if(openCourses.has(id)){ openCourses.delete(id); if(openForm===id) openForm=null; } else openCourses.add(id); renderTopics(); return; } const find=id=>state.topics.find(x=>x.id===id);
   if(d.set){ find(d.set).done=+d.v; save(); render(); }
   else if(d.cdiff){ const t=find(d.cdiff); t.diff=t.diff%3+1; save(); render(); }
@@ -1374,6 +1449,21 @@ async function decodeFolder(code){
   });
   return f;
 }
+// Kurul eklendikten sonra: sayfa değişmez, sağ altta bildirim çıkar
+function afterImport(added, updated, bad){
+  // boş başlangıç kurulunu temizle
+  const hasReal = root.folders.some(f=>f.courses.length);
+  if(hasReal){ root.folders = root.folders.filter(f=>f.courses.length || f.archived); if(!root.folders.includes(state)){ state = sortedFolders().find(f=>!f.archived) || root.folders[0]; root.activeId=state.id; } }
+  $("sharePanel").style.display="none"; save(); render();
+  const parts=[]; if(added) parts.push(`${added} kurul eklendi`); if(updated) parts.push(`${updated} kurul güncellendi`);
+  toast(`✓ Başarıyla ${parts.join(", ") || "eklendi"}`, bad ? `${bad} kod okunamadı` : `Menüde "Sınav takibi" altında`);
+}
+function toast(title, sub){
+  let box=$("toasts"); if(!box){ box=document.createElement("div"); box.id="toasts"; document.body.append(box); }
+  const t=document.createElement("div"); t.className="toast"; t.innerHTML=`<b>${esc(title)}</b>${sub?`<small>${esc(sub)}</small>`:""}`;
+  box.append(t); requestAnimationFrame(()=>t.classList.add("in"));
+  setTimeout(()=>{ t.classList.remove("in"); setTimeout(()=>t.remove(),300); }, 3500);
+}
 // Gelen kurulu (src) mevcut kurula (dst) işle: ilerleme, elle süreler korunur
 function mergeFolderInto(dst, src){
   if(src.startDate) dst.startDate=src.startDate; if(src.examDate) dst.examDate=src.examDate;
@@ -1423,17 +1513,16 @@ function openCodeImport(){
   $("codeAdd").onclick = async ()=>{
     const codes = ($("codeIn").value.match(/KRL[01]\.[A-Za-z0-9_-]+/g) || []); // boşlukları silmeden: kodlar arası metin karışmasın
     if(!codes.length){ $("codeStatus").textContent="Kod bulunamadı — mesajın tamamını yapıştır."; return; }
-    let firstId=null, bad=0;
+    let firstId=null, bad=0, added=0, updated=0;
     for(const code of codes){
       let f; try{ f = await decodeFolder(code); }catch(e){ bad++; continue; }
       const ex = matchFolder({kurul_adi:f.name});
       if(ex && await askConfirm(`"${ex.name}" kurulun zaten var. Güncelleyeyim mi?`, "Evet: program, konular ve tarihler güncellenir, ilerlemen korunur. Hayır: ayrı bir kurul olarak eklenir.")){
-        mergeFolderInto(ex, f); firstId = firstId || ex.id;
-      } else { root.folders.push(f); firstId = firstId || f.id; }
+        mergeFolderInto(ex, f); firstId = firstId || ex.id; updated++;
+      } else { root.folders.push(f); firstId = firstId || f.id; added++; }
     }
     if(!firstId){ $("codeStatus").textContent="Kod okunamadı — tamamını kopyaladığından emin ol."; return; }
-    root.folders = root.folders.filter(f=>f.courses.length || f.id===firstId || root.folders.length===1);
-    P.style.display="none"; switchTo(firstId);
+    afterImport(added, updated, bad);
   };
 }
 $("sharePanel").addEventListener("click", e=>{ if(e.target.dataset.pclose) $("sharePanel").style.display="none"; });
@@ -1623,9 +1712,8 @@ async function openLibrary(){
     const add=e.target.dataset.libadd, del=e.target.dataset.libdel;
     if(add){ e.target.disabled=true; e.target.textContent="Ekleniyor…";
       try{ const r=await fetch("/api/library?id="+add); const j=await r.json(); if(!r.ok) throw j.error;
-        const id=await importFolderObj(await decodeFolder(j.data));
-        root.folders=root.folders.filter(f=>f.courses.length || f.id===id || root.folders.length===1);
-        P.style.display="none"; switchTo(id);
+        const before=root.folders.length; await importFolderObj(await decodeFolder(j.data));
+        const isNew = root.folders.length>before; afterImport(isNew?1:0, isNew?0:1, 0);
       }catch(err){ e.target.textContent="Olmadı"; } }
     if(del && await askConfirm("Kütüphaneden kaldırılsın mı?","Başkalarının eklediği kopyalar silinmez.")){
       await fetch("/api/library",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({code:CUR,id:del})});
