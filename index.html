@@ -308,6 +308,18 @@
   .code-warn{margin-top:6px;font-size:12.5px;color:var(--warn);background:var(--warn-soft);padding:6px 10px;border-radius:8px;max-width:520px}
   .alldone{background:transparent;color:var(--muted);border:1px solid var(--line);padding:5px 10px;font-size:12px;border-radius:99px;white-space:nowrap}
   .alldone:hover{border-color:var(--good);color:var(--good)} .alldone.on{background:var(--good-soft);color:var(--good);border-color:transparent}
+  .att{float:right;display:inline-flex;gap:2px;margin:-2px -4px 2px 6px;position:relative;z-index:1}
+  .att button{width:22px;height:22px;padding:0;border-radius:6px;font-size:12px;line-height:1;background:rgba(127,127,127,.18);color:var(--muted);font-weight:800}
+  .att button:hover{color:var(--ink)}
+  .att button.on.p{background:var(--good);color:#fff} .att button.on.a{background:var(--bad);color:#fff}
+  .cell.absent,.bx.absent{opacity:.55;text-decoration:line-through}
+  .cell.absent .att,.bx.absent .att{text-decoration:none;opacity:1}
+  body.no-attend .att, body.no-attend #absCard{display:none !important}
+  body.no-attend .cell.absent, body.no-attend .bx.absent{opacity:1;text-decoration:none}
+  table.abs{margin-top:10px} table.abs td{vertical-align:middle}
+  .abs-in{width:84px;padding:6px 8px;font-size:14px}
+  .abs-left{font-weight:700;padding:3px 9px;border-radius:99px;font-size:13px;white-space:nowrap}
+  .abs-left.good{background:var(--good-soft);color:var(--good)} .abs-left.warn{background:var(--warn-soft);color:var(--warn)} .abs-left.bad{background:var(--bad-soft);color:var(--bad)}
   .add-topic{background:transparent;color:var(--accent);padding:6px 0;font-size:14px}
   .add label.f{font-size:11px}
   .two{grid-template-columns:1.25fr 1fr;align-items:start}
@@ -441,6 +453,7 @@
 
   <div class="tabpane" data-pane="program" style="display:none">
   <section class="card" id="weekCard" style="display:none;margin-bottom:16px"></section>
+  <section class="card att-card" id="absCard" style="display:none;margin-bottom:16px"></section>
   <section class="card">
     <h2>Sonraki günler</h2>
     <div id="plan"></div>
@@ -827,11 +840,11 @@ function renderHome(){
 document.addEventListener("click", e=>{ if(e.target.closest("[data-goadd]")) showView("add"); const c=e.target.closest("[data-continue]"); if(c) switchTo(c.dataset.continue); });
 
 // ---- Ayarlar ----
-const SET_DEF = { verdict:true, count:true, prio:true, quote:true, theme:"dark" }; // varsayılan tema: koyu
+const SET_DEF = { verdict:true, count:true, prio:true, quote:true, attend:true, theme:"dark" }; // varsayılan tema: koyu
 const settings = () => Object.assign({}, SET_DEF, root.settings||{});
 function applySettings(){
   const st=settings(), B=document.body.classList;
-  B.toggle("hide-verdict", !st.verdict); B.toggle("hide-count", !st.count); B.toggle("no-prio", !st.prio); B.toggle("hide-quote", !st.quote);
+  B.toggle("hide-verdict", !st.verdict); B.toggle("hide-count", !st.count); B.toggle("no-prio", !st.prio); B.toggle("hide-quote", !st.quote); B.toggle("no-attend", !st.attend);
   if(st.theme==="auto") document.documentElement.removeAttribute("data-theme"); else document.documentElement.setAttribute("data-theme", st.theme);
 }
 // Ayarlar artık ayrı bir sayfa
@@ -842,6 +855,9 @@ function renderSettings(){
     <section class="card set-card"><h3>Görünüm</h3>
       <div class="set-row"><div><b>Tema</b><small>Açık, koyu ya da cihazına göre</small></div><div class="seg3">${[["auto","Otomatik"],["light","Açık"],["dark","Koyu"]].map(([v,l])=>`<button class="${st.theme===v?"on":""}" data-theme-set="${v}">${l}</button>`).join("")}</div></div>
       ${row("quote","Motivasyon sözü","Ana sayfadaki saatlik söz")}
+    </section>
+    <section class="card set-card"><h3>Takip</h3>
+      ${row("attend","Devamsızlık takibi","Ders programında ✓ katıldım / ✗ gelmedim işaretleri ve devamsızlık tablosu")}
     </section>
     <section class="card set-card"><h3>Sınav stresi</h3>
       <p class="muted" style="margin:-4px 0 4px">Gerginlik yaratan şeyleri kapatabilirsin; plan arkada aynı şekilde çalışmaya devam eder.</p>
@@ -880,7 +896,7 @@ $("drawer").addEventListener("click", e=>{
   else if(d.navedit){ const sec=d.navedit; navEdit = navEdit===sec ? null : sec; if(navEdit==="track") navOpen=true; if(navEdit==="arch") archOpen=true; renderDrawer(); }
   else if(d.sort){ root.kurulSort=d.sort; if(d.sort==="manual" && !root.kurulOrder) root.kurulOrder=sortedFolders().map(f=>f.id); save(); renderDrawer(); }
   else if(d.mv){ const arc=d.sec==="arch"; const ids=sortedFolders().filter(f=>!!f.archived===arc).map(f=>f.id); const i=ids.indexOf(d.mvid), j=i+(+d.mv); if(j<0||j>=ids.length) return; [ids[i],ids[j]]=[ids[j],ids[i]]; setManualOrder(ids); }
-  else if(d.navnew){ openDrawer(false); showView("kurul"); folderForm="new"; renderFolders(); }
+  else if(d.navnew){ openDrawer(false); newKurulDialog(); }
   else if(d.navk){ openDrawer(false); switchTo(d.navk); }
 });
 
@@ -904,6 +920,20 @@ function openGrade(){
     el.remove();
   };
   el.onclick=e=>{ if(e.target===el) return done("0"); const b=e.target.closest("[data-g]"); if(b) done(b.dataset.g); };
+  inp.onkeydown=e=>{ if(e.key==="Enter") done("1"); if(e.key==="Escape") done("0"); };
+}
+// Yeni kurul: küçük pencere (eski kurulun sayfası arkada karışıklık yaratmasın)
+function newKurulDialog(){
+  const el=document.createElement("div"); el.className="modal-bg"; el.style.zIndex=80;
+  el.innerHTML=`<div class="modal confirm-box"><h2>Yeni kurul</h2><p class="muted" style="margin:0 0 10px">Boş bir kurul açılır; dersleri sonra eklersin. PDF'ten ya da hazır kurullardan eklemek için <b>Kurul ekle</b> sayfasını kullan.</p>
+    <input id="nkName" placeholder="ör. Dönem 2 – 3. Kurul">
+    <div class="row" style="justify-content:space-between;margin-top:16px"><button class="ghost" data-nk="add">Kurul ekle sayfası</button><div class="row"><button class="ghost" data-nk="0">Vazgeç</button><button data-nk="1">Oluştur</button></div></div></div>`;
+  document.body.append(el); const inp=el.querySelector("#nkName"); inp.focus();
+  const done=v=>{
+    if(v==="1"){ const name=inp.value.trim(); if(!name){ inp.style.borderColor="var(--bad)"; return; } const f=blank(name); root.folders.push(f); el.remove(); folderForm=null; switchTo(f.id); showTab("topics"); return; }
+    el.remove(); if(v==="add") showView("add");
+  };
+  el.onclick=e=>{ if(e.target===el) return done("0"); const b=e.target.closest("[data-nk]"); if(b) done(b.dataset.nk); };
   inp.onkeydown=e=>{ if(e.key==="Enter") done("1"); if(e.key==="Escape") done("0"); };
 }
 function renderFolders(){
@@ -1091,6 +1121,7 @@ function render(){
   renderPlan(c);
   renderToday(c);
   renderWeek();
+  renderAbsence();
   $("aiCard").style.display = (aiReady && state.topics.length) ? "" : "none";
 }
 
@@ -1212,14 +1243,14 @@ function renderToday(c){
   const preNote = showISO===iso ? "" : `<p class="muted" style="margin:-4px 0 10px">${doneToday?"Bugünün dersleri bitti ✓":"Bugün ders yok 🎉"}</p>`;
   const ses0=all.filter(r=>r.date===showISO).sort((a,b)=>(a.time||"").localeCompare(b.time||""));
   const ses=[]; for(const r of ses0){ const p=ses[ses.length-1];
-    if(p && p.course===r.course && p.topic===r.topic && p.type===r.type && (p.teacher||"")===(r.teacher||"")){ p.time=(p.time||"").split("-")[0]+"-"+((r.time||"").split("-")[1]||""); p.n++; }
-    else ses.push({...r, n:1}); }
+    if(p && p.course===r.course && p.topic===r.topic && p.type===r.type && (p.teacher||"")===(r.teacher||"")){ p.time=(p.time||"").split("-")[0]+"-"+((r.time||"").split("-")[1]||""); p.n++; p.keys.push(attKey(r)); }
+    else ses.push({...r, n:1, keys:[attKey(r)]}); }
   const now=new Date(), hm=String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");
   const d=c.sim.days[0]||{items:[]};
   const total=d.items.reduce((a,x)=>a+x.h,0);
   const lectToday = t => effDate(t) && dayDiff(effDate(t))>=-1 && dayDiff(effDate(t))<=0;
   const classes = ses.length ? `<ul class="tl">${ses.map(r=>{ const [a,b]=(r.time||"").split("-"); const isNow = showISO===iso && a && b && hm>=a && hm<=b;
-      return `<li><span class="tm">${esc(a||"")}<small>${esc(b||"")}</small></span><div class="bx cc ${isNow?"now":""}" style="--h:${hueByName(r.course)}"><b>${esc(shortCourse(r.course))}${r.type==="uygulama"?" · uygulama":""}${r.n>1?` · ${r.n} saat`:""}</b>${esc(r.topic||"")}${r.teacher?`<span class="hoca">👤 ${esc(r.teacher)}</span>`:""}</div></li>`; }).join("")}</ul>`
+      return `<li><span class="tm">${esc(a||"")}<small>${esc(b||"")}</small></span><div class="bx cc ${isNow?"now":""} ${attOf(r.keys)==="a"?"absent":""}" style="--h:${hueByName(r.course)}">${attBtns(r.keys)}<b>${esc(shortCourse(r.course))}${r.type==="uygulama"?" · uygulama":""}${r.n>1?` · ${r.n} saat`:""}</b>${esc(r.topic||"")}${r.teacher?`<span class="hoca">👤 ${esc(r.teacher)}</span>`:""}</div></li>`; }).join("")}</ul>`
     : `<p class="muted" style="margin:0">${(state.sessions||[]).length ? "Bugün okulda ders yok 🎉" : (SA ? `Ders programı yok. PDF Ayırıcı'dan aldığın kurul kodunu yukarıdaki "📥 Kurul kodu ekle" ile yükle — ilerlemen silinmeden saat, ders, konu ve hoca buraya gelir.` : `Ders programı yok. Kurul kitapçığını yukarıdan yükle — "mevcut kurulu güncelle" seçeneğiyle ilerlemen silinmeden saat, ders, konu ve hoca buraya gelir.`)}</p>`;
   const TL=todayLog();
   const doneRows = TL.done.map((x,k)=>{ const t=state.topics.find(y=>y.id===x.id); if(!t) return "";
@@ -1235,6 +1266,42 @@ function renderToday(c){
       <span class="muted"><span class="count">Sınava <b>${c.days} gün</b> · </span>${esc(state.name)}</span></div>
     <div class="hero-b"><div class="hero-col"><h3>🏫 ${esc(dayLabel)}</h3>${preNote}${classes}</div><div class="hero-col"><h3>📚 Okul sonrası çalış</h3>${study}</div></div>`;
 }
+
+// ---- Devamsızlık takibi ----
+// Her ders saati için: "p" = katıldım, "a" = gelmedim, yok = işaretlenmedi
+const attKey = r => `${r.date}|${(r.time||"").replace(/\s/g,"")}|${norm(r.course)}`;
+const attOf = keys => { const A=state.attend||{}; const v=keys.map(k=>A[k]); return v.every(x=>x==="p")?"p":v.every(x=>x==="a")?"a":v.some(Boolean)?"mix":""; };
+function attBtns(keys){
+  const st=attOf(keys), k=keys.join(",");
+  return `<span class="att" data-attkeys="${esc(k)}"><button class="${st==="p"?"on p":""}" data-att="p" title="Katıldım">✓</button><button class="${st==="a"?"on a":""}" data-att="a" title="Gelmedim">✗</button></span>`;
+}
+document.addEventListener("click", e=>{
+  const b=e.target.closest("[data-att]"); if(!b) return; const box=b.closest("[data-attkeys]"); if(!box) return;
+  e.stopPropagation(); const keys=box.dataset.attkeys.split(","); state.attend=state.attend||{};
+  const v=b.dataset.att, cur=attOf(keys);
+  keys.forEach(k=>{ if(cur===v) delete state.attend[k]; else state.attend[k]=v; });   // aynı butona tekrar basınca işaret kalkar
+  save(); renderToday(lastC); renderWeek(); renderAbsence();
+});
+function renderAbsence(){
+  const el=$("absCard"); const S=state.sessions||[];
+  if(!S.length){ el.style.display="none"; return; }
+  el.style.display="";
+  const A=state.attend||{}, L=state.absLimit||{};
+  const rows={};
+  S.forEach(r=>{ const n=shortCourse(r.course), k=norm(n); const o=rows[k]||(rows[k]={name:n, total:0, p:0, a:0, past:0}); o.total++;
+    if(A[attKey(r)]==="p") o.p++; else if(A[attKey(r)]==="a") o.a++; if(r.date<=toISO(todayStart())) o.past++; });
+  const list=Object.entries(rows).sort((x,y)=>y[1].total-x[1].total);
+  el.innerHTML=`<div class="row" style="justify-content:space-between"><h2 style="margin:0">Devamsızlık</h2><span class="muted" style="font-size:12.5px">Programda ya da Bugün kartında ✓ katıldım / ✗ gelmedim işaretle</span></div>
+    <table class="abs"><thead><tr><th>Ders</th><th>Toplam</th><th>Katıldım</th><th>Gelmedim</th><th>Hakkım (saat)</th><th>Kalan</th></tr></thead><tbody>${
+      list.map(([k,o])=>{ const lim=L[k]; const left = lim!=null && lim!=="" ? lim - o.a : null;
+        const cls = left==null ? "" : left<0 ? "bad" : left<=1 ? "warn" : "good";
+        return `<tr><td><span class="dot" style="--h:${hueByName(o.name)}"></span>${esc(o.name)}</td><td>${o.total} sa</td><td>${o.p}</td><td><b>${o.a}</b></td>
+          <td><input type="number" min="0" step="1" class="abs-in" data-abslim="${esc(k)}" value="${lim??""}" placeholder="gir"></td>
+          <td><span class="abs-left ${cls}">${left==null?"–":left<0?`${-left} sa aştın!`:`${left} sa`}</span></td></tr>`; }).join("")}</tbody></table>
+    <p class="muted" style="margin:8px 0 0;font-size:12.5px">Hakkını kurul kitapçığındaki devamsızlık sınırına göre saat olarak yaz (ör. 24 saatlik dersin %30'u ≈ 7 saat).</p>`;
+}
+document.addEventListener("change", e=>{ const k=e.target.dataset && e.target.dataset.abslim; if(k==null) return;
+  state.absLimit=state.absLimit||{}; const v=parseFloat(e.target.value); if(isNaN(v)) delete state.absLimit[k]; else state.absLimit[k]=v; save(); renderAbsence(); });
 
 // ---- Haftalık ders programı (PDF'teki gibi tablo) ----
 let weekOff=null;
@@ -1261,11 +1328,13 @@ function renderWeek(){
     if(skip[ri][ci]||!grid[ri][ci]) continue; let k=ri+1;
     while(k<slots.length && grid[k][ci] && grid[k][ci].course===grid[ri][ci].course && grid[k][ci].topic===grid[ri][ci].topic && grid[k][ci].type===grid[ri][ci].type && (grid[k][ci].teacher||"")===(grid[ri][ci].teacher||"")){ skip[k][ci]=true; span[ri][ci]++; k++; }
   }
+  const keysAt=(ri,ci)=>{ const ks=[]; for(let k=ri;k<ri+span[ri][ci];k++) ks.push(attKey(grid[k][ci])); return ks; };
   const head=showDays.map(d=>`<th class="${toISO(d)===todayISO?"today":""}">${d.toLocaleDateString("tr-TR",{weekday:"long"})}<small>${d.toLocaleDateString("tr-TR",{day:"numeric",month:"short"})}</small></th>`).join("");
   const body=slots.map((sl,ri)=>`<tr><td class="tm">${esc(sl)}</td>${showDays.map((d,ci)=>{
       if(skip[ri][ci]) return ""; const r=grid[ri][ci];
       if(!r) return `<td class="empty-c"></td>`;
-      return `<td rowspan="${span[ri][ci]}"><div class="cell cc ${r.type==="uygulama"?"uyg":""}" style="--h:${hueByName(r.course)}"><b>${esc(shortCourse(r.course))}</b>${esc(r.topic||"")}${r.teacher?`<span class="hoca">${esc(r.teacher)}</span>`:""}</div></td>`;
+      const ks=keysAt(ri,ci), st=attOf(ks);
+      return `<td rowspan="${span[ri][ci]}"><div class="cell cc ${r.type==="uygulama"?"uyg":""} ${st==="a"?"absent":""}" style="--h:${hueByName(r.course)}">${attBtns(ks)}<b>${esc(shortCourse(r.course))}</b>${esc(r.topic||"")}${r.teacher?`<span class="hoca">${esc(r.teacher)}</span>`:""}</div></td>`;
     }).join("")}</tr>`).join("");
   const used=[...new Set(S.map(r=>shortCourse(r.course)))];
   el.innerHTML=`<div class="wk-h"><h2>📅 Ders programı <span class="muted">· ${weekOff+1}. hafta / ${nWeeks}</span></h2>
