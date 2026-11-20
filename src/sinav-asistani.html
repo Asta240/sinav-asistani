@@ -335,6 +335,18 @@
   .dayatt-row .att{float:none;margin:0}
   .dayatt-row .att button{width:auto;padding:0 10px;height:26px;font-size:12px}
   body.no-attend .dayatt, body.no-attend .dayatt-row{display:none !important}
+  .new-rib{display:inline-block;margin-left:8px;padding:2px 7px;border-radius:999px;background:var(--bad);color:#fff;font-size:10.5px;font-weight:800;letter-spacing:.06em;vertical-align:middle;line-height:1.4}
+  #verFoot{color:inherit;text-decoration:underline dotted;text-underline-offset:3px}
+  .upd-box{max-width:560px;max-height:86vh;display:flex;flex-direction:column}
+  .upd-kicker{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .upd-list{overflow-y:auto;margin-top:14px}
+  .upd-ver{border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin-bottom:10px}
+  .upd-vh{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:8px}
+  .upd-vh b{font-size:17px;color:var(--accent)} .upd-vh span{color:var(--muted);font-size:12.5px}
+  .upd-ver ol{margin:8px 0 0;padding-left:20px} .upd-ver li{margin:10px 0}
+  .upd-ver li p{margin:3px 0 0;color:var(--muted);font-size:13.5px;line-height:1.5}
+  .upd-tag{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.05em;border-radius:6px;padding:1px 6px;margin-right:7px;vertical-align:1px}
+  .t-new{background:var(--good-soft);color:var(--good)} .t-fix{background:var(--warn-soft);color:var(--warn)} .t-chg{background:var(--accent-soft);color:var(--accent)}
   .toast-undo{border-left-color:var(--accent);position:relative;overflow:hidden;padding-bottom:15px}
   .toast-undo b{color:var(--ink)}
   .undo-btn{background:var(--accent);color:#fff;border:0;border-radius:9px;padding:7px 12px;font-weight:700;cursor:pointer;white-space:nowrap}
@@ -532,7 +544,7 @@
   </div>
 
   <div style="height:28px;flex:none"></div>
-  <footer class="sig">Sınav Haftası Asistanı · <b>CardiacAI</b> tarafından geliştirildi · 2026</footer>
+  <footer class="sig">Sınav Haftası Asistanı · <b>CardiacAI</b> tarafından geliştirildi · 2026 · <a href="#" id="verFoot" data-updlog="1">v1.0.0</a></footer>
 </div>
 
 <!-- ===== YAN MENÜ ===== -->
@@ -549,7 +561,8 @@
   <div class="nav-row" id="navArchRow" style="display:none"><button class="nav-item" id="navArch" data-navarch="1"><span>Arşiv <span class="muted" id="archCount"></span></span><span class="chev">▸</span></button><button class="nav-edit" id="navArchEdit" data-navedit="arch" title="Sırala / düzenle"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>
   <div id="navArchList" class="nav-sub" style="display:none"></div>
   <button class="nav-item nav-faq" data-nav="faq">Sık sorulan sorular</button>
-  <div class="drawer-sig">Sınav Haftası Asistanı<br><b>CardiacAI</b> · 2026</div>
+  <button class="nav-item" id="navUpd" data-updlog="1">Sürüm notları</button>
+  <div class="drawer-sig">Sınav Haftası Asistanı<br><b>CardiacAI</b> · 2026 · <span id="verSig">v1.0.0</span></div>
 </aside>
 
 <script>
@@ -569,6 +582,42 @@ let folderForm = null; // null | "new" | "rename"
 let confirmDel = false;
 let openForm = null;
 const openCourses = new Set(); // açık (konuları görünen) dersler
+document.addEventListener("click", e=>{ const u=e.target.closest("[data-updlog]"); if(!u) return; e.preventDefault(); if(typeof openDrawer==="function" && u.closest("#drawer")) openDrawer(false); showUpdateLog(true); });
+// ===== SÜRÜM NOTLARI (Update Log) =====
+// KURALLAR: yeni sürüm EN ÜSTE eklenir · bir sürümde en fazla 3 madde (4. madde yeni yama sürümü açar: v1.0.1, v1.0.2…)
+// Kullanıcı görmediği sürümü açılışta bir kez görür; "Anladım" deyince root.settings.seenVer kaydedilir (cihazlar arası).
+const UPDATE_LOG = [
+  { ver:"v1.0.0", date:"2026-11-20", items:[
+    ["YENİ","Sürüm notları","Sitede yapılan değişiklikler bundan sonra sürüm numarasıyla bu pencerede duyurulacaktır. Önceki sürümlere menüdeki “Sürüm notları” bölümünden ulaşılabilir."],
+    ["DEĞİŞİKLİK","Yeni adres","vercel.app alan adına Türkiye’den erişim engellendiği için site sinav-asistani.netlify.app adresine taşınmıştır. Mevcut kodunuzla giriş yaptığınızda tüm verileriniz aynen yüklenir."],
+    ["YENİ","Kütüphane yönetimi","Kütüphaneden kaldırılan paylaşımlar 10 saniye içinde geri alınabilir. Uygunsuz içerik paylaşan hesaplar yönetici tarafından engellenebilir."],
+  ]},
+];
+const LATEST = UPDATE_LOG[0].ver;
+// "YENİ" şeridi: o özellik en son sürümde eklendiyse gösterilir
+const NEW_IN = { updlog:"v1.0.0" };
+const newRib = k => NEW_IN[k]===LATEST ? `<span class="new-rib">YENİ</span>` : "";
+function showUpdateLog(all){
+  $("whatsNew")?.remove();
+  const list = all ? UPDATE_LOG : UPDATE_LOG.slice(0,1);
+  const fmt = d => new Date(d+"T12:00").toLocaleDateString("tr-TR",{day:"numeric",month:"long",year:"numeric"});
+  const el=document.createElement("div"); el.id="whatsNew"; el.className="modal-bg"; el.style.zIndex=85;
+  el.innerHTML=`<div class="modal upd-box">
+    <div class="row" style="justify-content:space-between;align-items:flex-start;flex-wrap:nowrap">
+      <div><div class="upd-kicker">Sınav Haftası Asistanı · Sürüm notları</div><h2 style="margin:4px 0 0">${all?"Tüm sürümler":"Bu sürümdeki yenilikler"}</h2></div>
+      ${!all && UPDATE_LOG.length>1 ? `<button class="ghost" data-updall="1" style="font-size:12.5px;padding:6px 10px">Tüm sürümler</button>` : ""}
+    </div>
+    <div class="upd-list">${list.map(v=>`<section class="upd-ver"><div class="upd-vh"><b>${esc(v.ver)}</b><span>${fmt(v.date)}</span></div>
+      <ol>${v.items.map(([tag,title,txt])=>`<li><span class="upd-tag t-${tag==="YENİ"?"new":tag==="DÜZELTME"?"fix":"chg"}">${esc(tag)}</span><b>${esc(title)}</b><p>${esc(txt)}</p></li>`).join("")}</ol></section>`).join("")}</div>
+    <div class="row" style="justify-content:space-between;margin-top:14px"><span class="muted" style="font-size:12px">CardiacAI · ${esc(LATEST)}</span><button data-updok="1">Anladım</button></div></div>`;
+  const done=()=>{ el.remove(); if(root && root.settings && root.settings.seenVer!==LATEST){ root.settings.seenVer=LATEST; save(); } renderDrawer(); };
+  el.onclick=e=>{ if(e.target===el || e.target.closest("[data-updok]")) done(); else if(e.target.closest("[data-updall]")) showUpdateLog(true); };
+  document.body.append(el);
+}
+function maybeWhatsNew(){
+  if(!root || !root.settings || $("welcome") || $("whatsNew") || (SA && !CUR)) return;
+  if(root.settings.seenVer!==LATEST) showUpdateLog(false);
+}
 // Açılan panel, butonuna basılan kutunun hemen ALTINA yerleşir (yukarıda değil)
 let lastBtn=null;
 document.addEventListener("click", e=>{ const b=e.target.closest("button, a"); if(b && !b.closest("#sharePanel")) lastBtn=b; }, true);
@@ -776,6 +825,8 @@ function setManualOrder(ids){ const rest=sortedFolders().map(f=>f.id).filter(id=
 function showView(v){ view=v; $("sharePanel").style.display="none"; $("homeView").style.display = v==="home"?"":"none"; $("addView").style.display = v==="add"?"":"none"; $("settingsView").style.display = v==="settings"?"":"none"; if(v==="settings") renderSettings(); $("faqView").style.display = v==="faq"?"":"none"; if(v==="faq") renderFaq(); $("kurulView").style.display = v==="kurul"?"":"none"; renderDrawer(); if(v==="home") renderQuote(); window.scrollTo({top:0}); }
 function openDrawer(o){ if(!o) navEdit=null; document.body.classList.toggle("drawer-open", o); $("drawer").setAttribute("aria-hidden", o?"false":"true"); if(o) renderDrawer(); }
 function renderDrawer(){
+  if($("navUpd")) $("navUpd").innerHTML = `Sürüm notları${newRib("updlog")}`;
+  if($("verSig")) $("verSig").textContent = LATEST; if($("verFoot")) $("verFoot").textContent = LATEST;
   document.querySelectorAll("[data-nav]").forEach(b=>b.classList.toggle("on", view===b.dataset.nav));
   $("navTrack").classList.toggle("open", navOpen); $("navTrack").classList.toggle("on", view==="kurul");
   $("navKurullar").style.display = navOpen ? "" : "none";
@@ -1892,7 +1943,7 @@ function openWelcomeSA(){
     try{
       const r = await fetch("/api/new",{method:"POST"}); const j = await r.json();
       if(!r.ok || !j.code) throw j.error || "Kod alınamadı";
-      CUR=j.code; lsSet(CUR_KEY, CUR); root.code=CUR; root.onboarded=true; root.updatedAt=Date.now(); persist();
+      CUR=j.code; lsSet(CUR_KEY, CUR); root.code=CUR; root.onboarded=true; (root.settings=root.settings||{}).seenVer=LATEST; root.updatedAt=Date.now(); persist();
       try{ const pr=await fetch("/api/data",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({code:CUR, json:JSON.stringify(root), base:0})});
         if(pr.ok){ const pj=await pr.json(); root._ver=pj.updatedAt; root._dirty=false; persist(); } }catch(e){}
       $("wStep1").style.display="none"; $("wStep2").style.display=""; $("wNewCode").textContent=CUR;
@@ -2299,6 +2350,7 @@ $("deviceBtn").style.display="none";
 Promise.race([syncReady, new Promise(r=>setTimeout(()=>r(false),4000))]).then(ok=>{
   setClaudeMode(ok);
   if(!ok && !CUR) (SA ? openWelcomeSA : openWelcome)();
+  setTimeout(maybeWhatsNew, 600);
 });
 // yavaş bağlantıda Claude kaydı sonradan doğrulanırsa yine Claude moduna geç
 syncReady.then(ok=>{ if(ok && !claudeMode){ setClaudeMode(true); $("welcome")?.remove(); pushRemote(); } });

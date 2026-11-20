@@ -6,7 +6,7 @@ Proje sahibi: Yasin (Türkçe, samimi ve kısa yazar; hızlı yazdığı için y
 ## Önemli çalışma kuralları
 - **Yasin'in istemediği özelliği ekleme.** Bir şey eklemek gerekiyorsa önce sor ("ekleme demedim mi").
 - Cevaplar Türkçe, kısa, adım adım. Değişiklikten sonra ne değiştiğini maddelerle söyle.
-- Her değişikliği test et (headless Chrome + sahte API ile), sonra **main**'e push et. Netlify (ve Vercel) main'den otomatik yayınlar (~1 dk).
+- Her değişikliği test et (headless Chrome + sahte API ile), sonra commit et; **push'u Yasin "yayınla" deyince yap** (Netlify her yayında 15 kredi yer). Netlify (ve Vercel) main'den otomatik yayınlar (~1 dk).
 
 ## Parçalar
 | Parça | Nerede | Not |
@@ -32,6 +32,13 @@ claude.ai artifact'lerini sadece Yasin'in kendi Claude hesabındaki bir oturum g
 - Görünümler: home · add (Kurul ekle) · settings · faq · kurul (sekmeler: today/topics/program). Menü: `#drawer`.
 - Kurul kodu: `encodeFolder/decodeFolder` (deflate-raw + base64url, `KRL1.`). Eşleştirme `matchFolder` kurul **numarasına** göre.
 - Ayarlar `root.settings`: verdict, count, prio, quote, attend, theme (varsayılan koyu).
+
+## Sürüm notları (Update Log)
+- `UPDATE_LOG` (src içinde) — yeni sürüm EN ÜSTE eklenir; v1.0.0'dan başladı. **Bir sürümde en fazla 3 madde**, 4. madde yeni yama sürümü (v1.0.1…) açar. Dil resmi.
+- Her yeni özelliğe `NEW_IN[key]=sürüm` + `newRib(key)` ile "YENİ" şeridi; sadece en son sürümde görünür.
+- Görmediği sürümü kullanıcı açılışta bir kez görür (`root.settings.seenVer`). Menü "Sürüm notları" + footer'daki sürüm numarası açar.
+- Silme / sıfırlama işlemleri `askConfirm` ile onay ister.
+- **Netlify bedava plan: her yayın (push to main) 15 kredi, ayda 300.** Değişiklikleri biriktir, Yasin "yayınla" deyince push et.
 
 ## Test
 Sahte API: basit bir Python HTTP sunucusu `/api/new`, `/api/data`, `/api/library` taklit eder; Playwright ile `index.html` açılır. Sayfa hatası (`pageerror`) olmamalı.
