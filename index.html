@@ -281,6 +281,11 @@
   body.hide-quote #heroQuote{display:none}
   .arch-banner{flex-basis:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--warn-soft);color:var(--warn);border-radius:10px;padding:8px 12px;font-size:13.5px;font-weight:600}
   .arch-banner button{padding:5px 10px;font-size:12.5px}
+  .grade-chip{background:var(--accent-soft);color:var(--accent);padding:6px 12px;border-radius:99px;font-size:13px;font-weight:700}
+  .grade-chip.has{background:var(--good-soft);color:var(--good)} .grade-chip b{font-size:15px}
+  .btn-code{background:var(--good);color:#fff}
+  .btn-pdf{display:inline-flex;align-items:center;padding:10px 16px;border-radius:10px;font-weight:700;color:#fff;text-decoration:none;background:linear-gradient(135deg,#9c36b5,#e03131)}
+  .btn-pdf:hover,.btn-code:hover{filter:brightness(1.08)}
   .add-topic{background:transparent;color:var(--accent);padding:6px 0;font-size:14px}
   .add label.f{font-size:11px}
   .two{grid-template-columns:1.25fr 1fr;align-items:start}
@@ -358,7 +363,7 @@
     <div class="row" style="justify-content:space-between;gap:12px">
       <div><h2>📄 Kurulunu ekle</h2>
         <p class="muted" style="margin:4px 0 0">Önce <b>📚 Hazır kurullar</b>'a bak — biri ayıklayıp paylaştıysa tek tıkla eklersin. Yoksa: <b>PDF Ayırıcı</b>'da kitapçığı yükle → kodu "Kurul kodu ekle" ile yapıştır → <b>🌍 Kütüphaneye paylaş</b> ile herkese aç. Kurulun zaten varsa ilerlemen korunarak güncellenir.</p></div>
-      <div class="row"><button id="saLibBtn">📚 Hazır kurullar</button><a class="ghost-link" id="addAyirici" target="_blank" rel="noopener" style="display:none">PDF Ayırıcı ↗</a><button class="ghost" id="saCodeBtn">📥 Kurul kodu ekle</button></div>
+      <div class="row"><button id="saLibBtn">📚 Hazır kurullar</button><button class="btn-code" id="saCodeBtn">📥 Kurul kodu ekle</button><a class="btn-pdf" id="addAyirici" target="_blank" rel="noopener" style="display:none">📄 PDF Ayırıcı ↗</a></div>
     </div>
   </section>
   </div>
@@ -678,7 +683,8 @@ function renderDrawer(){
   $("navTrack").classList.toggle("open", navOpen); $("navTrack").classList.toggle("on", view==="kurul");
   $("navKurullar").style.display = navOpen ? "" : "none";
   const item = f=>{
-    const d = f.examDate ? `Sınav: ${new Date(f.examDate+"T00:00:00").toLocaleDateString("tr-TR",{day:"numeric",month:"short"})}` : (f.courses.length?`${f.courses.length} ders`:"boş");
+    let d = f.examDate ? `Sınav: ${new Date(f.examDate+"T00:00:00").toLocaleDateString("tr-TR",{day:"numeric",month:"short"})}` : (f.courses.length?`${f.courses.length} ders`:"boş");
+    if(f.grade!=null) d = `Notum: ${String(f.grade).replace(".",",")}`; else if(examPassed(f)) d += " · not girilmedi";
     return `<button class="${view==="kurul" && f.id===state.id?"on":""}" data-navk="${f.id}">${esc(f.name)}<small>${d}</small></button>`; };
   const act = sortedFolders().filter(f=>!f.archived), arch = sortedFolders().filter(f=>f.archived);
   $("navKurullar").innerHTML = `<button class="new" data-navnew="1">+ Yeni kurul</button>` + act.map(item).join("");
@@ -795,12 +801,34 @@ $("drawer").addEventListener("click", e=>{
   else if(d.navk){ openDrawer(false); switchTo(d.navk); }
 });
 
+// ---- Sınav notu (geçen kurullar) ----
+const examPassed = f => !!f.examDate && dayDiffOf(f.examDate) < 0;
+function dayDiffOf(iso){ return Math.round((new Date(iso+"T00:00:00")-todayStart())/86400000); }
+function gradeChip(f){
+  if(f.grade!=null && f.grade!=="") return `<button class="grade-chip has" data-fgrade="1" title="Notu düzenle">Notum: <b>${String(f.grade).replace(".",",")}</b></button>`;
+  if(examPassed(f) || f.archived) return `<button class="grade-chip" data-fgrade="1">+ Aldığım notu yaz</button>`;
+  return "";
+}
+function openGrade(){
+  const el=document.createElement("div"); el.className="modal-bg"; el.style.zIndex=80;
+  el.innerHTML=`<div class="modal confirm-box"><h2>${esc(state.name)}</h2><p class="muted" style="margin:0 0 10px">Bu kurul sınavından kaç aldın?</p>
+    <input id="gIn" type="text" inputmode="decimal" placeholder="ör. 78,5" value="${state.grade!=null?String(state.grade).replace(".",","):""}" style="font-size:28px;font-weight:800;text-align:center">
+    <div class="row" style="justify-content:space-between;margin-top:16px">${state.grade!=null?`<button class="ghost" data-g="del">Notu sil</button>`:"<span></span>"}<div class="row"><button class="ghost" data-g="0">Vazgeç</button><button data-g="1">Kaydet</button></div></div></div>`;
+  document.body.append(el); const inp=el.querySelector("#gIn"); inp.focus(); inp.select();
+  const done=v=>{
+    if(v==="del"){ delete state.grade; save(); render(); }
+    else if(v==="1"){ const n=parseFloat(String(inp.value).replace(",", ".")); if(isNaN(n)||n<0||n>100){ inp.style.borderColor="var(--bad)"; return; } state.grade=Math.round(n*100)/100; save(); render(); }
+    el.remove();
+  };
+  el.onclick=e=>{ if(e.target===el) return done("0"); const b=e.target.closest("[data-g]"); if(b) done(b.dataset.g); };
+  inp.onkeydown=e=>{ if(e.key==="Enter") done("1"); if(e.key==="Escape") done("0"); };
+}
 function renderFolders(){
   const d = state.examDate ? new Date(state.examDate+"T00:00:00").toLocaleDateString("tr-TR",{day:"numeric",month:"long"}) : "";
   const title = folderForm ? `<form class="folder-form" id="folderForm"><input id="fName" placeholder="${folderForm==="new"?"Yeni kurul adı, ör. Dönem 2 – 3. Kurul":""}" value="${folderForm==="rename"?esc(state.name):""}" required><button type="submit">${folderForm==="rename"?"Kaydet":"Kurulu oluştur"}</button><button type="button" class="ghost" data-fcancel="1">Vazgeç</button></form>`
-    : `<h2>${esc(state.name)}</h2>${d?`<span class="muted">Sınav: ${d}</span>`:""}`;
+    : `<h2>${esc(state.name)}</h2>${d?`<span class="muted">Sınav: ${d}</span>`:""}${gradeChip(state)}`;
   const tools = folderForm ? "" : `<div class="folder-tools">${SA && state.courses.length ? `<button class="ghost" data-fpub="1">🌍 Kütüphaneye paylaş</button>` : ""}<button class="ghost" data-fshare="1">🔗 Paylaş</button><button class="ghost" data-fcode="1">Kod ile ekle</button><button class="ghost" data-frename="1">Adını değiştir</button><button class="ghost" data-farch="1">${state.archived?"Arşivden çıkar":"Arşivle"}</button>${
-    root.folders.length>1 ? `<button class="ghost" data-fdel="1">Kurulu sil</button>`:""}</div>`;
+    `<button class="ghost" data-fdel="1">Kurulu sil</button>`}</div>`;
   const banner = state.archived && !folderForm ? `<div class="arch-banner">Bu kurul arşivde — menüde "Sınav takibi" yerine "Arşiv" altında duruyor. <button class="ghost" data-farch="1">Arşivden çıkar</button></div>` : "";
   $("folders").innerHTML = `<div class="kurul-title" style="flex:1">${title}</div>` + tools + banner;
   if(folderForm){ const i=$("fName"); i.focus(); i.select(); }
@@ -1257,13 +1285,16 @@ $("folders").addEventListener("click", e=>{
   else if(d.fnew){ folderForm="new"; confirmDel=false; renderFolders(); }
   else if(d.fshare) openShare();
   else if(d.fpub) openPublish();
+  else if(d.fgrade) openGrade();
   else if(d.farch){ state.archived = !state.archived; if(!state.archived) navOpen=true; else archOpen=true; save(); render(); }
   else if(d.fcode) openCodeImport();
   else if(d.frename){ folderForm="rename"; confirmDel=false; renderFolders(); }
   else if(d.fcancel){ folderForm=null; renderFolders(); }
   else if(d.fdel){
     askConfirm(`"${state.name}" kurulu silinsin mi?`, "İçindeki bütün dersler, konular ve ilerlemen silinecek.").then(ok=>{
-      if(!ok) return; root.folders = root.folders.filter(f=>f.id!==state.id); switchTo(root.folders[0].id); });
+      if(!ok) return; root.folders = root.folders.filter(f=>f.id!==state.id);
+      if(!root.folders.length){ const f=blank("1. Kurul"); root.folders.push(f); state=f; root.activeId=f.id; save(); render(); showView("home"); return; }
+      const next = sortedFolders().find(f=>!f.archived) || root.folders[0]; switchTo(next.id); });
   }
 });
 $("folders").addEventListener("submit", e=>{
@@ -1624,7 +1655,7 @@ if(SA){
   $("deviceBtn").onclick = openAccountPanel;
   $("saCard").style.display="";
   $("saCodeBtn").onclick = openCodeImport;
-  if(AYIRICI_URL){ $("addAyirici").href = AYIRICI_URL; $("addAyirici").style.display = ""; }
+  if(AYIRICI_URL){ $("addAyirici").href = AYIRICI_URL; $("addAyirici").style.display = "inline-flex"; }
 }
 
 // ---- İlk açılış sihirbazı ----
@@ -1844,9 +1875,18 @@ function renderPreview(){
   $("pApply").onclick = applyImport;
 }
 
+// Aynı kurul mu? Kurul numarası varsa numara aynı olmalı; yoksa adı birebir aynı olmalı.
+// (Eskiden "Sistemleri" gibi ortak kelimeler farklı kurulları eşleştiriyordu.)
+const kurulNo = name => { const m = String(name||"").match(/(\d+)\s*\.?\s*(ders\s*)?kurul/i) || String(name||"").match(/\b([IVX]+)\.\s*(ders\s*)?kurul/i);
+  if(!m) return null; const r=m[1]; if(/^\d+$/.test(r)) return +r; const R={I:1,V:5,X:10}; let n=0; for(let i=0;i<r.length;i++){ const v=R[r[i]], nx=R[r[i+1]]||0; n += v<nx ? -v : v; } return n; };
 function matchFolder(k){
-  const words = norm(k.kurul_adi).split(" ").filter(w=>w.length>4 && !/kurul|ders/.test(w));
-  return root.folders.find(f=> f.courses.length && (norm(f.name)===norm(k.kurul_adi) || words.some(w=>norm(f.name).includes(w)))) || null;
+  const name=k.kurul_adi, no=kurulNo(name);
+  return root.folders.find(f=>{
+    if(!f.courses.length) return false;
+    const fno=kurulNo(f.name);
+    if(no!=null && fno!=null) return no===fno;
+    return norm(f.name)===norm(name);
+  }) || null;
 }
 function applyImport(){
   let firstId=null;
