@@ -320,6 +320,13 @@
   .abs-in{width:84px;padding:6px 8px;font-size:14px}
   .abs-left{font-weight:700;padding:3px 9px;border-radius:99px;font-size:13px;white-space:nowrap}
   .abs-left.good{background:var(--good-soft);color:var(--good)} .abs-left.warn{background:var(--warn-soft);color:var(--warn)} .abs-left.bad{background:var(--bad-soft);color:var(--bad)}
+  .setup-banner{flex-basis:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--accent-soft);border:1px solid var(--accent);border-radius:12px;padding:12px 14px;font-size:14px}
+  .setup-banner span{font-size:13px;color:var(--muted)} .setup-banner span.ok{color:var(--good);text-decoration:line-through}
+  .faq details{padding:0;margin-bottom:10px} .faq summary{cursor:pointer;padding:14px 18px;font-weight:700;list-style:none;display:flex;justify-content:space-between}
+  .faq summary::after{content:"+";color:var(--muted);font-size:18px} .faq details[open] summary::after{content:"–"}
+  .faq details p{margin:0;padding:0 18px 16px;color:var(--muted);line-height:1.55} .faq details p b{color:var(--ink)}
+  .faq-link{display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:12px 18px;margin-bottom:16px;font-size:18px}
+  .faq-link:hover{border-color:var(--accent)} .faq-link b{display:block;font-size:15px} .faq-link small{color:var(--muted);font-size:12.5px;font-weight:500}
   .add-topic{background:transparent;color:var(--accent);padding:6px 0;font-size:14px}
   .add label.f{font-size:11px}
   .two{grid-template-columns:1.25fr 1fr;align-items:start}
@@ -367,6 +374,7 @@
   </section>
 
   <section class="continue" id="homeContinue" style="display:none"></section>
+  <button class="faq-link" data-gofaq="1"><span><b>Nasıl kullanılır?</b><small>Sık sorulan sorular</small></span><span>→</span></button>
   <section class="card" id="homeEmpty" style="display:none">
     <div class="row" style="justify-content:space-between"><div><h2 style="margin:0">Henüz kurulun yok</h2><p class="muted" style="margin:4px 0 0">Kurul kitapçığından ya da hazır kurullardan başla.</p></div><button data-goadd="1">Kurul ekle →</button></div>
   </section>
@@ -376,6 +384,12 @@
   <div id="settingsView" style="display:none">
     <div class="page-h"><h2>Ayarlar</h2><p class="muted">Ayarların hesabına kaydedilir, her cihazda aynı olur.</p></div>
     <div id="settingsBody"></div>
+  </div>
+
+  <!-- ===== SSS SAYFASI ===== -->
+  <div id="faqView" style="display:none">
+    <div class="page-h"><h2>Sık sorulan sorular</h2><p class="muted">Siteyi nasıl kullanacağın, kısa ve net.</p></div>
+    <div id="faqBody" class="faq"></div>
   </div>
 
   <!-- ===== KURUL EKLE SAYFASI ===== -->
@@ -508,6 +522,7 @@
   <button class="nav-item" data-nav="settings">Ayarlar</button>
   <button class="nav-item" data-nav="home">Ana sayfa</button>
   <button class="nav-item" data-nav="add">Kurul ekle</button>
+  <button class="nav-item" data-nav="faq">Sık sorulan sorular</button>
   <div class="nav-row"><button class="nav-item" id="navTrack" data-navtoggle="1"><span>Sınav takibi</span><span class="chev">▸</span></button><button class="nav-edit" id="navEdit" data-navedit="track" title="Sırala / düzenle"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>
   <div id="navKurullar" class="nav-sub" style="display:none"></div>
   <div class="nav-row" id="navArchRow" style="display:none"><button class="nav-item" id="navArch" data-navarch="1"><span>Arşiv <span class="muted" id="archCount"></span></span><span class="chev">▸</span></button><button class="nav-edit" id="navArchEdit" data-navedit="arch" title="Sırala / düzenle"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>
@@ -709,7 +724,7 @@ async function startSync(){
     }, ()=>{ syncOff=true; setSync(""); resolveSync(false); });
   }catch(e){ resolveSync(false); }
 }
-function switchTo(id){ view="kurul"; $("sharePanel").style.display="none"; $("homeView").style.display="none"; $("addView").style.display="none"; $("settingsView").style.display="none"; $("kurulView").style.display=""; window.scrollTo({top:0}); state = root.folders.find(f=>f.id===id); root.activeId=id; weekOff=null; openForm=null; folderForm=null; confirmDel=false; $("aiOut").textContent=""; save(); render(); }
+function switchTo(id){ view="kurul"; $("sharePanel").style.display="none"; $("homeView").style.display="none"; $("addView").style.display="none"; $("settingsView").style.display="none"; $("faqView").style.display="none"; $("kurulView").style.display=""; window.scrollTo({top:0}); state = root.folders.find(f=>f.id===id); root.activeId=id; weekOff=null; openForm=null; folderForm=null; confirmDel=false; $("aiOut").textContent=""; save(); render(); }
 
 // ---- Görünüm: ana sayfa / kurul sayfası + yan menü ----
 let view = "home", navOpen = false, archOpen = false, tab = "today";
@@ -727,7 +742,7 @@ function sortedFolders(){
   return arr;
 }
 function setManualOrder(ids){ const rest=sortedFolders().map(f=>f.id).filter(id=>!ids.includes(id)); root.kurulOrder=[...ids, ...rest]; root.kurulSort="manual"; save(); renderDrawer(); }
-function showView(v){ view=v; $("sharePanel").style.display="none"; $("homeView").style.display = v==="home"?"":"none"; $("addView").style.display = v==="add"?"":"none"; $("settingsView").style.display = v==="settings"?"":"none"; if(v==="settings") renderSettings(); $("kurulView").style.display = v==="kurul"?"":"none"; renderDrawer(); if(v==="home") renderQuote(); window.scrollTo({top:0}); }
+function showView(v){ view=v; $("sharePanel").style.display="none"; $("homeView").style.display = v==="home"?"":"none"; $("addView").style.display = v==="add"?"":"none"; $("settingsView").style.display = v==="settings"?"":"none"; if(v==="settings") renderSettings(); $("faqView").style.display = v==="faq"?"":"none"; if(v==="faq") renderFaq(); $("kurulView").style.display = v==="kurul"?"":"none"; renderDrawer(); if(v==="home") renderQuote(); window.scrollTo({top:0}); }
 function openDrawer(o){ if(!o) navEdit=null; document.body.classList.toggle("drawer-open", o); $("drawer").setAttribute("aria-hidden", o?"false":"true"); if(o) renderDrawer(); }
 function renderDrawer(){
   document.querySelectorAll("[data-nav]").forEach(b=>b.classList.toggle("on", view===b.dataset.nav));
@@ -837,7 +852,7 @@ function renderHome(){
   if($("hCopy")) $("hCopy").onclick = async ()=>{ try{ await navigator.clipboard.writeText(CUR); $("hSt").textContent="Kopyalandı ✓"; }catch(e){ $("hSt").textContent=CUR; } };
   if($("hOut")) $("hOut").onclick = async ()=>{ if(!await askConfirm("Çıkış yapılsın mı?", `Tekrar girmek için ${CUR} koduna ihtiyacın olacak.`)) return; lsSet(CUR_KEY,""); location.reload(); };
 }
-document.addEventListener("click", e=>{ if(e.target.closest("[data-goadd]")) showView("add"); const c=e.target.closest("[data-continue]"); if(c) switchTo(c.dataset.continue); });
+document.addEventListener("click", e=>{ if(e.target.closest("[data-goadd]")) showView("add"); const c=e.target.closest("[data-continue]"); if(c) switchTo(c.dataset.continue); if(e.target.closest("[data-gofaq]")) showView("faq"); });
 
 // ---- Ayarlar ----
 const SET_DEF = { verdict:true, count:true, prio:true, quote:true, attend:true, theme:"dark" }; // varsayılan tema: koyu
@@ -847,6 +862,23 @@ function applySettings(){
   B.toggle("hide-verdict", !st.verdict); B.toggle("hide-count", !st.count); B.toggle("no-prio", !st.prio); B.toggle("hide-quote", !st.quote); B.toggle("no-attend", !st.attend);
   if(st.theme==="auto") document.documentElement.removeAttribute("data-theme"); else document.documentElement.setAttribute("data-theme", st.theme);
 }
+// ---- S.S.S. ----
+const FAQ = [
+  ["Bu site ne işe yarıyor?", "Kurulundaki dersleri ve konuları takip edip sınava kadar gün gün ne çalışman gerektiğini çıkarır. Okulda hangi gün hangi ders var, ne kadarını bitirdin, yetişir mi — hepsi tek yerde."],
+  ["Kurulumu nasıl eklerim?", "Menüden <b>Kurul ekle</b>'ye gir. Önce <b>Hazır kurullar</b>'a bak; biri paylaştıysa tek tıkla eklersin. Yoksa <b>PDF Ayırıcı</b>'da kurul kitapçığını yükle, çıkan kodu <b>Kurul kodu ekle</b>'ye yapıştır. İstersen menüdeki <b>+ Yeni kurul</b> ile kendin de oluşturabilirsin."],
+  ["Kodum ne işe yarıyor, kaybedersem ne olur?", "Kodun senin hesabın. Telefonda, bilgisayarda, tablette girişte bu kodu yazınca verilerin gelir. Kaybedersen başka cihazdan verilerine ulaşamazsın — ana sayfadaki <b>WhatsApp'a gönder</b> ile kendine at, sakla."],
+  ["Verilerim nerede, kaydetmem gerekiyor mu?", "Hayır, her değişiklik otomatik kaydedilir (sağ üstte “Kaydedildi” yazar). Başka cihazda aynı kodla girince her şey kaldığın yerden gelir."],
+  ["Plan nasıl hesaplanıyor?", "Her konu derste işlendiği günden sonra plana girer. Konunun süresi = ders saati × “1 saat ders = kaç saat çalışma” × zorluk. O gün ya da dün işlenen konu öne alınır ki aynı gün tekrar edesin. Dersler bir güne yığılmaz, karışık dağıtılır."],
+  ["Bir konu bana daha uzun/kısa geliyor.", "Konular sekmesinde o konunun altındaki <b>süre</b> kutusuna kendi süreni yaz; plan ona göre değişir. Zorluk ve önemi de üstlerine tıklayarak değiştirebilirsin."],
+  ["Çalıştığımı nasıl işaretlerim?", "Bugün sekmesinde “Okul sonrası çalış” listesinde ✓'ye bas — konunun ilerlemesine eklenir. ⇄ ile o konuyu başka bir konuyla değiştirebilirsin. Konular sekmesinde Hiç / Az / Yarı / Çoğu / Bitti ile de işaretleyebilirsin."],
+  ["“Yetişmez” uyarısı stres yapıyor.", "<b>Ayarlar → Sınav stresi</b>'nden yetişir mi uyarısını, geri sayımı ve öncelik etiketlerini kapatabilirsin. Plan arkada aynı şekilde çalışmaya devam eder."],
+  ["Devamsızlığımı nasıl takip ederim?", "Program sekmesinde ya da Bugün kartında her dersin yanında ✓ (katıldım) / ✗ (gelmedim) var. Altındaki <b>Devamsızlık</b> tablosuna her dersin hakkını saat olarak yaz; kalanını gösterir, aşarsan uyarır."],
+  ["Kurulumu arkadaşlarımla nasıl paylaşırım?", "Kurul sayfasında <b>🌍 Kütüphaneye paylaş</b> dersen herkes “Hazır kurullar”dan ekleyebilir. Sadece belirli kişilere vermek istersen <b>🔗 Paylaş</b> ile kod alıp gönder. Senin ilerlemen ve kodun paylaşılmaz."],
+  ["Sınav bitti, ne yapayım?", "Kurulun başlığındaki <b>+ Aldığım notu yaz</b> ile notunu kaydet, sonra <b>Arşivle</b>. Arşivdeki kurullar menüde ayrı durur, istediğin zaman geri açarsın."],
+  ["PDF Ayırıcı Claude hakkımı harcar mı?", "Evet, PDF'i Claude okuduğu için okuyanın hakkından gider. Bu yüzden sınıfta bir kişinin ayıklayıp kütüphaneye paylaşması yeterli; diğerleri hak harcamadan ekler. Asıl sitenin geri kalanı hiç hak harcamaz."]
+];
+function renderFaq(){ $("faqBody").innerHTML = FAQ.map(([q,a],i)=>`<details class="card"${i===0?" open":""}><summary>${q}</summary><p>${a}</p></details>`).join(""); }
+
 // Ayarlar artık ayrı bir sayfa
 function renderSettings(){
   const st=settings();
@@ -923,6 +955,49 @@ function openGrade(){
   inp.onkeydown=e=>{ if(e.key==="Enter") done("1"); if(e.key==="Escape") done("0"); };
 }
 // Yeni kurul: küçük pencere (eski kurulun sayfası arkada karışıklık yaratmasın)
+// ---- Kurulum sihirbazı: kendi oluşturduğun kurulda zorunlu adımlar ----
+const setupSteps = f => [
+  {k:"date",  t:"Sınav tarihini gir",   done: !!f.examDate},
+  {k:"course",t:"İlk dersini ekle",     done: f.courses.length>0},
+  {k:"topics",t:"Konularını ekle",      done: f.topics.some(t=>!isPlaceholder(t))}
+];
+const setupMissing = f => f.manual && setupSteps(f).some(x=>!x.done);
+function setupWizard(){
+  const f=state; let i=Math.max(0, setupSteps(f).findIndex(x=>!x.done)); if(i<0) return;
+  const el=document.createElement("div"); el.className="modal-bg"; el.style.zIndex=80; document.body.append(el);
+  const draw=()=>{
+    const steps=setupSteps(f), st=steps[i];
+    const dots=steps.map((x,j)=>`<i class="${j<=i?"on":""}"></i>`).join("");
+    let body="";
+    if(st.k==="date") body=`<h2>📅 Sınav ne zaman?</h2><p class="muted">Plan buna göre çıkar.</p>
+      <label class="f">Sınav tarihi (zorunlu)<input type="date" id="wzExam" value="${esc(f.examDate||"")}"></label>
+      <label class="f" style="margin-top:10px">Kurul (dersler) başlangıcı — isteğe bağlı<input type="date" id="wzStart" value="${esc(f.startDate||"")}"></label>`;
+    if(st.k==="course") body=`<h2>📚 İlk dersini ekle</h2><p class="muted">Diğer dersleri sonra Konular sekmesinden eklersin.</p>
+      <label class="f">Ders adı (zorunlu)<input id="wzCName" placeholder="ör. Anatomi"></label>
+      <div class="row" style="margin-top:10px"><label class="f">Ders saati<input id="wzLec" type="number" min="0" placeholder="ör. 21"></label><label class="f">Slayt sayısı<input id="wzSl" type="number" min="0" placeholder="isteğe bağlı"></label></div>`;
+    if(st.k==="topics"){ const c=f.courses[f.courses.length-1];
+      body=`<h2>📝 ${esc(c?c.name:"Ders")} konuları</h2><p class="muted">Her satıra bir konu. Sonuna tarih yazabilirsin (ör. "Mide - 20.11").</p>
+      <textarea id="wzTopics" style="width:100%;min-height:120px;font:inherit;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)" placeholder="Mide anatomisi - 20.11&#10;Karaciğer - 27.11"></textarea>`; }
+    el.innerHTML=`<div class="modal" style="max-width:460px"><div class="steps">${dots}</div>${body}
+      <p class="muted" id="wzErr" style="color:var(--bad);margin:8px 0 0"></p>
+      <div class="row" style="justify-content:space-between;margin-top:14px"><button class="ghost" data-wz="later">Sonra tamamla</button><button data-wz="next">${steps.filter(x=>!x.done).length<=1 ? "Bitir ✓" : "İleri →"}</button></div></div>`;
+    const first=el.querySelector("input,textarea"); first && first.focus();
+  };
+  const err=t=>{ el.querySelector("#wzErr").textContent=t; };
+  el.onclick=e=>{
+    const b=e.target.closest("[data-wz]"); if(e.target===el || (b && b.dataset.wz==="later")){ el.remove(); render(); return; }
+    if(!b) return; const st=setupSteps(f)[i];
+    if(st.k==="date"){ const v=$("wzExam").value; if(!v) return err("Sınav tarihini seçmelisin."); f.examDate=v; f.startDate=$("wzStart").value||f.startDate||""; }
+    if(st.k==="course"){ const n=$("wzCName").value.trim(); if(!n) return err("Ders adını yazmalısın."); f.courses.push({id:uid(), name:n, lectureH:parseFloat($("wzLec").value)||0, slides:parseInt($("wzSl").value)||0, questions:0}); }
+    if(st.k==="topics"){ const c=f.courses[f.courses.length-1]; const rows=$("wzTopics").value.split("\n").map(x=>parseLine(x,"")).filter(r=>r.name);
+      if(!rows.length) return err("En az bir konu yazmalısın."); rows.forEach(r=>f.topics.push({id:uid(), courseId:c.id, name:r.name, date:r.date, diff:2, weight:2, done:0})); }
+    save(); render();
+    const next=setupSteps(f).findIndex(x=>!x.done);
+    if(next<0){ el.remove(); showTab("today"); toast("✓ Kurulun hazır!", "Bugün sekmesinde planın çıktı"); return; }
+    i=next; draw();
+  };
+  draw();
+}
 function newKurulDialog(){
   const el=document.createElement("div"); el.className="modal-bg"; el.style.zIndex=80;
   el.innerHTML=`<div class="modal confirm-box"><h2>Yeni kurul</h2><p class="muted" style="margin:0 0 10px">Boş bir kurul açılır; dersleri sonra eklersin. PDF'ten ya da hazır kurullardan eklemek için <b>Kurul ekle</b> sayfasını kullan.</p>
@@ -930,7 +1005,7 @@ function newKurulDialog(){
     <div class="row" style="justify-content:space-between;margin-top:16px"><button class="ghost" data-nk="add">Kurul ekle sayfası</button><div class="row"><button class="ghost" data-nk="0">Vazgeç</button><button data-nk="1">Oluştur</button></div></div></div>`;
   document.body.append(el); const inp=el.querySelector("#nkName"); inp.focus();
   const done=v=>{
-    if(v==="1"){ const name=inp.value.trim(); if(!name){ inp.style.borderColor="var(--bad)"; return; } const f=blank(name); root.folders.push(f); el.remove(); folderForm=null; switchTo(f.id); showTab("topics"); return; }
+    if(v==="1"){ const name=inp.value.trim(); if(!name){ inp.style.borderColor="var(--bad)"; return; } const f=blank(name); f.manual=true; root.folders.push(f); el.remove(); folderForm=null; switchTo(f.id); showTab("today"); setupWizard(); return; }
     el.remove(); if(v==="add") showView("add");
   };
   el.onclick=e=>{ if(e.target===el) return done("0"); const b=e.target.closest("[data-nk]"); if(b) done(b.dataset.nk); };
@@ -944,7 +1019,9 @@ function renderFolders(){
   const tools = folderForm ? "" : `<div class="folder-tools">${SA && state.courses.length && !state.fromLib ? `<button class="ghost" data-fpub="1">🌍 Kütüphaneye paylaş</button>` : ""}<button class="ghost" data-fshare="1">🔗 Paylaş</button><button class="ghost" data-fcode="1">Kod ile ekle</button><button class="ghost" data-frename="1">Adını değiştir</button><button class="ghost" data-farch="1">${state.archived?"Arşivden çıkar":"Arşivle"}</button>${
     `<button class="ghost" data-fdel="1">Kurulu sil</button>`}</div>`;
   const banner = state.archived && !folderForm ? `<div class="arch-banner">Bu kurul arşivde — menüde "Sınav takibi" yerine "Arşiv" altında duruyor. <button class="ghost" data-farch="1">Arşivden çıkar</button></div>` : "";
-  $("folders").innerHTML = `<div class="kurul-title" style="flex:1">${title}</div>` + tools + banner;
+  const setup = setupMissing(state) && !folderForm ? `<div class="setup-banner"><div><b>Kurulunu hazırla</b> <span class="muted">· planın çıkması için:</span>
+      <div class="row" style="gap:12px;margin-top:4px">${setupSteps(state).map(x=>`<span class="${x.done?"ok":""}">${x.done?"✓":"○"} ${x.t}</span>`).join("")}</div></div><button data-fsetup="1">Devam et →</button></div>` : "";
+  $("folders").innerHTML = `<div class="kurul-title" style="flex:1">${title}</div>` + tools + banner + setup;
   if(folderForm){ const i=$("fName"); i.focus(); i.select(); }
 }
 
@@ -1291,9 +1368,18 @@ function renderAbsence(){
   S.forEach(r=>{ const n=shortCourse(r.course), k=norm(n); const o=rows[k]||(rows[k]={name:n, total:0, p:0, a:0, past:0}); o.total++;
     if(A[attKey(r)]==="p") o.p++; else if(A[attKey(r)]==="a") o.a++; if(r.date<=toISO(todayStart())) o.past++; });
   const list=Object.entries(rows).sort((x,y)=>y[1].total-x[1].total);
-  el.innerHTML=`<div class="row" style="justify-content:space-between"><h2 style="margin:0">Devamsızlık</h2><span class="muted" style="font-size:12.5px">Programda ya da Bugün kartında ✓ katıldım / ✗ gelmedim işaretle</span></div>
-    <table class="abs"><thead><tr><th>Ders</th><th>Toplam</th><th>Katıldım</th><th>Gelmedim</th><th>Hakkım (saat)</th><th>Kalan</th></tr></thead><tbody>${
-      list.map(([k,o])=>{ const lim=L[k]; const left = lim!=null && lim!=="" ? lim - o.a : null;
+  // Genel (varsayılan): tek satır, tek hak · Ders ders: her dersin kendi hakkı
+  const mode = state.absMode || "total";
+  if(mode==="total"){ const o={name:"Tüm dersler", total:0, p:0, a:0}; list.forEach(([_,x])=>{ o.total+=x.total; o.p+=x.p; o.a+=x.a; }); list.length=0; list.push(["__total", o]); }
+  const leftCell = (lim, o)=>{ const left = lim!=null && lim!=="" ? lim - o.a : null; const cls = left==null ? "" : left<0 ? "bad" : left<=1 ? "warn" : "good";
+    return `<span class="abs-left ${cls}">${left==null?"–":left<0?`${-left} sa aştın!`:`${left} sa`}</span>`; };
+  el.innerHTML=`<div class="row" style="justify-content:space-between"><h2 style="margin:0">Devamsızlık</h2>
+      <div class="seg3"><button class="${mode==="total"?"on":""}" data-absmode="total">Genel</button><button class="${mode==="course"?"on":""}" data-absmode="course">Ders ders</button></div></div>
+    <p class="muted" style="font-size:12.5px;margin:6px 0 0">Programda ya da Bugün kartında ✓ katıldım / ✗ gelmedim işaretle.</p>
+    <table class="abs"><thead><tr><th>${mode==="total"?"":"Ders"}</th><th>Toplam</th><th>Katıldım</th><th>Gelmedim</th><th>Hakkım (saat)</th><th>Kalan</th></tr></thead><tbody>${
+      list.map(([k,o])=>{ if(k==="__total"){ const lim=state.absLimitTotal;
+          return `<tr><td><b>Tüm dersler</b></td><td>${o.total} sa</td><td>${o.p}</td><td><b>${o.a}</b></td><td><input type="number" min="0" step="1" class="abs-in" data-abslim="__total" value="${lim??""}" placeholder="gir"></td><td>${leftCell(lim,o)}</td></tr>`; }
+        const lim=L[k]; const left = lim!=null && lim!=="" ? lim - o.a : null;
         const cls = left==null ? "" : left<0 ? "bad" : left<=1 ? "warn" : "good";
         return `<tr><td><span class="dot" style="--h:${hueByName(o.name)}"></span>${esc(o.name)}</td><td>${o.total} sa</td><td>${o.p}</td><td><b>${o.a}</b></td>
           <td><input type="number" min="0" step="1" class="abs-in" data-abslim="${esc(k)}" value="${lim??""}" placeholder="gir"></td>
@@ -1301,7 +1387,11 @@ function renderAbsence(){
     <p class="muted" style="margin:8px 0 0;font-size:12.5px">Hakkını kurul kitapçığındaki devamsızlık sınırına göre saat olarak yaz (ör. 24 saatlik dersin %30'u ≈ 7 saat).</p>`;
 }
 document.addEventListener("change", e=>{ const k=e.target.dataset && e.target.dataset.abslim; if(k==null) return;
-  state.absLimit=state.absLimit||{}; const v=parseFloat(e.target.value); if(isNaN(v)) delete state.absLimit[k]; else state.absLimit[k]=v; save(); renderAbsence(); });
+  const v=parseFloat(e.target.value);
+  if(k==="__total"){ if(isNaN(v)) delete state.absLimitTotal; else state.absLimitTotal=v; }
+  else { state.absLimit=state.absLimit||{}; if(isNaN(v)) delete state.absLimit[k]; else state.absLimit[k]=v; }
+  save(); renderAbsence(); });
+document.addEventListener("click", e=>{ const b=e.target.closest("[data-absmode]"); if(!b) return; state.absMode=b.dataset.absmode; save(); renderAbsence(); });
 
 // ---- Haftalık ders programı (PDF'teki gibi tablo) ----
 let weekOff=null;
@@ -1444,6 +1534,7 @@ $("folders").addEventListener("click", e=>{
   else if(d.fnew){ folderForm="new"; confirmDel=false; renderFolders(); }
   else if(d.fshare) openShare();
   else if(d.fpub) openPublish();
+  else if(d.fsetup) setupWizard();
   else if(d.fgrade) openGrade();
   else if(d.farch){ state.archived = !state.archived; if(!state.archived) navOpen=true; save(); render(); }
   else if(d.fcode) openCodeImport();
