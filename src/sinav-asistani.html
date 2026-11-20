@@ -348,6 +348,21 @@
   .dayatt-row .att button{width:auto;padding:0 10px;height:26px;font-size:12px}
   body.no-attend .dayatt, body.no-attend .dayatt-row{display:none !important}
   .stats-card{margin-bottom:16px}
+  .today-sum,.badges-card{margin-bottom:16px}
+  .ts-h{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+  .ts-h .ghost{padding:6px 12px;font-size:13px}
+  .ts-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+  @media (max-width:700px){ .ts-grid{grid-template-columns:1fr} }
+  .ts-box{border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .ts-box p{margin:0;font-size:13.5px}
+  .ts-t{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+  .ts-list{list-style:none;margin:0;padding:0;font-size:14px} .ts-list li{padding:3px 0} .ts-list .t{display:inline-block;min-width:44px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .ts-big{font-size:22px;font-weight:800;margin-bottom:6px} .ts-big .muted{font-size:15px;font-weight:600}
+  .nm-lbl{color:var(--ink)} .nm-edit{background:none;border:0;padding:0 2px;cursor:pointer;font-size:12px;color:var(--muted)} .nm-edit.add{color:var(--accent);font-weight:700;font-size:12px}
+  .bd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px;margin-top:12px}
+  .bd{display:flex;flex-direction:column;align-items:center;text-align:center;gap:3px;padding:12px 8px;border-radius:14px;border:1px dashed var(--line);opacity:.5;filter:grayscale(1)}
+  .bd.on{opacity:1;filter:none;border:1px solid var(--warn);background:var(--warn-soft)}
+  .bd-ic{font-size:26px} .bd b{font-size:13.5px} .bd small{font-size:11.5px;color:var(--muted);line-height:1.3}
   .st-h{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
   .st-total{font-size:26px;font-weight:800;letter-spacing:-.01em;margin-right:6px} .st-sub{font-size:13px}
   .st-streak{display:flex;flex-direction:column;align-items:center;min-width:64px;padding:6px 10px;border-radius:12px;border:1px solid var(--line);opacity:.55}
@@ -439,7 +454,9 @@
   </section>
 
   <section class="continue" id="homeContinue" style="display:none"></section>
+  <section class="card today-sum" id="homeToday" style="display:none"></section>
   <section class="card stats-card" id="homeStats" style="display:none"></section>
+  <section class="card badges-card" id="homeBadges" style="display:none"></section>
   <button class="faq-link" data-gofaq="1"><span><b>Nasıl kullanılır?</b><small>Sık sorulan sorular</small></span><span>→</span></button>
   <section class="card" id="homeEmpty" style="display:none">
     <div class="row" style="justify-content:space-between"><div><h2 style="margin:0">Henüz kurulun yok</h2><p class="muted" style="margin:4px 0 0">Kurul kitapçığından ya da hazır kurullardan başla.</p></div><button data-goadd="1">Kurul ekle →</button></div>
@@ -805,6 +822,20 @@ const EN = {
 // --- yönlendirme / boş durum
 "Tümü":"All","boş":"empty","Bu cihazda":"On this device","Yeni bir cihazda":"On a new device","AB12":"AB12",
 "Çok sık istek gönderildi, biraz sonra tekrar dene.":"Too many requests, try again shortly.",
+"Takma adın":"Your nickname","Sitede bu isimle görünürsün (ör. paylaştıklarında). Sonra değiştirebilirsin.":"This is the name others see on the site (e.g. when you share). You can change it later.",
+"← Geri":"← Back","Kodumu oluştur →":"Create my code →","Bir takma ad yaz.":"Enter a nickname.","ör. Yasin":"e.g. Yasin","Sitede bu isimle görünürsün.":"This is the name others see on the site.",
+"✓ Takma adın kaydedildi":"✓ Nickname saved","+ Takma ad ekle":"+ Add nickname","Takma adı değiştir":"Change nickname","· kişisel kodun":"· your personal code",
+"Günaydın, {*}":"Good morning, {*}","İyi günler, {*}":"Good afternoon, {*}","İyi akşamlar, {*}":"Good evening, {*}","İyi geceler, {*}":"Good night, {*}",
+"/ {#} sa":"/ {#} h","Bugün toplam çalışılan:":"Studied today:","Hesabım ·":"My account ·","Takma ad":"Nickname","Hesap oluştururken takma ad seçilir; ana sayfada selamlamada ve hesap kartında görünür. Ana sayfadaki ✏️ düğmesiyle değiştirilebilir.":"A nickname is chosen when creating an account; it appears in the greeting and on the account card on the home page. It can be changed with the ✏️ button on the home page.",
+"📌 Bugünün özeti":"📌 Today's summary","Bugün sekmesi →":"Today tab →","🏫 Bugün okulda":"🏫 At school today","📚 Bugünkü çalışma":"📚 Today's study","· sınava {#} gün":"· {#} days to exam",
+"{#} konu kaldı: {*}":"{#} topics left: {*}","Bugün toplam çalışılan: {*}":"Studied today: {*}",
+"🏆 Rozetler":"🏆 Badges","Kazanıldı":"Earned","🏆 Yeni rozet: {*}":"🏆 New badge: {*}","Ana sayfadaki Rozetler bölümünde":"In the Badges section on the home page",
+"İlk konu":"First topic","Bir konuyu bitir":"Finish a topic","3 gün seri":"3-day streak","3 gün üst üste çalış":"Study 3 days in a row","7 gün seri":"7-day streak","7 gün üst üste çalış":"Study 7 days in a row",
+"10 saat":"10 hours","Toplam 10 saat çalış":"Study 10 hours in total","50 saat":"50 hours","Toplam 50 saat çalış":"Study 50 hours in total","Dolu hafta":"Full week","Bir haftada 15 saat çalış":"Study 15 hours in one week",
+"Ders tamam":"Course complete","Bir dersin bütün konularını bitir":"Finish every topic of a course","Kurul tamam":"Block complete","Bir kurulun bütün konularını bitir":"Finish every topic of a block",
+"Sınav geride":"Exam behind you","Bir kurul notunu kaydet":"Save a block grade","· {#}/{#}":"· {#}/{#}",
+"Bugünün özeti":"Today's summary","Ana sayfada, son açılan kurulun bugünkü dersleri ve günlük çalışma planının ilerlemesi tek kartta gösterilir.":"The home page shows today's lectures and the progress of the daily study plan for your most recently opened block in one card.",
+"Rozetler":"Badges","Çalışma serisi, toplam çalışma süresi ve tamamlanan dersler gibi hedeflere ulaşıldığında rozet kazanılır. Kazanılan rozetler ana sayfada listelenir.":"Badges are earned when you reach goals such as a study streak, total study time or completed courses. Earned badges are listed on the home page.",
 "📊 Bu hafta":"📊 This week","· geçen hafta {*}":"· last week {*}","· çalıştıkça burada birikir":"· builds up as you study","gün seri":"day streak",
 "Bugün kartında ✓ ya da Konular'da ilerleme işaretledikçe saatler buraya eklenir.":"Hours are added here as you tick ✓ on the Today card or mark progress in Topics.",
 "📅 Takvime ekle":"📅 Add to calendar","Takvime ekle":"Add to calendar","Ders programını ve sınav tarihini takvimine ekle":"Add the timetable and exam date to your calendar",
@@ -936,8 +967,13 @@ document.addEventListener("click", e=>{ const u=e.target.closest("#verFoot"); if
 // KURALLAR: yeni sürüm EN ÜSTE eklenir · bir sürümde en fazla 3 madde (4. madde yeni yama sürümü açar: v1.0.1, v1.0.2…)
 // Kullanıcı görmediği sürümü açılışta bir kez görür; "Anladım" deyince root.settings.seenVer kaydedilir (cihazlar arası).
 const UPDATE_LOG = [
+  { ver:"v1.0.3", date:"2026-11-20", items:[
+    ["YENİ","Takma ad","Hesap oluştururken takma ad seçilir; ana sayfada selamlamada ve hesap kartında görünür. Ana sayfadaki ✏️ düğmesiyle değiştirilebilir."],
+  ]},
   { ver:"v1.0.2", date:"2026-11-20", items:[
     ["YENİ","Uygulama olarak kullanım","Site telefona ve bilgisayara uygulama olarak eklenebilir; ana ekrandan açılır ve internet bağlantısı olmadan da çalışır. Ayarlar → Uygulama bölümünden yüklenebilir."],
+    ["YENİ","Bugünün özeti","Ana sayfada, son açılan kurulun bugünkü dersleri ve günlük çalışma planının ilerlemesi tek kartta gösterilir."],
+    ["YENİ","Rozetler","Çalışma serisi, toplam çalışma süresi ve tamamlanan dersler gibi hedeflere ulaşıldığında rozet kazanılır. Kazanılan rozetler ana sayfada listelenir."],
   ]},
   { ver:"v1.0.1", date:"2026-11-20", items:[
     ["YENİ","Dil seçeneği","Site Türkçe ve İngilizce olarak kullanılabilir. Dil, sağ üstteki TR | EN düğmesinden ya da Ayarlar → Dil bölümünden değiştirilebilir."],
@@ -952,7 +988,7 @@ const UPDATE_LOG = [
 ];
 const LATEST = UPDATE_LOG[0].ver;
 // "YENİ" şeridi: özelliğin eklendiği sürüm çıktıktan sonraki 7 gün boyunca gösterilir
-const NEW_IN = { updlog:"v1.0.0", lang:"v1.0.1", stats:"v1.0.1", ics:"v1.0.1", pwa:"v1.0.2" };
+const NEW_IN = { updlog:"v1.0.0", lang:"v1.0.1", stats:"v1.0.1", ics:"v1.0.1", pwa:"v1.0.2", today:"v1.0.2", badges:"v1.0.2", name:"v1.0.3" };
 const newRib = k => { const v=UPDATE_LOG.find(x=>x.ver===NEW_IN[k]); return v && (Date.now()-new Date(v.date+"T00:00").getTime()) < 7*864e5 ? `<span class="new-rib">YENİ</span>` : ""; };
 function showUpdateLog(all){
   $("whatsNew")?.remove();
@@ -1280,7 +1316,7 @@ function renderQuote(){
       <path d="M110 140 C 40 95, 18 60, 38 34 C 56 12, 92 16, 110 44 C 128 16, 164 12, 182 34 C 202 60, 180 95, 110 140 Z" stroke-width="3" opacity=".9"/>
       <path d="M8 86 H 70 L 82 64 L 96 112 L 112 40 L 126 98 L 136 86 H 212" stroke-width="3.5"/>
       <circle cx="212" cy="86" r="4" fill="#fff" stroke="none"/></svg>
-    <div class="hi">${hi} · ${now.toLocaleDateString(LOC(),{weekday:"long",day:"numeric",month:"long"})}</div>
+    <div class="hi">${hi}${myName()?`, ${esc(myName())}`:""} · ${now.toLocaleDateString(LOC(),{weekday:"long",day:"numeric",month:"long"})}</div>
     <blockquote>“${esc(QUOTES[idx])}”</blockquote>
     <div class="by"><span>— <b>CardiacAI</b></span><span class="tick">yeni söz ${left} dk sonra</span></div>`;
   lastQuoteHour=h;
@@ -1289,15 +1325,96 @@ setInterval(()=>{ if(view==="home" && !document.hidden) renderQuote(); }, 60000)
 let codeShown=false;
 const EYE='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>';
 const EYE_OFF='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><path d="M1 1l22 22"/></svg>';
+const cleanName = v => String(v||"").replace(/[<>]/g,"").replace(/\s+/g," ").trim().slice(0,24);
+const myName = () => (root && root.profile && root.profile.name) || "";
+function askName(){
+  return new Promise(res=>{
+    const el=document.createElement("div"); el.className="modal-bg"; el.style.zIndex=80;
+    el.innerHTML=`<div class="modal confirm-box"><h2>Takma adın</h2><p class="muted" style="margin:0 0 10px">Sitede bu isimle görünürsün.</p>
+      <input id="nmIn" maxlength="24" value="${esc(myName())}" placeholder="ör. Yasin" style="font:inherit;width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)">
+      <div class="row" style="justify-content:flex-end;margin-top:14px"><button class="ghost" data-a="0">Vazgeç</button><button data-a="1">Kaydet</button></div></div>`;
+    const done=v=>{ el.remove(); res(v); };
+    el.onclick=e=>{ if(e.target===el) return done(null); const a=e.target.closest("[data-a]"); if(!a) return; if(a.dataset.a==="0") return done(null); const v=cleanName($("nmIn").value); if(v) done(v); else $("nmIn").focus(); };
+    document.body.append(el); const i=$("nmIn"); i.focus(); i.select(); i.onkeydown=e=>{ if(e.key==="Enter") el.querySelector('[data-a="1"]').click(); if(e.key==="Escape") done(null); };
+  });
+}
+document.addEventListener("click", async e=>{ if(!e.target.closest("[data-editname]")) return; const v=await askName(); if(v){ (root.profile=root.profile||{}).name=v; save(); renderHome(); toast("✓ Takma adın kaydedildi", v); } });
 function codeBox(){
   const c=CUR||"—";
-  return `<div><div class="lbl">Hesabım · kişisel kodun</div>
+  return `<div><div class="lbl">Hesabım${newRib("name")} · ${myName() ? `<b class="nm-lbl">${esc(myName())}</b> <button class="nm-edit" data-editname="1" title="Takma adı değiştir">✏️</button>` : `<button class="nm-edit add" data-editname="1">+ Takma ad ekle</button>`} · kişisel kodun</div>
     <div class="row" style="gap:6px;align-items:center"><span class="code">${codeShown?esc(c):"•".repeat(c.length)}</span>
     <button class="eye" data-eye="1" title="${codeShown?"Gizle":"Göster"}">${codeShown?EYE_OFF:EYE}</button></div>
     ${codeShown?`<div class="code-warn">⚠️ Kodunu unutma — kodun olmadan verilerine başka cihazdan ulaşamazsın. WhatsApp'a gönderip sakla.</div>`:""}</div>`;
 }
 document.addEventListener("click", e=>{ if(e.target.closest("[data-eye]")){ codeShown=!codeShown; renderHome(); } });
 
+function streakDays(){ const L=root.studyLog||{}; let n=0; const c=todayStart(); if(!L[toISO(c)]) c.setDate(c.getDate()-1); while(L[toISO(c)]>0){ n++; c.setDate(c.getDate()-1); } return n; }
+// ---- 📌 Bugünün özeti (ana sayfa): son açılan kurulun bugünkü dersleri + bugünkü çalışma planı
+function renderTodaySum(){
+  const el=$("homeToday"); if(!el) return;
+  const f = root.folders.find(x=>x.id===root.activeId && x.courses.length && !x.archived) || sortedFolders().find(x=>x.courses.length && !x.archived);
+  if(!f){ el.style.display="none"; return; }
+  const keep=state; let c=null; try{ state=f; c=compute(); } catch(e){} finally{ state=keep; }
+  const iso=toISO(todayStart());
+  const ses0=(f.sessions||[]).filter(r=>r.date===iso).sort((a,b)=>(a.time||"").localeCompare(b.time||""));
+  const ses=[]; for(const r of ses0){ const p=ses[ses.length-1]; if(p && p.course===r.course && p.topic===r.topic){ p.end=(r.time||"").split("-")[1]||p.end; } else ses.push({...r, start:(r.time||"").split("-")[0], end:(r.time||"").split("-")[1]||""}); }
+  const items=(c && c.sim && c.sim.days[0] && c.sim.days[0].items)||[];
+  const tl=(f.today && f.today.date===iso) ? f.today.done : [];
+  const planH=items.reduce((a,x)=>a+x.h,0), doneH=tl.reduce((a,x)=>a+(x.h||0),0), studied=(root.studyLog||{})[iso]||0;
+  el.style.display="";
+  el.innerHTML=`<div class="ts-h"><div><div class="lbl">📌 Bugünün özeti${newRib("today")}</div><b>${esc(f.name)}</b>${c&&c.days>0?` <span class="muted">· sınava ${c.days} gün</span>`:""}</div>
+      <button class="ghost" data-goto-today="${f.id}">Bugün sekmesi →</button></div>
+    <div class="ts-grid">
+      <div class="ts-box"><div class="ts-t">🏫 Bugün okulda</div>${ses.length ? `<ul class="ts-list">${ses.map(r=>`<li><span class="t">${esc(r.start)}</span> <b>${esc(shortCourse(r.course))}</b>${r.topic?` <span class="muted">— ${esc(r.topic)}</span>`:""}</li>`).join("")}</ul>` : `<p class="muted">Bugün ders yok 🎉</p>`}</div>
+      <div class="ts-box"><div class="ts-t">📚 Bugünkü çalışma</div>${items.length||tl.length ? `<div class="ts-big">${fmtH(doneH)} <span class="muted">/ ${fmtH(doneH+planH)}</span></div>
+        <div class="bar"><i style="width:${Math.round(doneH/Math.max(0.01,doneH+planH)*100)}%"></i></div>
+        <p class="muted" style="margin:6px 0 0">${items.length ? `${items.length} konu kaldı: ${items.slice(0,3).map(x=>esc(shortCourse(courseOfF(f,x.topic))+": "+x.topic.name)).join(", ")}${items.length>3?" …":""}` : "bugünlük bitti 🎉"}</p>` : `<p class="muted">${c && c.days>0 ? "Bugün için planlanmış çalışma yok — soru çöz ya da tekrar yap." : "Plan için sınav tarihini gir."}</p>`}
+        ${studied ? `<p class="muted" style="margin:4px 0 0">Bugün toplam çalışılan: <b>${fmtH(studied)}</b></p>`:""}</div>
+    </div>`;
+}
+const courseOfF = (f,t) => (f.courses.find(c=>c.id===t.courseId)||{}).name || "";
+document.addEventListener("click", e=>{ const b=e.target.closest("[data-goto-today]"); if(!b) return; switchTo(b.dataset.gotoToday); showTab("today"); });
+// ---- 🏆 Rozetler: verilerden hesaplanır; bir kez kazanılan rozet kalır (root.badges = {id: tarih})
+const BADGES = [
+  ["first_topic","📗","İlk konu","Bir konuyu bitir"],
+  ["streak3","🔥","3 gün seri","3 gün üst üste çalış"],
+  ["streak7","☄️","7 gün seri","7 gün üst üste çalış"],
+  ["h10","⏱️","10 saat","Toplam 10 saat çalış"],
+  ["h50","💪","50 saat","Toplam 50 saat çalış"],
+  ["week15","📅","Dolu hafta","Bir haftada 15 saat çalış"],
+  ["course_done","✅","Ders tamam","Bir dersin bütün konularını bitir"],
+  ["kurul_done","🏁","Kurul tamam","Bir kurulun bütün konularını bitir"],
+  ["grade","🎓","Sınav geride","Bir kurul notunu kaydet"],
+];
+function badgeEarned(id){
+  const L=root.studyLog||{}, F=root.folders.filter(f=>f.courses.length), total=Object.values(L).reduce((a,b)=>a+b,0);
+  switch(id){
+    case "first_topic": return F.some(f=>f.topics.some(t=>t.done>=100));
+    case "streak3": return streakDays()>=3;
+    case "streak7": return streakDays()>=7;
+    case "h10": return total>=10;
+    case "h50": return total>=50;
+    case "week15": { const w={}; for(const [k,v] of Object.entries(L)){ const m=toISO(mondayOf(new Date(k+"T00:00:00"))); w[m]=(w[m]||0)+v; } return Object.values(w).some(v=>v>=15); }
+    case "course_done": return F.some(f=>f.courses.some(c=>{ const ts=f.topics.filter(t=>t.courseId===c.id); return ts.length && ts.every(t=>t.done>=100); }));
+    case "kurul_done": return F.some(f=>f.topics.length && f.topics.every(t=>t.done>=100));
+    case "grade": return F.some(f=>f.grade!=null && f.grade!=="");
+  }
+  return false;
+}
+function checkBadges(){
+  if(!root || !root.folders) return;
+  const first = !root.badges; root.badges=root.badges||{}; let got=[];
+  for(const [id,ic,name] of BADGES) if(!root.badges[id] && badgeEarned(id)){ root.badges[id]=toISO(todayStart()); got.push([ic,name]); }
+  if(got.length){ save(); if(!first) got.forEach(([ic,name],i)=>setTimeout(()=>toast(`🏆 Yeni rozet: ${ic} ${name}`, "Ana sayfadaki Rozetler bölümünde"), i*600)); if(view==="home") renderBadges(); }
+}
+function renderBadges(){
+  const el=$("homeBadges"); if(!el) return;
+  if(!root.folders.some(f=>f.courses.length)){ el.style.display="none"; return; }
+  checkBadges(); const B=root.badges||{}; const n=BADGES.filter(b=>B[b[0]]).length;
+  el.style.display="";
+  el.innerHTML=`<div class="ts-h"><div class="lbl">🏆 Rozetler${newRib("badges")} <span class="muted">· ${n}/${BADGES.length}</span></div></div>
+    <div class="bd-grid">${BADGES.map(([id,ic,name,how])=>`<div class="bd ${B[id]?"on":""}" title="${B[id]?esc(new Date(B[id]+"T12:00").toLocaleDateString(LOC(),{day:"numeric",month:"long"})):esc(how)}"><span class="bd-ic">${ic}</span><b>${name}</b><small>${B[id]?"Kazanıldı":how}</small></div>`).join("")}</div>`;
+}
 function renderStats(){
   const el=$("homeStats"); if(!el) return;
   const L=root.studyLog||{}; if(!root.folders.some(f=>f.courses.length)){ el.style.display="none"; return; }
@@ -1332,7 +1449,7 @@ function renderHome(){
   $("acctExtra").innerHTML = btns;
   $("deviceBtn").style.display = (SA || claudeMode) ? "none" : "";
   $("homeEmpty").style.display = root.folders.some(f=>f.courses.length) ? "none" : "";
-  renderStats();
+  renderTodaySum(); renderStats(); renderBadges();
   // kaldığın yerden devam: en son açılan kurul
   const last = root.folders.find(f=>f.id===root.activeId && f.courses.length) || sortedFolders().find(f=>f.courses.length && !f.archived);
   const hc=$("homeContinue");
@@ -1660,6 +1777,7 @@ function fmtH(h){ return (Math.round(h*10)/10).toString().replace(".",",") + " s
 
 function render(){
   if(!state) return;
+  setTimeout(checkBadges, 0);
   applySettings(); renderFolders(); renderHome(); renderDrawer();
   $("examDate").value = state.examDate; $("startDate").value = state.startDate||""; $("perLec").value = state.perLec||2;
   $("dailyHours").value = state.dailyHours;
@@ -2381,6 +2499,12 @@ function openWelcomeSA(){
       <p class="muted" id="wSt" style="margin:8px 0 0"></p>
       <button class="choice" id="wNew" style="margin-top:14px">✨ İlk kez kullanıyorum<small>Sana 4 haneli kişisel bir kod verelim — her cihazda onunla girersin</small></button>
     </div>
+    <div id="wStepName" style="display:none">
+      <label class="f" style="margin-top:10px">Takma adın<input id="wName" maxlength="24" autocomplete="nickname" placeholder="ör. Yasin" style="${box};font-size:20px"></label>
+      <p class="muted" style="margin:6px 0 0;font-size:13px">Sitede bu isimle görünürsün (ör. paylaştıklarında). Sonra değiştirebilirsin.</p>
+      <div class="row" style="margin-top:10px"><button class="ghost" id="wNameBack">← Geri</button><button id="wNameGo" style="flex:1">Kodumu oluştur →</button></div>
+      <p class="muted" id="wSt2" style="margin:8px 0 0"></p>
+    </div>
     <div id="wStep2" style="display:none;text-align:center">
       <p class="muted">Kişisel kodun:</p>
       <div style="font-size:44px;font-weight:800;letter-spacing:.18em;margin:4px 0 10px" id="wNewCode"></div>
@@ -2396,18 +2520,23 @@ function openWelcomeSA(){
     try{ await saLogin(v); }catch(e){ $("wSt").textContent=String(e); $("wGo").disabled=false; }
   };
   $("wGo").onclick=go; $("wCode").onkeydown=e=>{ if(e.key==="Enter") go(); };
-  $("wNew").onclick = async ()=>{
-    $("wNew").disabled=true; $("wSt").textContent="Kod oluşturuluyor…";
+  $("wNew").onclick = ()=>{ $("wStep1").style.display="none"; $("wStepName").style.display=""; setTimeout(()=>$("wName").focus(),30); };
+  $("wNameBack").onclick = ()=>{ $("wStepName").style.display="none"; $("wStep1").style.display=""; };
+  $("wName").onkeydown = e=>{ if(e.key==="Enter") $("wNameGo").click(); };
+  $("wNameGo").onclick = async ()=>{
+    const nm=cleanName($("wName").value); if(!nm){ $("wSt2").textContent="Bir takma ad yaz."; $("wName").focus(); return; }
+    $("wNameGo").disabled=true; $("wSt2").textContent="Kod oluşturuluyor…";
+    (root.profile=root.profile||{}).name=nm;
     try{
       const r = await fetch("/api/new",{method:"POST"}); const j = await r.json();
       if(!r.ok || !j.code) throw j.error || "Kod alınamadı";
       CUR=j.code; lsSet(CUR_KEY, CUR); root.code=CUR; root.onboarded=true; (root.settings=root.settings||{}).seenVer=LATEST; root.updatedAt=Date.now(); persist();
       try{ const pr=await fetch("/api/data",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({code:CUR, json:JSON.stringify(root), base:0})});
         if(pr.ok){ const pj=await pr.json(); root._ver=pj.updatedAt; root._dirty=false; persist(); } }catch(e){}
-      $("wStep1").style.display="none"; $("wStep2").style.display=""; $("wNewCode").textContent=CUR;
+      $("wStepName").style.display="none"; $("wStep2").style.display=""; $("wNewCode").textContent=CUR;
       $("wWa").href = "https://wa.me/?text="+encodeURIComponent(saMsg());
       $("wDone").onclick = ()=>location.reload();
-    }catch(e){ $("wSt").textContent=String(e); $("wNew").disabled=false; }
+    }catch(e){ $("wSt2").textContent=String(e); $("wNameGo").disabled=false; }
   };
   setTimeout(()=>$("wCode").focus(),50);
 }
