@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sınav Haftası Asistanı</title>
+<title>Sınav Haftası Asistanı · CardiacAI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -199,6 +199,43 @@
   .course .cnt{font-size:12px;font-weight:600;color:var(--muted);margin-left:8px;background:var(--bg);padding:2px 8px;border-radius:99px}
   .course:not(.open){padding-bottom:12px}
   .ghost-link{display:inline-flex;align-items:center;padding:10px 16px;border-radius:10px;border:1px solid var(--accent);color:var(--accent);text-decoration:none;font-weight:600;background:var(--card)}
+  /* başlık + imza */
+  .brand{font-size:13px;font-weight:800;letter-spacing:.04em;color:var(--bad)}
+  .menu-btn{background:var(--card);color:var(--ink);border:1px solid var(--line);width:44px;height:44px;padding:0;font-size:20px;border-radius:12px;flex:none}
+  .menu-btn:hover{border-color:var(--accent);color:var(--accent)}
+  .sig{text-align:center;color:var(--muted);font-size:13px;margin-top:28px;padding-top:16px;border-top:1px solid var(--line)}
+  .sig b{color:var(--bad)}
+  /* yan menü */
+  .drawer-bg{position:fixed;inset:0;background:rgba(10,12,20,.45);opacity:0;pointer-events:none;transition:opacity .2s;z-index:60}
+  .drawer{position:fixed;top:0;left:0;bottom:0;width:290px;max-width:85vw;background:var(--card);border-right:1px solid var(--line);transform:translateX(-102%);transition:transform .22s ease;z-index:61;display:flex;flex-direction:column;padding:14px;overflow-y:auto}
+  body.drawer-open .drawer{transform:none} body.drawer-open .drawer-bg{opacity:1;pointer-events:auto}
+  .drawer-h{display:flex;justify-content:space-between;align-items:center;padding:4px 6px 14px;border-bottom:1px solid var(--line);margin-bottom:10px}
+  .nav-item{display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left;background:transparent;color:var(--ink);padding:11px 12px;border-radius:10px;font-size:15px}
+  .nav-item:hover{background:var(--bg)} .nav-item.on{background:var(--accent-soft);color:var(--accent)}
+  .nav-item .chev{transition:transform .15s;color:var(--muted)} .nav-item.open .chev{transform:rotate(90deg)}
+  .nav-sub{padding-left:10px;margin:2px 0 8px;border-left:2px solid var(--line);margin-left:16px}
+  .nav-sub button{display:block;width:100%;text-align:left;background:transparent;color:var(--ink);padding:8px 10px;border-radius:8px;font-weight:500;font-size:14px}
+  .nav-sub button:hover{background:var(--bg)} .nav-sub button.on{background:var(--accent-soft);color:var(--accent);font-weight:700}
+  .nav-sub button small{display:block;color:var(--muted);font-weight:500;font-size:12px}
+  .nav-sub .new{color:var(--accent);font-weight:700}
+  .drawer-sig{margin-top:auto;padding:14px 8px 4px;color:var(--muted);font-size:12px;border-top:1px solid var(--line)}
+  .drawer-sig b{color:var(--bad)}
+  /* ana sayfa */
+  .account .code-big{font-size:34px;font-weight:800;letter-spacing:.16em}
+  .kurul-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-top:10px}
+  .kurul-card{text-align:left;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .kurul-card:hover{border-color:var(--accent)}
+  .kurul-card small{display:block;color:var(--muted);font-weight:500;margin-top:2px}
+  .kurul-title{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+  .kurul-title h2{margin:0;font-size:22px;letter-spacing:-.02em}
+  .tabs3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 16px}
+  .tabs3 button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:14px 16px;font-size:16px;font-weight:700}
+  .tabs3 button span{font-size:22px;line-height:1;margin-bottom:4px}
+  .tabs3 button small{font-size:12px;font-weight:500;color:var(--muted)}
+  .tabs3 button:hover{border-color:var(--accent)}
+  .tabs3 button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+  .tabs3 button.on small{color:#fff;opacity:.85}
+  @media (max-width:600px){ .tabs3 button{padding:10px;font-size:14px} .tabs3 button small{display:none} }
   .add-topic{background:transparent;color:var(--accent);padding:6px 0;font-size:14px}
   .add label.f{font-size:11px}
   .two{grid-template-columns:1.25fr 1fr;align-items:start}
@@ -227,17 +264,25 @@
 <body>
 <div class="wrap">
   <header>
-    <div>
-      <h1>Sınav Haftası <span>Asistanı</span></h1>
-      <p class="sub">Konularını gir, ne kadar bittiğini işaretle — sana neye öncelik vermen gerektiğini ve günlük planı çıkarayım.</p>
+    <div class="row" style="align-items:center;gap:14px;flex-wrap:nowrap">
+      <button class="menu-btn" id="menuBtn" title="Menü" aria-label="Menü">☰</button>
+      <div>
+        <div class="brand">❤️‍🔥 CardiacAI</div>
+        <h1>Sınav Haftası <span>Asistanı</span></h1>
+      </div>
     </div>
-    <div class="row">
-      <span class="muted" id="syncStatus"></span>
-      <button class="ghost" id="deviceBtn">👤 Kodum <b id="codeLabel"></b><span id="dirtyDot" class="dirty" style="display:none" title="Son koddan beri değişiklik var"></span></button>
-      <button class="ghost" id="demoBtn">Örnek veri yükle</button>
-      <button class="ghost" id="resetBtn">Sıfırla</button>
-    </div>
+    <span class="muted" id="syncStatus"></span>
   </header>
+  <section class="card panel" id="sharePanel" style="display:none"></section>
+
+  <!-- ===== ANA SAYFA ===== -->
+  <div id="homeView">
+  <section class="card account" id="accountCard">
+    <div id="accountBody"></div>
+    <div class="row" id="accountBtns" style="margin-top:12px">
+      <button class="ghost" id="deviceBtn">👤 Kodum <b id="codeLabel"></b><span id="dirtyDot" class="dirty" style="display:none" title="Son koddan beri değişiklik var"></span></button>
+    </div>
+  </section>
 
   <!-- İÇE AKTAR -->
   <section class="card import" id="importCard" style="display:none">
@@ -261,15 +306,23 @@
   <section class="card import" id="saCard" style="display:none">
     <div class="row" style="justify-content:space-between;gap:12px">
       <div><h2>📄 Kurulunu ekle</h2>
-        <p class="muted" style="margin:4px 0 0">1) PDF Ayırıcı'da kitapçığı yükle, kurul kodunu kopyala · 2) Buraya "Kurul kodu ekle" ile yapıştır. Kurulun zaten varsa ilerlemen korunarak güncellenir.</p></div>
-      <div class="row"><a class="ghost-link" id="ayiriciLink" target="_blank" rel="noopener">📄 PDF Ayırıcı'yı aç</a><button id="saCodeBtn">📥 Kurul kodu ekle</button></div>
+        <p class="muted" style="margin:4px 0 0">Önce <b>📚 Hazır kurullar</b>'a bak — biri ayıklayıp paylaştıysa tek tıkla eklersin. Yoksa: PDF Ayırıcı'da kitapçığı yükle → kodu "Kurul kodu ekle" ile yapıştır → <b>🌍 Kütüphaneye paylaş</b> ile herkese aç. Kurulun zaten varsa ilerlemen korunarak güncellenir.</p></div>
+      <div class="row"><button id="saLibBtn">📚 Hazır kurullar</button><a class="ghost-link" id="ayiriciLink" target="_blank" rel="noopener">📄 PDF Ayırıcı'yı aç</a><button class="ghost" id="saCodeBtn">📥 Kurul kodu ekle</button></div>
     </div>
   </section>
 
-  <!-- KURULLAR -->
-  <nav class="folders" id="folders"></nav>
-  <section class="card panel" id="sharePanel" style="display:none"></section>
+  </div>
 
+  <!-- ===== KURUL SAYFASI ===== -->
+  <div id="kurulView" style="display:none">
+  <nav class="folders" id="folders"></nav>
+  <div class="tabs3" id="kTabs">
+    <button data-tab="today" class="on"><span>📅</span>Bugün<small>günün dersleri ve çalışman</small></button>
+    <button data-tab="topics"><span>📚</span>Konular<small>dersler, konular, ilerleme</small></button>
+    <button data-tab="program"><span>🗓️</span>Program<small>ders programı ve sonraki günler</small></button>
+  </div>
+
+  <div class="tabpane" data-pane="topics" style="display:none">
   <!-- AYARLAR -->
   <section class="card grid g-setup">
     <label class="f">Kurul (dersler) başlangıcı
@@ -288,7 +341,9 @@
       <select id="reviewDay"><option value="1">Evet</option><option value="0">Hayır</option></select>
     </label>
   </section>
+  </div>
 
+  <div class="tabpane" data-pane="today">
   <!-- ÖZET -->
   <section class="grid stats">
     <div class="card stat"><div class="k">Kalan süre</div><div class="v" id="sDays">–</div><div class="d" id="sDaysD">Sınav tarihini gir</div></div>
@@ -298,9 +353,17 @@
 
   <div id="verdict"></div>
   <section class="card today-hero" id="todayHero" style="display:none"></section>
-  <section class="card" id="weekCard" style="display:none;margin-bottom:16px"></section>
+  </div>
 
-  <div class="grid two">
+  <div class="tabpane" data-pane="program" style="display:none">
+  <section class="card" id="weekCard" style="display:none;margin-bottom:16px"></section>
+  <section class="card">
+    <h2>Sonraki günler</h2>
+    <div id="plan"></div>
+  </section>
+  </div>
+
+  <div class="tabpane" data-pane="topics" style="display:none">
     <!-- KONULAR -->
     <section class="card">
       <div class="row" style="justify-content:space-between;margin-bottom:12px">
@@ -318,13 +381,6 @@
       <p class="muted" style="margin:10px 0 0">Konu süresi = konunun ders saati × "1 saat ders = kaç saat çalışma" × zorluk (kolay ×0,75 · zor ×1,4). Bir konu sana daha uzun/kısa geliyorsa "süre" kutusuna kendin yaz. "Önem" = sınavda ne kadar soru çıkar.</p>
     </section>
 
-    <!-- PLAN -->
-    <section class="card">
-      <h2>Sonraki günler</h2>
-      <div id="plan"></div>
-    </section>
-  </div>
-
   <!-- AI KOÇ -->
   <section class="card" id="aiCard" style="margin-top:16px;display:none">
     <div class="row" style="justify-content:space-between">
@@ -336,11 +392,29 @@
     </div>
     <div class="ai-out" id="aiOut"></div>
   </section>
+  <div class="row" style="justify-content:flex-end;margin-top:12px">
+    <button class="ghost" id="demoBtn">Örnek veri yükle</button>
+    <button class="ghost" id="resetBtn">Bu kurulu sıfırla</button>
+  </div>
+  </div>
+  </div>
+
+  <footer class="sig">Sınav Haftası Asistanı · <b>CardiacAI</b> tarafından geliştirildi · 2026</footer>
 </div>
+
+<!-- ===== YAN MENÜ ===== -->
+<div id="drawerBg" class="drawer-bg"></div>
+<aside id="drawer" class="drawer" aria-hidden="true">
+  <div class="drawer-h"><span class="brand" style="font-size:15px">❤️‍🔥 CardiacAI</span><button class="icon" id="drawerClose" title="Kapat">✕</button></div>
+  <button class="nav-item" data-nav="home">🏠 Ana sayfa</button>
+  <button class="nav-item" id="navTrack" data-navtoggle="1"><span>📚 Sınav takibi</span><span class="chev">▸</span></button>
+  <div id="navKurullar" class="nav-sub" style="display:none"></div>
+  <div class="drawer-sig">Sınav Haftası Asistanı<br><b>CardiacAI</b> · 2026</div>
+</aside>
 
 <script>window.STANDALONE=true; window.AYIRICI_URL="https://claude.ai/artifact/Ds98xGWsqprjqbzfDFFvtT";</script>
 <script>
-// STANDALONE: Vercel'deki asıl site (sunuculu, 6 haneli kod). claude.ai sürümünde false.
+// STANDALONE: Vercel'deki asıl site (sunuculu, 4 haneli kod). claude.ai sürümünde false.
 const SA = !!window.STANDALONE;
 const AYIRICI_URL = window.AYIRICI_URL || "";
 const $ = id => document.getElementById(id);
@@ -349,7 +423,7 @@ const STEPS = [[0,"Hiç"],[25,"Az"],[50,"Yarı"],[75,"Çoğu"],[100,"Bitti"]];
 const WEIGHT = {1:"Az",2:"Orta",3:"Çok"};
 const KEY = "sinav-asistani-v3";
 
-const blank = name => ({ id:String(Date.now())+Math.floor(Math.random()*1e6), name, startDate:"", examDate:"", dailyHours:5, perLec:2, reviewDay:1, courses:[], topics:[] });
+const blank = name => ({ id:String(Date.now())+Math.floor(Math.random()*1e6), createdAt:Date.now(), name, startDate:"", examDate:"", dailyHours:5, perLec:2, reviewDay:1, courses:[], topics:[] });
 let root = { activeId:null, folders:[] };
 let state; // aktif kurul
 let folderForm = null; // null | "new" | "rename"
@@ -463,7 +537,7 @@ function applyRemote(r){
 // Claude hesabına yazabiliyor mu? (site sahibi: evet · herkese açık linkle gelen: şimdilik hayır)
 let claudeMode=false, resolveSync; const syncReady = new Promise(r=>resolveSync=r);
 function setClaudeMode(ok){
-  claudeMode=!!ok; $("deviceBtn").style.display = (claudeMode && !SA) ? "none" : ""; if(claudeMode) syncOff=false;
+  claudeMode=!!ok; $("deviceBtn").style.display = (claudeMode || SA) ? "none" : ""; setTimeout(renderHome,0); if(claudeMode) syncOff=false;
   if(!claudeMode){ syncOff=true; setSync(""); } updateDirty();
 }
 // ---- Asıl site (SA): kendi sunucumuz /api/data ----
@@ -502,7 +576,7 @@ async function saPoll(first){
 async function startSync(){
   try{
     if(SA){
-      if(!/^[A-Z0-9]{6}$/.test(CUR)) return resolveSync(false);
+      if(!/^([A-Z0-9]{4}|[A-Z0-9]{6})$/.test(CUR)) return resolveSync(false);
       remoteRef = {sa:true};
       saPoll(true);
       setInterval(()=>{ if(!document.hidden) saPoll(false); }, 30000);
@@ -532,18 +606,64 @@ async function startSync(){
     }, ()=>{ syncOff=true; setSync(""); resolveSync(false); });
   }catch(e){ resolveSync(false); }
 }
-function switchTo(id){ state = root.folders.find(f=>f.id===id); root.activeId=id; weekOff=null; openForm=null; folderForm=null; confirmDel=false; $("aiOut").textContent=""; save(); render(); }
+function switchTo(id){ view="kurul"; $("homeView").style.display="none"; $("kurulView").style.display=""; window.scrollTo({top:0}); state = root.folders.find(f=>f.id===id); root.activeId=id; weekOff=null; openForm=null; folderForm=null; confirmDel=false; $("aiOut").textContent=""; save(); render(); }
+
+// ---- Görünüm: ana sayfa / kurul sayfası + yan menü ----
+let view = "home", navOpen = true, tab = "today";
+function showTab(t){ tab=t; document.querySelectorAll("#kTabs [data-tab]").forEach(b=>b.classList.toggle("on", b.dataset.tab===t));
+  document.querySelectorAll(".tabpane").forEach(p=>p.style.display = p.dataset.pane===t ? "" : "none"); }
+document.getElementById("kTabs").addEventListener("click", e=>{ const b=e.target.closest("[data-tab]"); if(b) showTab(b.dataset.tab); });
+const createdOf = f => f.createdAt || +String(f.id).slice(0,13) || 0;
+const sortedFolders = () => [...root.folders].sort((a,b)=>createdOf(a)-createdOf(b));
+function showView(v){ view=v; $("homeView").style.display = v==="home"?"":"none"; $("kurulView").style.display = v==="kurul"?"":"none"; renderDrawer(); window.scrollTo({top:0}); }
+function openDrawer(o){ document.body.classList.toggle("drawer-open", o); $("drawer").setAttribute("aria-hidden", o?"false":"true"); if(o) renderDrawer(); }
+function renderDrawer(){
+  document.querySelectorAll("[data-nav=home]").forEach(b=>b.classList.toggle("on", view==="home"));
+  $("navTrack").classList.toggle("open", navOpen); $("navTrack").classList.toggle("on", view==="kurul");
+  $("navKurullar").style.display = navOpen ? "" : "none";
+  $("navKurullar").innerHTML = `<button class="new" data-navnew="1">+ Yeni kurul</button>` + sortedFolders().map(f=>{
+    const d = f.examDate ? `Sınav: ${new Date(f.examDate+"T00:00:00").toLocaleDateString("tr-TR",{day:"numeric",month:"short"})}` : (f.courses.length?`${f.courses.length} ders`:"boş");
+    return `<button class="${view==="kurul" && f.id===state.id?"on":""}" data-navk="${f.id}">${esc(f.name)}<small>${d}</small></button>`; }).join("");
+}
+function renderHome(){
+  let body="";
+  if(SA){
+    body = CUR ? `<div class="muted" style="font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-size:12px">👤 Hesabım</div>
+      <div class="row" style="align-items:baseline;gap:12px"><span class="code-big">${esc(CUR)}</span><span class="muted">kişisel kodun</span></div>
+      <p class="muted" style="margin:4px 0 0">Telefonda, bilgisayarda, tablette girişte bu kodu yazarsın; verilerin her değişiklikte otomatik kaydediliyor.</p>
+      <div class="row" style="margin-top:12px"><a class="wa" href="https://wa.me/?text=${encodeURIComponent(saMsg())}" target="_blank" rel="noopener">🟢 Kodumu WhatsApp'a gönder</a>
+        <button class="ghost" id="hCopy">Kodu kopyala</button><button class="ghost" id="hOut">Çıkış yap</button><span class="muted" id="hSt"></span></div>` : `<p class="muted">Giriş yapılmadı.</p>`;
+  } else if(claudeMode){
+    body = `<div class="muted" style="font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-size:12px">👤 Hesabım</div><h2 style="margin:6px 0 0">☁️ Claude hesabınla giriş yaptın</h2><p class="muted" style="margin:4px 0 0">Verilerin her cihazda otomatik kaydediliyor.</p>`;
+  } else {
+    body = `<div class="muted" style="font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-size:12px">👤 Hesabım</div>
+      <div class="row" style="align-items:baseline;gap:12px"><span class="code-big">${esc(CUR||"—")}</span><span class="muted">kişisel kodun</span></div>
+      <p class="muted" style="margin:4px 0 0">Bu cihazda girişte bu kodu yazarsın. Başka cihaza geçerken "Kodum"dan güncel halini WhatsApp'a gönder.</p>`;
+  }
+  $("accountBody").innerHTML = body;
+  $("accountBtns").style.display = (SA || claudeMode) ? "none" : "";
+  if($("hCopy")) $("hCopy").onclick = async ()=>{ try{ await navigator.clipboard.writeText(CUR); $("hSt").textContent="Kopyalandı ✓"; }catch(e){ $("hSt").textContent=CUR; } };
+  if($("hOut")) $("hOut").onclick = async ()=>{ if(!await askConfirm("Çıkış yapılsın mı?", `Tekrar girmek için ${CUR} koduna ihtiyacın olacak.`)) return; lsSet(CUR_KEY,""); location.reload(); };
+}
+$("menuBtn").onclick = ()=>openDrawer(true);
+$("drawerClose").onclick = ()=>openDrawer(false);
+$("drawerBg").onclick = ()=>openDrawer(false);
+document.addEventListener("keydown", e=>{ if(e.key==="Escape") openDrawer(false); });
+$("drawer").addEventListener("click", e=>{
+  const b=e.target.closest("button"); if(!b) return; const d=b.dataset;
+  if(d.nav==="home"){ openDrawer(false); showView("home"); }
+  else if(d.navtoggle){ navOpen=!navOpen; renderDrawer(); }
+  else if(d.navnew){ openDrawer(false); showView("kurul"); folderForm="new"; renderFolders(); }
+  else if(d.navk){ openDrawer(false); switchTo(d.navk); }
+});
 
 function renderFolders(){
-  const chips = root.folders.map(f=>{
-    const d = f.examDate ? new Date(f.examDate+"T00:00:00").toLocaleDateString("tr-TR",{day:"numeric",month:"short"}) : "";
-    return `<button class="chip ${f.id===state.id?"on":""}" data-folder="${f.id}">${esc(f.name)}${d?`<small>${d}</small>`:""}</button>`;
-  }).join("");
-  const form = folderForm ? `<form class="folder-form" id="folderForm"><input id="fName" placeholder="ör. Dönem 2 – 3. Kurul" value="${folderForm==="rename"?esc(state.name):""}" required><button type="submit">${folderForm==="rename"?"Kaydet":"Oluştur"}</button><button type="button" class="ghost" data-fcancel="1">Vazgeç</button></form>`
-    : `<button class="chip new" data-fnew="1">+ Yeni kurul</button>`;
-  const tools = `<div class="folder-tools"><button class="ghost" data-fshare="1">🔗 Paylaş</button><button class="ghost" data-fcode="1">Kod ile ekle</button><button class="ghost" data-frename="1">Adını değiştir</button>${
+  const d = state.examDate ? new Date(state.examDate+"T00:00:00").toLocaleDateString("tr-TR",{day:"numeric",month:"long"}) : "";
+  const title = folderForm ? `<form class="folder-form" id="folderForm"><input id="fName" placeholder="${folderForm==="new"?"Yeni kurul adı, ör. Dönem 2 – 3. Kurul":""}" value="${folderForm==="rename"?esc(state.name):""}" required><button type="submit">${folderForm==="rename"?"Kaydet":"Kurulu oluştur"}</button><button type="button" class="ghost" data-fcancel="1">Vazgeç</button></form>`
+    : `<h2>${esc(state.name)}</h2>${d?`<span class="muted">Sınav: ${d}</span>`:""}`;
+  const tools = folderForm ? "" : `<div class="folder-tools">${SA && state.courses.length ? `<button class="ghost" data-fpub="1">🌍 Kütüphaneye paylaş</button>` : ""}<button class="ghost" data-fshare="1">🔗 Paylaş</button><button class="ghost" data-fcode="1">Kod ile ekle</button><button class="ghost" data-frename="1">Adını değiştir</button>${
     root.folders.length>1 ? `<button class="ghost" data-fdel="1">Kurulu sil</button>`:""}</div>`;
-  $("folders").innerHTML = chips + form + tools;
+  $("folders").innerHTML = `<div class="kurul-title" style="flex:1">${title}</div>` + tools;
   if(folderForm){ const i=$("fName"); i.focus(); i.select(); }
 }
 
@@ -678,7 +798,7 @@ function fmtH(h){ return (Math.round(h*10)/10).toString().replace(".",",") + " s
 
 function render(){
   if(!state) return;
-  renderFolders();
+  renderFolders(); renderHome(); renderDrawer();
   $("examDate").value = state.examDate; $("startDate").value = state.startDate||""; $("perLec").value = state.perLec||2;
   $("dailyHours").value = state.dailyHours;
   $("reviewDay").value = String(state.reviewDay);
@@ -997,6 +1117,7 @@ $("folders").addEventListener("click", e=>{
   if(d.folder) switchTo(d.folder);
   else if(d.fnew){ folderForm="new"; confirmDel=false; renderFolders(); }
   else if(d.fshare) openShare();
+  else if(d.fpub) openPublish();
   else if(d.fcode) openCodeImport();
   else if(d.frename){ folderForm="rename"; confirmDel=false; renderFolders(); }
   else if(d.fcancel){ folderForm=null; renderFolders(); }
@@ -1238,7 +1359,7 @@ function openWelcome(force){
   setTimeout(()=>$("wCode").focus(),50);
 }
 
-// ================= ASIL SİTE (SA): 6 haneli kodla gerçek hesap =================
+// ================= ASIL SİTE (SA): 4 haneli kodla gerçek hesap (eski 6 haneliler de geçerli) =================
 function saMsg(){ return `📚 Sınav Asistanı · Kodum: ${CUR}\n${SITE_URL}\nHer cihazda girişte bu kodu yaz, verilerin gelir.`; }
 async function saLogin(code){
   const r = await fetch("/api/data?code="+encodeURIComponent(code),{cache:"no-store"});
@@ -1257,10 +1378,10 @@ function openWelcomeSA(){
   const box="font:inherit;width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)";
   el.innerHTML=`<div class="modal"><h2>👋 Sınav Haftası Asistanı</h2>
     <div id="wStep1">
-      <label class="f" style="margin-top:10px">Kodunla giriş yap<input id="wCode" maxlength="6" autocapitalize="characters" autocomplete="off" placeholder="ABC123" style="${box};font-size:26px;letter-spacing:.3em;text-align:center;text-transform:uppercase"></label>
+      <label class="f" style="margin-top:10px">Kodunla giriş yap<input id="wCode" maxlength="6" autocapitalize="characters" autocomplete="off" placeholder="AB12" style="${box};font-size:30px;letter-spacing:.4em;text-align:center;text-transform:uppercase"></label>
       <div class="row" style="margin-top:8px"><button id="wGo" style="flex:1">Giriş</button></div>
       <p class="muted" id="wSt" style="margin:8px 0 0"></p>
-      <button class="choice" id="wNew" style="margin-top:14px">✨ İlk kez kullanıyorum<small>Sana 6 haneli kişisel bir kod verelim — her cihazda onunla girersin</small></button>
+      <button class="choice" id="wNew" style="margin-top:14px">✨ İlk kez kullanıyorum<small>Sana 4 haneli kişisel bir kod verelim — her cihazda onunla girersin</small></button>
     </div>
     <div id="wStep2" style="display:none;text-align:center">
       <p class="muted">Kişisel kodun:</p>
@@ -1269,11 +1390,10 @@ function openWelcomeSA(){
       <div class="row" style="justify-content:center;margin-top:10px"><a class="wa" id="wWa" target="_blank" rel="noopener">🟢 Kodumu WhatsApp'a gönder</a><button class="ghost" id="wDone">Başla →</button></div>
     </div></div>`;
   document.body.append(el);
-  const clean = v => v.toUpperCase().replace(/[^A-Z0-9]/g,"").replace(/O/g,"0").replace(/[IL]/g,"1").slice(0,6);
   $("wCode").oninput = e=>{ e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,6); };
   const go = async ()=>{
     const v = $("wCode").value.toUpperCase();
-    if(v.length!==6){ $("wSt").textContent="Kod 6 karakter olmalı."; return; }
+    if(v.length!==4 && v.length!==6){ $("wSt").textContent="Kod 4 karakter olmalı (harf ve rakam)."; return; }
     $("wGo").disabled=true; $("wSt").textContent="Giriş yapılıyor…";
     try{ await saLogin(v); }catch(e){ $("wSt").textContent=String(e); $("wGo").disabled=false; }
   };
@@ -1305,7 +1425,62 @@ function openAccountPanel(){
     lsSet(CUR_KEY,""); location.reload();
   };
 }
+// ---- Hazır kurul kütüphanesi (SA) ----
+async function importFolderObj(f){
+  const ex = matchFolder({kurul_adi:f.name});
+  if(ex && await askConfirm(`"${ex.name}" kurulun zaten var. Güncelleyeyim mi?`, "Evet: program, konular ve tarihler güncellenir, ilerlemen korunur. Hayır: ayrı bir kurul olarak eklenir.")){ mergeFolderInto(ex, f); return ex.id; }
+  root.folders.push(f); return f.id;
+}
+async function openLibrary(){
+  const P=$("sharePanel"); P.style.display="";
+  P.innerHTML=`<div class="row" style="justify-content:space-between"><h2 style="margin:0">📚 Hazır kurullar</h2><button class="ghost" data-pclose="1">Kapat</button></div>
+    <p class="muted" style="margin:6px 0 10px">Başkalarının PDF'ten ayıklayıp paylaştığı kurullar. Seç, ekle — kendi ilerlemen sende kalır.</p>
+    <input id="libQ" placeholder="Ara: kurul, okul, dönem…" style="margin-bottom:10px"><div id="libList"><div class="empty">Yükleniyor…</div></div>`;
+  let items=[];
+  const draw=()=>{
+    const q=norm($("libQ").value); const list=items.filter(it=>!q || norm(it.name+" "+it.school).includes(q));
+    $("libList").innerHTML = list.length ? list.map(it=>`<div class="day" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <div style="flex:1;min-width:200px"><b>${esc(it.name)}</b>${it.school?` <span class="muted">· ${esc(it.school)}</span>`:""}
+          <div class="muted">${it.courses} ders · ${it.topics} konu${it.sessions?` · ${it.sessions} saatlik program`:""} · ${new Date(it.createdAt).toLocaleDateString("tr-TR",{day:"numeric",month:"short"})}${it.mine?" · <b>senin paylaşımın</b>":""}</div></div>
+        <button data-libadd="${it.id}">Ekle</button>${it.mine?`<button class="ghost" data-libdel="${it.id}">Kaldır</button>`:""}</div>`).join("")
+      : `<div class="empty">${items.length?"Aramaya uyan kurul yok.":"Henüz paylaşılmış kurul yok. İlk paylaşan sen ol: kurulunu ekle → 🌍 Kütüphaneye paylaş."}</div>`;
+  };
+  try{ const r=await fetch("/api/library?me="+encodeURIComponent(CUR||""),{cache:"no-store"}); items=(await r.json()).items||[]; }
+  catch(e){ $("libList").innerHTML=`<div class="empty">Kütüphaneye ulaşılamadı.</div>`; return; }
+  draw(); $("libQ").oninput=draw;
+  $("libList").onclick=async e=>{
+    const add=e.target.dataset.libadd, del=e.target.dataset.libdel;
+    if(add){ e.target.disabled=true; e.target.textContent="Ekleniyor…";
+      try{ const r=await fetch("/api/library?id="+add); const j=await r.json(); if(!r.ok) throw j.error;
+        const id=await importFolderObj(await decodeFolder(j.data));
+        root.folders=root.folders.filter(f=>f.courses.length || f.id===id || root.folders.length===1);
+        P.style.display="none"; switchTo(id);
+      }catch(err){ e.target.textContent="Olmadı"; } }
+    if(del && await askConfirm("Kütüphaneden kaldırılsın mı?","Başkalarının eklediği kopyalar silinmez.")){
+      await fetch("/api/library",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({code:CUR,id:del})});
+      items=items.filter(it=>it.id!==del); draw(); }
+  };
+}
+function openPublish(){
+  const P=$("sharePanel"); P.style.display="";
+  P.innerHTML=`<div class="row" style="justify-content:space-between"><h2 style="margin:0">🌍 Kütüphaneye paylaş</h2><button class="ghost" data-pclose="1">Kapat</button></div>
+    <p class="muted" style="margin:6px 0 10px">Kurulun dersleri, konuları, tarihleri ve ders programı herkese açık "Hazır kurullar" listesine eklenir. <b>Senin ilerlemen ve kodun paylaşılmaz.</b></p>
+    <div class="row"><label class="f" style="flex:2">Kurul adı<input id="pubName" value="${esc(state.name)}"></label>
+      <label class="f" style="flex:2">Okul / sınıf<input id="pubSchool" placeholder="ör. Sakarya Tıp · Dönem 2 · 2026-27"></label></div>
+    <div class="row" style="margin-top:10px"><button id="pubGo">Paylaş</button><span class="muted" id="pubSt"></span></div>`;
+  $("pubGo").onclick=async()=>{
+    $("pubGo").disabled=true; $("pubSt").textContent="Paylaşılıyor…";
+    try{
+      const body={ code:CUR, name:$("pubName").value.trim()||state.name, school:$("pubSchool").value.trim(), data:await encodeFolder(state),
+        courses:state.courses.length, topics:state.topics.filter(t=>!isPlaceholder(t)).length, sessions:(state.sessions||[]).length };
+      const r=await fetch("/api/library",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}); const j=await r.json();
+      if(!r.ok) throw j.error||"Olmadı";
+      $("pubSt").innerHTML='<b style="color:var(--good)">Paylaşıldı ✓</b> Artık herkes "📚 Hazır kurullar"dan ekleyebilir.';
+    }catch(e){ $("pubSt").textContent=String(e); $("pubGo").disabled=false; }
+  };
+}
 if(SA){
+  $("saLibBtn").onclick = openLibrary;
   $("deviceBtn").onclick = openAccountPanel;
   $("saCard").style.display="";
   $("saCodeBtn").onclick = openCodeImport;
