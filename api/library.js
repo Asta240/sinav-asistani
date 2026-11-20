@@ -3,10 +3,12 @@
 // GET    /api/library?id=XXXX           → tek kurulun kurul kodu (KRL1…)
 // POST   /api/library {code,name,school,data} → kütüphaneye ekle (hesap kodu gerekli, yasaklı değilse)
 // POST   /api/library {action:"restore",code,id} → silineni geri al (10 dk içinde; yasak da kalkar)
+// GET    /api/library?me=ADMIN&bans=1 → yasaklılar listesi (sadece admin)
+// POST   /api/library {action:"unban",code,by} → yasağı kaldır (sadece admin)
 // DELETE /api/library {code,id,ban}     → sil (paylaşan ya da admin). ban:true (sadece admin) → paylaşanı yasakla
 const crypto = require("crypto");
 const { redis, CODE_RE, cleanCode, ipOf, overLimit, send, today } = require("./_lib");
-const LIST = "lib:list", BANNED = "lib:banned";
+const LIST = "lib:list", BANNED = "lib:banned", BANS = "lib:bans";
 const MAX_DATA = 300 * 1024, MAX_ITEMS = 300, TRASH_TTL = 600;
 const owner = code => crypto.createHash("sha256").update("lib:" + code).digest("hex").slice(0, 16);
 const ipHash = req => "ip:" + crypto.createHash("sha256").update("libip:" + ipOf(req)).digest("hex").slice(0, 16);
@@ -24,9 +26,24 @@ module.exports = async (req, res) => {
         return send(res, 200, JSON.parse(raw));
       }
       const meCode = q.me ? cleanCode(q.me) : "";
+      if (q.bans) {
+        if (!isAdmin(meCode)) return send(res, 403, { error: "Sadece yönetici." });
+        const h = await redis("HGETALL", BANS) || [];
+        const bans = []; for (let i = 0; i < h.length; i += 2) bans.push({ by: h[i], ...JSON.parse(h[i + 1]) });
+        bans.sort((a, b) => b.at - a.at);
+        return send(res, 200, { bans: bans.map(({ ip, ...x }) => x) });
+      }
       const me = meCode ? owner(meCode) : null;
       const items = (await redis("LRANGE", LIST, 0, MAX_ITEMS - 1) || []).map(x => JSON.parse(x));
       return send(res, 200, { admin: isAdmin(meCode), items: items.map(({ by, ip, ...it }) => ({ ...it, mine: !!me && by === me })) });
+    }
+    if (req.method === "POST" && b.action === "unban") {
+      if (!isAdmin(cleanCode(b.code))) return send(res, 403, { error: "Sadece yönetici." });
+      const by = clip(b.by, 40), raw = await redis("HGET", BANS, by);
+      await redis("SREM", BANNED, by);
+      if (raw) { const r = JSON.parse(raw); if (r.ip) await redis("SREM", BANNED, r.ip); }
+      await redis("HDEL", BANS, by);
+      return send(res, 200, { ok: true });
     }
     if (req.method === "POST" && b.action === "restore") {
       const code = cleanCode(b.code), id = clip(b.id, 20);
@@ -37,7 +54,7 @@ module.exports = async (req, res) => {
       await redis("SET", `lib:item:${id}`, t.item);
       await redis("LPUSH", LIST, t.meta);
       await redis("LTRIM", LIST, 0, MAX_ITEMS - 1);
-      if (t.banned) { await redis("SREM", BANNED, meta.by); if (meta.ip) await redis("SREM", BANNED, meta.ip); }
+      if (t.banned) { await redis("SREM", BANNED, meta.by); if (meta.ip) await redis("SREM", BANNED, meta.ip); await redis("HDEL", BANS, meta.by); }
       await redis("DEL", `lib:trash:${id}`);
       return send(res, 200, { ok: true, id });
     }
@@ -71,7 +88,10 @@ module.exports = async (req, res) => {
       await redis("SET", `lib:trash:${id}`, JSON.stringify({ meta: raw, item, banned: ban }), "EX", TRASH_TTL);
       await redis("LREM", LIST, 1, raw);
       await redis("DEL", `lib:item:${id}`);
-      if (ban) { await redis("SADD", BANNED, meta.by); if (meta.ip) await redis("SADD", BANNED, meta.ip); }
+      if (ban) {
+        await redis("SADD", BANNED, meta.by); if (meta.ip) await redis("SADD", BANNED, meta.ip);
+        await redis("HSET", BANS, meta.by, JSON.stringify({ at: Date.now(), name: meta.name, school: meta.school || "", ip: meta.ip || "" }));
+      }
       return send(res, 200, { ok: true, banned: ban });
     }
     send(res, 405, { error: "Desteklenmeyen istek" });

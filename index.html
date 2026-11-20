@@ -343,7 +343,11 @@
   .undo-bar{position:absolute;left:0;bottom:0;height:3px;width:100%;background:var(--accent);transform-origin:left;animation:undoBar linear forwards}
   @keyframes undoBar{from{transform:scaleX(1)}to{transform:scaleX(0)}}
   .ban-btn{color:var(--bad)!important;border-color:var(--bad)!important}
-  .admin-note{background:var(--warn-soft);color:var(--warn);border-radius:10px;padding:8px 12px;font-size:13px;margin-bottom:10px;font-weight:600}
+  .admin-note{background:var(--warn-soft);color:var(--warn);border-radius:10px;padding:8px 12px;font-size:13px;margin-bottom:10px;font-weight:600;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+  .admin-note .ghost{padding:5px 10px;font-size:13px}
+  .bans{border:1px solid var(--bad);border-radius:12px;padding:10px 12px;margin-bottom:12px}
+  .bans>b{color:var(--bad)}
+  .ban-row{display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line);margin-top:6px}
   .pub-on{color:var(--good)!important;border-color:var(--good)!important}
   .add-topic{background:transparent;color:var(--accent);padding:6px 0;font-size:14px}
   .add label.f{font-size:11px}
@@ -1949,7 +1953,26 @@ async function openLibrary(){
   };
   try{ const r=await fetch("/api/library?me="+encodeURIComponent(CUR||""),{cache:"no-store"}); const j=await r.json(); items=j.items||[]; admin=!!j.admin; }
   catch(e){ $("libList").innerHTML=`<div class="empty">Kütüphaneye ulaşılamadı.</div>`; return; }
-  if(admin) $("libList").insertAdjacentHTML("beforebegin",`<div class="admin-note">🛡️ Yönetici modu — tüm paylaşımları kaldırabilir, kötü paylaşanı yasaklayabilirsin.</div>`);
+  if(admin){
+    $("libList").insertAdjacentHTML("beforebegin",`<div class="admin-note"><span>🛡️ Yönetici modu — tüm paylaşımları kaldırabilir, kötü paylaşanı yasaklayabilirsin.</span><button class="ghost" id="bansBtn">🚫 Yasaklılar</button></div><div id="bansBox" style="display:none"></div>`);
+    let bansOpen=false;
+    const loadBans=async()=>{
+      const B=$("bansBox"); if(!B) return; B.innerHTML=`<div class="empty">Yükleniyor…</div>`;
+      try{ const r=await fetch("/api/library?bans=1&me="+encodeURIComponent(CUR||""),{cache:"no-store"}); const j=await r.json(); if(!r.ok) throw j.error;
+        const bans=j.bans||[]; $("bansBtn").textContent=`🚫 Yasaklılar (${bans.length})`;
+        B.innerHTML=`<div class="bans"><b>🚫 Yasaklılar</b>${bans.length ? bans.map(x=>`<div class="ban-row"><div style="flex:1;min-width:0"><b>${esc(x.name||"?")}</b>${x.school?` <span class="muted">· ${esc(x.school)}</span>`:""}<div class="muted" style="font-size:12px">Bu paylaşım yüzünden · ${new Date(x.at).toLocaleString("tr-TR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}</div></div><button class="ghost" data-unban="${esc(x.by)}">Yasağı kaldır</button></div>`).join("") : `<div class="muted" style="margin-top:6px">Yasaklı kimse yok.</div>`}</div>`;
+      }catch(e){ B.innerHTML=`<div class="empty">Liste alınamadı.</div>`; }
+    };
+    $("bansBtn").onclick=()=>{ bansOpen=!bansOpen; $("bansBox").style.display=bansOpen?"":"none"; if(bansOpen) loadBans(); };
+    $("bansBox").onclick=async e=>{
+      const by=e.target.dataset.unban; if(!by) return;
+      e.target.disabled=true; e.target.textContent="Kaldırılıyor…";
+      const r=await fetch("/api/library",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"unban",code:CUR,by})});
+      if(r.ok){ toast("✓ Yasak kaldırıldı","Bu kişi tekrar paylaşım yapabilir"); loadBans(); } else { e.target.textContent="Olmadı"; }
+    };
+    window._reloadBans=()=>{ if(bansOpen) loadBans(); else fetch("/api/library?bans=1&me="+encodeURIComponent(CUR||""),{cache:"no-store"}).then(r=>r.json()).then(j=>{ if($("bansBtn")) $("bansBtn").textContent=`🚫 Yasaklılar (${(j.bans||[]).length})`; }).catch(()=>{}); };
+    window._reloadBans();
+  }
   draw(); $("libQ").oninput=draw;
   $("libList").onclick=async e=>{
     const add=e.target.dataset.libadd, del=e.target.dataset.libdel, ban=e.target.dataset.libban;
@@ -1966,10 +1989,10 @@ async function openLibrary(){
     const r=await fetch("/api/library",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({code:CUR,id,ban:!!ban})});
     if(!r.ok){ const j=await r.json().catch(()=>({})); toast("Olmadı", j.error||""); return; }
     const pos=items.indexOf(it); items=items.filter(x=>x!==it); draw();
-    const mineF=root.folders.find(f=>f.publishedId===id); clearPublished(id);
+    const mineF=root.folders.find(f=>f.publishedId===id); clearPublished(id); if(ban && window._reloadBans) window._reloadBans();
     toastUndo(ban?"🚫 Kaldırıldı ve yasaklandı":"✓ Kütüphaneden kaldırıldı", ban?"Paylaşan artık paylaşım yapamaz":"Yanlışlıkla mı bastın?", async()=>{
       await libRestore(id); items.splice(Math.max(0,pos),0,it); if(document.contains($("libList"))) draw();
-      if(mineF){ mineF.publishedId=id; save(); render(); }
+      if(mineF){ mineF.publishedId=id; save(); render(); } if(ban && window._reloadBans) window._reloadBans();
       toast("↶ Geri alındı", ban?"Paylaşım geri geldi, yasak kaldırıldı":"Kurul tekrar kütüphanede");
     });
   };

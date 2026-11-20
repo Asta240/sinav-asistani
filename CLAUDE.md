@@ -21,7 +21,7 @@ claude.ai artifact'lerini sadece Yasin'in kendi Claude hesabındaki bir oturum g
 - `src/sinav-asistani.html` → **tek kaynak dosya**. Düzenlemeyi burada yap.
 - `python3 build.py` → `index.html`'i üretir (başına `window.STANDALONE=true` ekler). **index.html'i elle düzenleme.**
 - `api/_lib.js` Upstash Redis REST bağlantısı, kod üretimi (4 karakter, `23456789ABCDEFGHJKMNPQRSTUVWXYZ`; eski 6 karakterliler de geçerli), hız sınırları.
-- `api/new.js` yeni kod · `api/data.js` GET/PUT veri (sunucu sürümü `updatedAt`; PUT `base` farklıysa 409) · `api/library.js` herkese açık "Hazır kurullar" kütüphanesi (silme: paylaşan ya da env `ADMIN_CODE`; silinen 10 dk `lib:trash:ID`de durur → `POST {action:"restore"}` ile geri alınır; admin `ban:true` ile paylaşanı (kod + IP hash) `lib:banned` set'ine ekler).
+- `api/new.js` yeni kod · `api/data.js` GET/PUT veri (sunucu sürümü `updatedAt`; PUT `base` farklıysa 409) · `api/library.js` herkese açık "Hazır kurullar" kütüphanesi (silme: paylaşan ya da env `ADMIN_CODE`; silinen 10 dk `lib:trash:ID`de durur → `POST {action:"restore"}` ile geri alınır; admin `ban:true` ile paylaşanı (kod + IP hash) `lib:banned` set'ine ekler, kaydı `lib:bans` hash; `?bans=1` liste, `POST {action:"unban",by}` kaldırır).
 - Ortam değişkenleri (Vercel): `KV_REST_API_URL`, `KV_REST_API_TOKEN` (Upstash), isteğe bağlı `ADMIN_CODE`.
 
 ## Uygulama mantığı (src içinde)
