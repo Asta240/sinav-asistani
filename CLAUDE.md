@@ -52,7 +52,7 @@ claude.ai artifact'lerini sadece Yasin'in kendi Claude hesabındaki bir oturum g
 
 ## Sürüm notları (Update Log)
 - `UPDATE_LOG` (src içinde) — yeni sürüm EN ÜSTE eklenir; v1.0.0'dan başladı. **Bir sürümde en fazla 3 madde**, 4. madde yeni yama sürümü (v1.0.1…) açar. Dil resmi.
-- Her yeni özelliğe `NEW_IN[key]=sürüm` + `newRib(key)` ile "YENİ" şeridi; sadece en son sürümde görünür.
+- Her yeni özelliğe `NEW_IN[key]=sürüm` + `newRib(key)` ile "YENİ" şeridi: sürümden sonra 7 gün görünür, kullanıcı o şeye basınca kaybolur (`root.settings.seenNew`).
 - Görmediği sürümü kullanıcı açılışta bir kez görür (`root.settings.seenVer`). Menü "Sürüm notları" + footer'daki sürüm numarası açar.
 - Silme / sıfırlama işlemleri `askConfirm` ile onay ister.
 - **Netlify bedava plan: her yayın (push to main) 15 kredi, ayda 300.** Değişiklikleri biriktir, Yasin "yayınla" deyince push et.

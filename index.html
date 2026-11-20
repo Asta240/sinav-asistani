@@ -627,13 +627,14 @@
   <button class="nav-item" data-nav="settings">Ayarlar</button>
   <button class="nav-item" data-nav="home">Ana sayfa</button>
   <button class="nav-item" data-nav="add">Kurul ekle</button>
-  <button class="nav-item" id="navNotes" data-nav="notes" style="display:none">Notlar & slaytlar</button>
   <div class="nav-row"><button class="nav-item" id="navTrack" data-navtoggle="1"><span>Sınav takibi</span><span class="chev">▸</span></button><button class="nav-edit" id="navEdit" data-navedit="track" title="Sırala / düzenle"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>
   <div id="navKurullar" class="nav-sub" style="display:none"></div>
+  <button class="nav-item" id="navNotes" data-nav="notes" style="display:none">Notlar & slaytlar</button>
+  <button class="nav-item nav-faq" data-nav="faq">Sık sorulan sorular</button>
+  
+  <button class="nav-item" id="navUpd" data-nav="updates">Sürüm notları</button>
   <div class="nav-row" id="navArchRow" style="display:none"><button class="nav-item" id="navArch" data-navarch="1"><span>Arşiv <span class="muted" id="archCount"></span></span><span class="chev">▸</span></button><button class="nav-edit" id="navArchEdit" data-navedit="arch" title="Sırala / düzenle"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>
   <div id="navArchList" class="nav-sub" style="display:none"></div>
-  <button class="nav-item nav-faq" data-nav="faq">Sık sorulan sorular</button>
-  <button class="nav-item" id="navUpd" data-nav="updates">Sürüm notları</button>
   <div class="drawer-sig">Sınav Haftası Asistanı<br><b>CardiacAI</b> · 2026 · <span id="verSig">v1.0.0</span></div>
 </aside>
 
@@ -1020,7 +1021,11 @@ const UPDATE_LOG = [
 const LATEST = UPDATE_LOG[0].ver;
 // "YENİ" şeridi: özelliğin eklendiği sürüm çıktıktan sonraki 7 gün boyunca gösterilir
 const NEW_IN = { updlog:"v1.0.0", lang:"v1.0.1", stats:"v1.0.1", ics:"v1.0.1", pwa:"v1.0.2", today:"v1.0.2", badges:"v1.0.2", name:"v1.0.3", notes:"v1.0.3" };
-const newRib = k => { const v=UPDATE_LOG.find(x=>x.ver===NEW_IN[k]); return v && (Date.now()-new Date(v.date+"T00:00").getTime()) < 7*864e5 ? `<span class="new-rib">YENİ</span>` : ""; };
+// Şerit: sürüm çıktıktan sonra 7 gün görünür; kullanıcı o yeni şeye bir kez basınca kaybolur (root.settings.seenNew)
+const newRib = k => { const v=UPDATE_LOG.find(x=>x.ver===NEW_IN[k]); const seen=root && root.settings && root.settings.seenNew && root.settings.seenNew[k];
+  return v && !seen && (Date.now()-new Date(v.date+"T00:00").getTime()) < 7*864e5 ? `<span class="new-rib" data-rib="${k}">YENİ</span>` : ""; };
+function markNewSeen(k){ if(!root) return; root.settings=root.settings||{}; const S=root.settings.seenNew=root.settings.seenNew||{}; if(S[k]) return; S[k]=1; document.querySelectorAll(`[data-rib="${k}"]`).forEach(x=>x.remove()); save(); }
+document.addEventListener("click", e=>{ const host=e.target.closest("button, a, .card, section, .continue"); if(!host) return; host.querySelectorAll("[data-rib]").forEach(r=>markNewSeen(r.dataset.rib)); }, true);
 function showUpdateLog(all){
   $("whatsNew")?.remove();
   const list = all ? UPDATE_LOG : UPDATE_LOG.slice(0,1);
@@ -1365,7 +1370,7 @@ function sortedFolders(){
   return arr;
 }
 function setManualOrder(ids){ const rest=sortedFolders().map(f=>f.id).filter(id=>!ids.includes(id)); root.kurulOrder=[...ids, ...rest]; root.kurulSort="manual"; save(); renderDrawer(); }
-function showView(v){ view=v; $("sharePanel").style.display="none"; $("homeView").style.display = v==="home"?"":"none"; $("addView").style.display = v==="add"?"":"none"; $("settingsView").style.display = v==="settings"?"":"none"; if(v==="settings") renderSettings(); $("faqView").style.display = v==="faq"?"":"none"; if(v==="faq") renderFaq(); $("updView").style.display = v==="updates"?"":"none"; if(v==="updates") renderUpdates(); $("notesView").style.display = v==="notes"?"":"none"; if(v==="notes") renderNotes(); $("kurulView").style.display = v==="kurul"?"":"none"; renderDrawer(); if(v==="home") renderQuote(); window.scrollTo({top:0}); }
+function showView(v){ view=v; $("sharePanel").style.display="none"; $("homeView").style.display = v==="home"?"":"none"; $("addView").style.display = v==="add"?"":"none"; $("settingsView").style.display = v==="settings"?"":"none"; if(v==="settings") renderSettings(); $("faqView").style.display = v==="faq"?"":"none"; if(v==="faq") renderFaq(); $("updView").style.display = v==="updates"?"":"none"; if(v==="updates"){ markNewSeen("updlog"); renderUpdates(); } $("notesView").style.display = v==="notes"?"":"none"; if(v==="notes"){ markNewSeen("notes"); renderNotes(); } $("kurulView").style.display = v==="kurul"?"":"none"; renderDrawer(); if(v==="home") renderQuote(); window.scrollTo({top:0}); }
 function openDrawer(o){ if(!o) navEdit=null; document.body.classList.toggle("drawer-open", o); $("drawer").setAttribute("aria-hidden", o?"false":"true"); if(o) renderDrawer(); }
 function renderDrawer(){
   if($("navNotes")){ $("navNotes").style.display = SA ? "" : "none"; $("navNotes").innerHTML = `Notlar & slaytlar${newRib("notes")}`; }
@@ -1643,7 +1648,7 @@ document.getElementById("settingsBody").addEventListener("click", e=>{
   applySettings(); save(); renderSettings();
 });
 $("gearBtn").onclick = openSettings;
-$("langBtn").onclick = ()=> setLang(LANG==="tr" ? "en" : "tr");
+$("langBtn").onclick = ()=>{ markNewSeen("lang"); setLang(LANG==="tr" ? "en" : "tr"); };
 // sürükle-bırak (fare); telefonda ↑↓ butonları
 let dragId=null;
 $("drawer").addEventListener("dragstart", e=>{ const it=e.target.closest("[data-dragid]"); if(!it) return; dragId=it.dataset.dragid; it.classList.add("dragging"); e.dataTransfer.effectAllowed="move"; try{ e.dataTransfer.setData("text/plain", dragId); }catch(_){} });
