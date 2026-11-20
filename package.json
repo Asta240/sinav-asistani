@@ -1,0 +1,5 @@
+{
+  "name": "sinav-haftasi-asistani",
+  "private": true,
+  "engines": { "node": ">=18" }
+}
