@@ -11,7 +11,7 @@ Proje sahibi: Yasin (Türkçe, samimi ve kısa yazar; hızlı yazdığı için y
 ## Parçalar
 | Parça | Nerede | Not |
 |---|---|---|
-| Asıl site | https://sinav-asistani1.netlify.app (bu repo; `netlify.toml` + `netlify/functions/api.js` adaptörü `api/*.js`'i çalıştırır) | **vercel.app Türkiye'de engelli (USOM)**, bu yüzden Netlify'a taşındı |
+| Asıl site | https://sinav-asistani.netlify.app (bu repo; `netlify.toml` + `netlify/functions/api.js` adaptörü `api/*.js`'i çalıştırır) | **vercel.app Türkiye'de engelli (USOM)**, bu yüzden Netlify'a taşındı |
 | Eski adres | https://sinav-asistani-ten.vercel.app (Vercel, hâlâ çalışır ama TR'de VPN'siz açılmaz) | `index.html` + `api/` |
 | PDF Ayırıcı | https://claude.ai/artifact/Ds98xGWsqprjqbzfDFFvtT | claude.ai artifact; Claude kitapçığı okuyup **kurul kodu** (KRL1.…) üretir. Kaynağı: `extras/pdf-ayirici/` |
 | Eski claude.ai sürümü | https://claude.ai/artifact/Vfzzj8XBE6L9LVLFrU7Lvg | Artık asıl site Vercel. Kaynak aynı (`src/`), STANDALONE=false |
