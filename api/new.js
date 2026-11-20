@@ -1,5 +1,5 @@
 // POST /api/new  → yeni 4 haneli kod üretir ve boş kayıt açar
-const { redis, newCode, ipOf, overLimit, send, today } = require("./_lib");
+const { redis, newCode, ipOf, overLimit, send, today, indexUser } = require("./_lib");
 
 module.exports = async (req, res) => {
   if (req.method !== "POST") return send(res, 405, { error: "POST kullan" });
@@ -11,7 +11,7 @@ module.exports = async (req, res) => {
       const code = newCode();
       // NX: sadece yoksa oluştur (çakışma olmasın)
       const ok = await redis("SET", `u:${code}`, JSON.stringify({ json: null, updatedAt: 0 }), "NX");
-      if (ok === "OK") return send(res, 200, { code });
+      if (ok === "OK") { try { await indexUser(code, null); } catch (e) {} return send(res, 200, { code }); }
     }
     send(res, 500, { error: "Kod üretilemedi, tekrar dene." });
   } catch (e) { send(res, 500, { error: e.message }); }

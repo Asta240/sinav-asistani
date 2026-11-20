@@ -42,5 +42,14 @@ function send(res, status, obj) {
   res.end(JSON.stringify(obj));
 }
 const today = () => new Date().toISOString().slice(0, 10);
+// Yöneticiler: ADMIN_CODE'a virgülle birden fazla kod yazılabilir (ör. "AB12,CD34")
+const adminCodes = () => String(process.env.ADMIN_CODE || "").split(/[,\s;]+/).map(cleanCode).filter(Boolean);
+const isAdmin = code => !!code && adminCodes().includes(cleanCode(code));
+// Yönetici sayfası için hafif kullanıcı dizini: users hash → kod: {name, at, k}
+async function indexUser(code, json) {
+  let name = "", k = 0;
+  try { const d = JSON.parse(json || "null"); name = String((d && d.profile && d.profile.name) || "").slice(0, 24); k = ((d && d.folders) || []).filter(f => f.courses && f.courses.length).length; } catch (e) {}
+  await redis("HSET", "users", code, JSON.stringify({ name, at: Date.now(), k }));
+}
 
-module.exports = { redis, newCode, CODE_RE, cleanCode, ipOf, overLimit, send, today };
+module.exports = { redis, newCode, CODE_RE, cleanCode, ipOf, overLimit, send, today, isAdmin, indexUser };

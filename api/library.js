@@ -7,13 +7,12 @@
 // POST   /api/library {action:"unban",code,by} → yasağı kaldır (sadece admin)
 // DELETE /api/library {code,id,ban}     → sil (paylaşan ya da admin). ban:true (sadece admin) → paylaşanı yasakla
 const crypto = require("crypto");
-const { redis, CODE_RE, cleanCode, ipOf, overLimit, send, today } = require("./_lib");
+const { redis, CODE_RE, cleanCode, ipOf, overLimit, send, today, isAdmin } = require("./_lib");
 const LIST = "lib:list", BANNED = "lib:banned", BANS = "lib:bans";
 const MAX_DATA = 300 * 1024, MAX_ITEMS = 300, TRASH_TTL = 600;
 const owner = code => crypto.createHash("sha256").update("lib:" + code).digest("hex").slice(0, 16);
 const ipHash = req => "ip:" + crypto.createHash("sha256").update("libip:" + ipOf(req)).digest("hex").slice(0, 16);
 const clip = (s, n) => String(s || "").replace(/[<>]/g, "").trim().slice(0, n);
-const isAdmin = code => !!process.env.ADMIN_CODE && !!code && code === cleanCode(process.env.ADMIN_CODE);
 
 module.exports = async (req, res) => {
   try {

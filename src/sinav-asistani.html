@@ -372,7 +372,7 @@
   .dayatt-row .att button{width:auto;padding:0 10px;height:26px;font-size:12px}
   body.no-attend .dayatt, body.no-attend .dayatt-row{display:none !important}
   .stats-card{margin-bottom:16px}
-  .faq-legend{font-size:12.5px;margin:0 0 8px} .faq-star{border-color:var(--warn)!important} .faq .star{margin-right:6px}
+  .faq-legend{font-size:12.5px;margin:0 0 8px} .faq .star{margin-right:6px}
   .nt-form{display:flex;flex-direction:column;gap:10px;margin-top:12px}
   .nt-how{font-size:13px;margin:0;background:var(--accent-soft);border-radius:10px;padding:8px 12px;color:var(--ink)}
   .nt-kinds button{padding:6px 12px;font-size:13px;border:1px solid var(--line);border-radius:99px;background:transparent;color:var(--ink)}
@@ -430,6 +430,13 @@
   .upd-cur{font-size:11px;font-weight:700;color:var(--good);background:var(--good-soft);border-radius:999px;padding:2px 8px;margin-left:6px;vertical-align:2px}
   #updView .upd-ver{margin-bottom:12px;border-radius:16px}
   .a2-box{max-width:420px}
+  .link-btn{background:none;border:0;padding:0;margin:8px 0 0;color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+  .contact-box{border:1px solid var(--accent);background:var(--accent-soft);border-radius:12px;padding:12px 14px;font-weight:700;font-size:16px;word-break:break-word}
+  .adm-head,.adm-row{display:grid;grid-template-columns:1fr 80px 130px 90px;gap:8px;align-items:center}
+  .adm-head{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:700;padding:4px 0 6px;border-bottom:1px solid var(--line)}
+  .adm-row{padding:7px 0;border-bottom:1px solid var(--line)} .adm-row .ghost{padding:5px 10px;font-size:12.5px}
+  .adm-code{font-size:15px;font-weight:800;letter-spacing:.12em} .adm-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .adm-at{font-size:12px}
+  @media (max-width:600px){ .adm-head,.adm-row{grid-template-columns:1fr 70px 80px} .adm-at,.adm-head span:nth-child(3){display:none} }
   .a2-hero{display:flex;gap:14px;align-items:center} .a2-hero img{border-radius:14px;flex:none}
   .a2-steps{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
   .a2-steps li{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
@@ -522,6 +529,10 @@
   </div>
 
   <!-- ===== SSS SAYFASI ===== -->
+  <div id="adminView" style="display:none">
+    <div class="page-h"><h2>🛡️ Yönetici</h2><p class="muted">Sadece yöneticiler görür: kullanıcı kodları, iletişim bilgisi ve yasaklılar.</p></div>
+    <div id="adminBody"></div>
+  </div>
   <div id="notesView" style="display:none">
     <div class="page-h"><h2>Notlar & slaytlar</h2><p class="muted">Sınıf arkadaşlarının paylaştığı slayt, not ve soru linkleri. Sen de paylaş — adın görünür.</p></div>
     <div id="notesBody"></div>
@@ -673,6 +684,7 @@
   <button class="nav-item nav-faq" data-nav="faq">Sık sorulan sorular</button>
   
   <button class="nav-item" id="navUpd" data-nav="updates">Sürüm notları</button>
+  <button class="nav-item" id="navAdmin" data-nav="admin" style="display:none">🛡️ Yönetici</button>
   <div class="nav-row" id="navArchRow" style="display:none"><button class="nav-item" id="navArch" data-navarch="1"><span>Arşiv <span class="muted" id="archCount"></span></span><span class="chev">▸</span></button><button class="nav-edit" id="navArchEdit" data-navedit="arch" title="Sırala / düzenle"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>
   <div id="navArchList" class="nav-sub" style="display:none"></div>
   <div class="drawer-sig">Sınav Haftası Asistanı<br><b>CardiacAI</b> · 2026 · <span id="verSig">v1.0.0</span></div>
@@ -880,6 +892,17 @@ const EN = {
 // --- yönlendirme / boş durum
 "Tümü":"All","boş":"empty","Bu cihazda":"On this device","Yeni bir cihazda":"On a new device","AB12":"AB12",
 "Çok sık istek gönderildi, biraz sonra tekrar dene.":"Too many requests, try again shortly.",
+"Giriş ekranına “Kodumu unuttum” bağlantısı eklendi; kodunu kaybeden kullanıcılar yöneticinin iletişim bilgisine buradan ulaşabilir.":"An “I forgot my code” link was added to the sign-in screen; users who lost their code can reach the admin's contact details there.",
+"Giriş ekranı":"Sign-in screen","Dil seçimi giriş ekranının en üstüne taşındı. Ana ekrana ekleme rehberi, yeni kayıt olanlara ve bu sürümü ilk açanlara sürüm notlarından önce bir kez gösterilir.":"The language choice moved to the top of the sign-in screen. The add-to-home-screen guide is shown once to new users and to everyone opening this version, before the release notes.",
+"Kodumu unuttum":"I forgot my code","🔑 Kodumu unuttum":"🔑 I forgot my code","Yöneticiye ulaş;":"Contact an admin;","takma adını":"tell them your nickname","söyle, kodunu bulup sana iletsin.":"and they'll find your code and send it to you.",
+"Yönetici henüz iletişim bilgisi eklemedi. Siteyi sana gönderen kişiye sor.":"The admin hasn't added contact details yet. Ask the person who sent you the site.","İpucu: kodunu WhatsApp'a gönderdiysen oradaki mesajda yazıyor.":"Tip: if you sent your code to WhatsApp, it's in that message.","Tamam":"OK",
+"🛡️ Yönetici":"🛡️ Admin","Sadece yöneticiler görür: kullanıcı kodları, iletişim bilgisi ve yasaklılar.":"Only admins see this: user codes, contact details and bans.","Bu sayfa sadece yöneticiler için.":"This page is for admins only.",
+"📞 İletişim bilgisi":"📞 Contact details","Kodunu unutanlar giriş ekranında “Kodumu unuttum”a basınca bunu görür (ör. Instagram: @kullanici, WhatsApp: 05xx…).":"People who forgot their code see this when they tap “I forgot my code” on the sign-in screen (e.g. Instagram: @user, WhatsApp: 05xx…).",
+"ör. Instagram: @cardiacai":"e.g. Instagram: @cardiacai","👥 Kullanıcılar":"👥 Users","↻ Yenile":"↻ Refresh",
+"Kodunu kaybeden biri takma adını söylerse buradan bulup kodunu ilet. ⚠️ Kodlar hesabın şifresidir; sadece sahibine ver.":"If someone who lost their code tells you their nickname, find it here and send them the code. ⚠️ Codes are account passwords; only give them to the owner.",
+"Ara: takma ad ya da kod…":"Search: nickname or code…","Kod":"Code","Son kayıt":"Last saved","(adsız)":"(no name)","{#} kurul":"{#} blocks","· {#} kurul":"· {#} blocks","Bulunamadı.":"Not found.",
+"✓ İletişim bilgisi kaydedildi":"✓ Contact details saved","✓ Kod kopyalandı":"✓ Code copied","Kod: {*}":"Code: {*}","· {#}":"· {#}",
+"Kodumu kaybettim, ne yapmalıyım?":"I lost my code, what should I do?","Giriş ekranındaki “Kodumu unuttum”a bas; yöneticinin iletişim bilgisi çıkar. Yöneticiye takma adını söyle, kodunu bulup sana iletir. Kodunu WhatsApp'a gönderdiysen oradaki mesajda da yazıyor.":"Tap “I forgot my code” on the sign-in screen to see the admin's contact details. Tell the admin your nickname and they'll find your code and send it to you. If you sent your code to WhatsApp, it's also in that message.",
 "Ana ekrana ekleme rehberi":"Add-to-home-screen guide","Telefon ve tablette siteyi ana ekrana eklemeyi adım adım gösteren bir rehber bir kez gösterilir. “Ekledim” ya da “Şimdi değil” seçildiğinde tekrar gösterilmez.":"On phones and tablets, a step-by-step guide to adding the site to the home screen is shown once. It is not shown again after choosing “I've added it” or “Not now”.",
 "Yeni özelliklerle ilgili sorular eklendi; en sık sorulanlar ⭐ ile işaretlenip en üstte gösterilir.":"Questions about the new features were added; the most frequently asked ones are marked with ⭐ and shown at the top.",
 "⭐ En sık sorulanlar":"⭐ Most frequently asked",
@@ -1068,6 +1091,10 @@ document.addEventListener("click", e=>{ const u=e.target.closest("#verFoot"); if
 // KURALLAR: yeni sürüm EN ÜSTE eklenir · bir sürümde en fazla 3 madde (4. madde yeni yama sürümü açar: v1.0.1, v1.0.2…)
 // Kullanıcı görmediği sürümü açılışta bir kez görür; "Anladım" deyince root.settings.seenVer kaydedilir (cihazlar arası).
 const UPDATE_LOG = [
+  { ver:"v1.0.6", date:"2026-11-20", items:[
+    ["YENİ","Kodumu unuttum","Giriş ekranına “Kodumu unuttum” bağlantısı eklendi; kodunu kaybeden kullanıcılar yöneticinin iletişim bilgisine buradan ulaşabilir."],
+    ["DEĞİŞİKLİK","Giriş ekranı","Dil seçimi giriş ekranının en üstüne taşındı. Ana ekrana ekleme rehberi, yeni kayıt olanlara ve bu sürümü ilk açanlara sürüm notlarından önce bir kez gösterilir."],
+  ]},
   { ver:"v1.0.5", date:"2026-11-20", items:[
     ["YENİ","Ana ekrana ekleme rehberi","Telefon ve tablette siteyi ana ekrana eklemeyi adım adım gösteren bir rehber bir kez gösterilir. “Ekledim” ya da “Şimdi değil” seçildiğinde tekrar gösterilmez."],
     ["DEĞİŞİKLİK","Sık sorulan sorular","Yeni özelliklerle ilgili sorular eklendi; en sık sorulanlar ⭐ ile işaretlenip en üstte gösterilir."],
@@ -1122,7 +1149,7 @@ function showUpdateLog(all){
     <div class="upd-list">${list.map(v=>`<section class="upd-ver"><div class="upd-vh"><b>${esc(v.ver)}</b><span>${fmt(v.date)}</span></div>
       <ol>${v.items.map(([tag,title,txt])=>`<li><span class="upd-tag t-${tag==="YENİ"?"new":tag==="DÜZELTME"?"fix":"chg"}">${esc(tag)}</span><b>${esc(title)}</b><p>${esc(txt)}</p></li>`).join("")}</ol></section>`).join("")}</div>
     <div class="row" style="justify-content:space-between;margin-top:14px"><span class="muted" style="font-size:12px">CardiacAI · ${esc(LATEST)}</span><button data-updok="1">Anladım</button></div></div>`;
-  const done=()=>{ el.remove(); if(root && root.settings && root.settings.seenVer!==LATEST){ root.settings.seenVer=LATEST; save(); } renderDrawer(); setTimeout(maybeA2HS,400); };
+  const done=()=>{ el.remove(); if(root && root.settings && root.settings.seenVer!==LATEST){ root.settings.seenVer=LATEST; save(); } renderDrawer(); };
   el.onclick=e=>{ if(e.target===el || e.target.closest("[data-updok]")) done(); else if(e.target.closest("[data-updall]")){ done(); showView("updates"); } };
   document.body.append(el);
 }
@@ -1243,7 +1270,9 @@ async function maybeWhatsNew(){
   if(!root || !root.settings || $("welcome") || $("whatsNew") || $("forceName") || (SA && !CUR)) return;
   // takma ad zorunlu: eski hesaplarda yoksa önce isim sorulur (kapatılamaz)
   if(SA && !myName()){ const v=await askName(true); (root.profile=root.profile||{}).name=v; save(); try{ renderHome(); }catch(e){} }
-  if(root.settings.seenVer!==LATEST) showUpdateLog(false); else setTimeout(maybeA2HS,400);
+  // önce (bir kerelik) ana ekrana ekle rehberi, kapanınca sürüm notları
+  if(a2hsDue()) return maybeA2HS(()=>{ if(root.settings.seenVer!==LATEST) showUpdateLog(false); });
+  if(root.settings.seenVer!==LATEST) showUpdateLog(false);
 }
 // Açılan panel, butonuna basılan kutunun hemen ALTINA yerleşir (yukarıda değil)
 let lastBtn=null;
@@ -1437,7 +1466,7 @@ async function startSync(){
     }, ()=>{ syncOff=true; setSync(""); resolveSync(false); });
   }catch(e){ resolveSync(false); }
 }
-function switchTo(id){ setTimeout(()=>checkPublished(root.folders.find(f=>f.id===id)),0); view="kurul"; $("sharePanel").style.display="none"; $("homeView").style.display="none"; $("addView").style.display="none"; $("settingsView").style.display="none"; $("faqView").style.display="none"; $("updView").style.display="none"; $("notesView").style.display="none"; $("kurulView").style.display=""; window.scrollTo({top:0}); state = root.folders.find(f=>f.id===id); root.activeId=id; weekOff=null; openForm=null; folderForm=null; confirmDel=false; $("aiOut").textContent=""; save(); render(); }
+function switchTo(id){ setTimeout(()=>checkPublished(root.folders.find(f=>f.id===id)),0); view="kurul"; $("sharePanel").style.display="none"; $("homeView").style.display="none"; $("addView").style.display="none"; $("settingsView").style.display="none"; $("faqView").style.display="none"; $("updView").style.display="none"; $("notesView").style.display="none"; $("adminView").style.display="none"; $("kurulView").style.display=""; window.scrollTo({top:0}); state = root.folders.find(f=>f.id===id); root.activeId=id; weekOff=null; openForm=null; folderForm=null; confirmDel=false; $("aiOut").textContent=""; save(); render(); }
 
 // ---- Görünüm: ana sayfa / kurul sayfası + yan menü ----
 let view = "home", navOpen = false, archOpen = false, tab = "today";
@@ -1455,7 +1484,7 @@ function sortedFolders(){
   return arr;
 }
 function setManualOrder(ids){ const rest=sortedFolders().map(f=>f.id).filter(id=>!ids.includes(id)); root.kurulOrder=[...ids, ...rest]; root.kurulSort="manual"; save(); renderDrawer(); }
-function showView(v){ view=v; $("sharePanel").style.display="none"; $("homeView").style.display = v==="home"?"":"none"; $("addView").style.display = v==="add"?"":"none"; $("settingsView").style.display = v==="settings"?"":"none"; if(v==="settings") renderSettings(); $("faqView").style.display = v==="faq"?"":"none"; if(v==="faq") renderFaq(); $("updView").style.display = v==="updates"?"":"none"; if(v==="updates"){ markNewSeen("updlog"); renderUpdates(); } $("notesView").style.display = v==="notes"?"":"none"; if(v==="notes"){ markNewSeen("notes"); renderNotes(); } $("kurulView").style.display = v==="kurul"?"":"none"; renderDrawer(); if(v==="home") renderQuote(); window.scrollTo({top:0}); }
+function showView(v){ view=v; $("sharePanel").style.display="none"; $("homeView").style.display = v==="home"?"":"none"; $("addView").style.display = v==="add"?"":"none"; $("settingsView").style.display = v==="settings"?"":"none"; if(v==="settings") renderSettings(); $("faqView").style.display = v==="faq"?"":"none"; if(v==="faq") renderFaq(); $("updView").style.display = v==="updates"?"":"none"; if(v==="updates"){ markNewSeen("updlog"); renderUpdates(); } $("adminView").style.display = v==="admin"?"":"none"; if(v==="admin") renderAdmin(); $("notesView").style.display = v==="notes"?"":"none"; if(v==="notes"){ markNewSeen("notes"); renderNotes(); } $("kurulView").style.display = v==="kurul"?"":"none"; renderDrawer(); if(v==="home") renderQuote(); window.scrollTo({top:0}); }
 // Menü açıkken arkadaki sayfa kaymasın (mobilde parmak menüyü kaydırsın)
 let drawerScrollY=0;
 function lockScroll(on){
@@ -1713,6 +1742,7 @@ function applySettings(){
 // ---- S.S.S. ----
 // 3. eleman true → ⭐ sık sorulan (en üstte gösterilir)
 const FAQ = [
+  ["Kodumu kaybettim, ne yapmalıyım?", "Giriş ekranındaki “Kodumu unuttum”a bas; yöneticinin iletişim bilgisi çıkar. Yöneticiye takma adını söyle, kodunu bulup sana iletir. Kodunu WhatsApp'a gönderdiysen oradaki mesajda da yazıyor.", true],
   ["Siteyi telefona uygulama gibi nasıl eklerim?", "iPhone: Safari'de alttaki Paylaş (□↑) → “Ana Ekrana Ekle” → Ekle. Android: Chrome'da sağ üstteki ⋮ → “Ana ekrana ekle” ya da “Uygulamayı yükle”. Ana ekrandaki kalp ikonuyla uygulama gibi açılır, internet yokken de çalışır. Ayarlar → Uygulama bölümünde de anlatılıyor.", true],
   ["Notları ve slaytları nasıl paylaşırım?", "Menüde “Notlar & slaytlar” → “+ Paylaş”. Dosyayı kendi Google Drive'ına (ya da OneDrive, Dropbox) yükle, paylaşımı “Bağlantıya sahip olan herkes” yap, linki yapıştır. Paylaşımın yanında takma adın görünür; istediğin zaman kaldırabilirsin.", true],
   ["Rozetleri nasıl kazanırım, tabloda ne görünür?", "Çalıştıkça, üst üste günler çalıştıkça ve ders ya da kurul bitirdikçe rozet kazanırsın. Rozet tablosunda herkesin sadece takma adı ve rozet sayısı görünür; kodun ve verilerin görünmez."],
@@ -2342,9 +2372,9 @@ function appInstallHint(){
 }
 // İlk açılışta (bir kez) telefona/tablete "ana ekrana ekle" rehberi. Ekledim ya da Atla deyince bir daha çıkmaz.
 const isMobileLike = () => isIOS() || /android/i.test(navigator.userAgent) || (matchMedia("(pointer:coarse)").matches && innerWidth<1100);
-function maybeA2HS(){
-  if(!SA || !CUR || !root || !root.settings || isStandalone() || !isMobileLike()) return;
-  if(root.settings.a2hs || $("a2hs") || $("whatsNew") || $("forceName") || $("welcome")) return;
+const a2hsDue = () => SA && CUR && root && root.settings && !root.settings.a2hs && !isStandalone() && isMobileLike();
+function maybeA2HS(after){
+  if(!a2hsDue() || $("a2hs") || $("whatsNew") || $("forceName") || $("welcome")){ if(after) after(); return; }
   const ios=isIOS();
   const steps = ios ? [["1","Safari'de alttaki <b>Paylaş</b> düğmesine bas","□↑"],["2","Listeyi kaydır, <b>“Ana Ekrana Ekle”</b>yi seç","＋"],["3","Sağ üstte <b>Ekle</b>'ye bas — bitti!","✓"]]
     : installEvt ? [["1","Aşağıdaki <b>📲 Şimdi yükle</b> düğmesine bas","📲"],["2","Çıkan pencerede <b>Yükle</b>'yi onayla","✓"]]
@@ -2357,7 +2387,7 @@ function maybeA2HS(){
     ${ios && !/safari/i.test(navigator.userAgent.replace(/crios|fxios|edgios/ig,"x")) ? `<p class="a2-warn">⚠️ iPhone'da bu sadece <b>Safari</b>'de çalışır. Başka tarayıcıdaysan linki Safari'de aç.</p>` : ""}
     <div class="row" style="justify-content:space-between;margin-top:14px;flex-wrap:nowrap"><button class="ghost" data-a2="skip">Şimdi değil</button>${installEvt && !ios ? `<button data-a2="install">📲 Şimdi yükle</button>` : `<button data-a2="done">Ekledim ✓</button>`}</div>
   </div>`;
-  const close=v=>{ el.remove(); root.settings.a2hs=v; save(); };
+  const close=v=>{ el.remove(); root.settings.a2hs=v; save(); if(after) setTimeout(after,300); };
   el.onclick=async e=>{ const b=e.target.closest("[data-a2]"); if(!b) return; const v=b.dataset.a2;
     if(v==="install"){ await installApp(); close("done"); toast("✓ Harika!", "Ana ekranından açabilirsin"); }
     else close(v); };
@@ -2758,19 +2788,76 @@ async function saLogin(code){
   if(data){ data.code=code; data._ver=j.updatedAt; data._dirty=false; lsSet(profKey(code), JSON.stringify(data)); }
   location.reload();
 }
+// Kodunu kaybeden: yöneticinin iletişim bilgisi (yönetici sayfasından girilir)
+async function showForgot(){
+  let c=""; try{ const r=await fetch("/api/admin?contact=1",{cache:"no-store"}); c=(await r.json()).contact||""; }catch(e){}
+  const el=document.createElement("div"); el.className="modal-bg"; el.style.zIndex=90;
+  el.innerHTML=`<div class="modal confirm-box"><h2>🔑 Kodumu unuttum</h2>
+    <p class="muted" style="margin:0 0 10px">Yöneticiye ulaş; <b>takma adını</b> söyle, kodunu bulup sana iletsin.</p>
+    ${c?`<div class="contact-box">${esc(c)}</div>`:`<p class="muted">Yönetici henüz iletişim bilgisi eklemedi. Siteyi sana gönderen kişiye sor.</p>`}
+    <p class="muted" style="font-size:12.5px;margin:10px 0 0">İpucu: kodunu WhatsApp'a gönderdiysen oradaki mesajda yazıyor.</p>
+    <div class="row" style="justify-content:flex-end;margin-top:14px"><button data-x="1">Tamam</button></div></div>`;
+  el.onclick=e=>{ if(e.target===el || e.target.closest("[data-x]")) el.remove(); };
+  document.body.append(el);
+}
+// ===== 🛡️ Yönetici sayfası (sadece ADMIN_CODE'daki kodlar) =====
+let IS_ADMIN=false, admUsers=null, admQ="";
+async function checkAdmin(){
+  if(!SA || !CUR) return;
+  try{ const r=await fetch("/api/admin?check=1&code="+encodeURIComponent(CUR),{cache:"no-store"}); IS_ADMIN=!!(await r.json()).admin; }catch(e){}
+  if($("navAdmin")) $("navAdmin").style.display = IS_ADMIN ? "" : "none";
+}
+async function renderAdmin(){
+  const B=$("adminBody"); if(!B) return;
+  if(!IS_ADMIN){ B.innerHTML=`<div class="empty">Bu sayfa sadece yöneticiler için.</div>`; return; }
+  B.innerHTML=`<section class="card"><h3 style="margin:0 0 6px">📞 İletişim bilgisi</h3>
+      <p class="muted" style="margin:0 0 8px;font-size:13px">Kodunu unutanlar giriş ekranında “Kodumu unuttum”a basınca bunu görür (ör. Instagram: @kullanici, WhatsApp: 05xx…).</p>
+      <div class="row"><input id="admContact" maxlength="200" placeholder="ör. Instagram: @cardiacai" style="flex:1;min-width:200px"><button id="admContactSave">Kaydet</button></div></section>
+    <section class="card" style="margin-top:14px"><div class="row" style="justify-content:space-between;align-items:center"><h3 style="margin:0">👥 Kullanıcılar <span class="muted" id="admCount"></span></h3><button class="ghost" id="admRefresh">↻ Yenile</button></div>
+      <p class="muted" style="margin:6px 0 8px;font-size:13px">Kodunu kaybeden biri takma adını söylerse buradan bulup kodunu ilet. ⚠️ Kodlar hesabın şifresidir; sadece sahibine ver.</p>
+      <input id="admQ" placeholder="Ara: takma ad ya da kod…" value="${esc(admQ)}">
+      <div id="admList" style="margin-top:8px"><div class="empty">Yükleniyor…</div></div></section>
+    <section class="card" style="margin-top:14px"><div class="row" style="justify-content:space-between;align-items:center"><h3 style="margin:0">🚫 Yasaklılar</h3></div><div id="admBans" style="margin-top:8px"><div class="empty">Yükleniyor…</div></div></section>`;
+  $("admQ").oninput=e=>{ admQ=e.target.value; drawAdmUsers(); };
+  $("admRefresh").onclick=()=>{ admUsers=null; renderAdmin(); };
+  $("admContactSave").onclick=async()=>{ const r=await fetch("/api/admin",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({code:CUR,contact:$("admContact").value})}); toast(r.ok?"✓ İletişim bilgisi kaydedildi":"Olmadı"); };
+  try{ const r=await fetch("/api/admin?code="+encodeURIComponent(CUR),{cache:"no-store"}); const j=await r.json(); if(!r.ok) throw j.error;
+    admUsers=j.users||[]; $("admContact").value=j.contact||""; $("admCount").textContent=`· ${j.total}${j.more?` (+${j.more} yükleniyor, ↻ Yenile)`:""}`; drawAdmUsers();
+  }catch(e){ $("admList").innerHTML=`<div class="empty">Liste alınamadı.</div>`; }
+  loadAdmBans();
+}
+function drawAdmUsers(){
+  const L=$("admList"); if(!L || !admUsers) return; const q=norm(admQ);
+  const list=admUsers.filter(u=>!q || norm(u.name+" "+u.code).includes(q));
+  L.innerHTML = list.length ? `<div class="adm-head"><span>Takma ad</span><span>Kod</span><span>Son kayıt</span><span></span></div>`+list.slice(0,300).map(u=>`<div class="adm-row">
+      <b class="adm-name">${u.name?esc(u.name):`<span class="muted">(adsız)</span>`}</b><code class="adm-code">${esc(u.code)}</code>
+      <span class="muted adm-at">${u.at?new Date(u.at).toLocaleDateString(LOC(),{day:"numeric",month:"short",year:"2-digit"}):"–"}${u.k?` · ${u.k} kurul`:""}</span>
+      <button class="ghost" data-admcopy="${esc(u.code)}">Kopyala</button></div>`).join("") : `<div class="empty">Bulunamadı.</div>`;
+}
+async function loadAdmBans(){
+  const B=$("admBans"); if(!B) return;
+  try{ const r=await fetch("/api/library?bans=1&me="+encodeURIComponent(CUR),{cache:"no-store"}); const j=await r.json(); if(!r.ok) throw 0; const bans=j.bans||[];
+    B.innerHTML = bans.length ? bans.map(x=>`<div class="ban-row"><div style="flex:1;min-width:0"><b>${esc(x.name||"?")}</b>${x.school?` <span class="muted">· ${esc(x.school)}</span>`:""}<div class="muted" style="font-size:12px">${new Date(x.at).toLocaleString(LOC(),{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}</div></div><button class="ghost" data-admunban="${esc(x.by)}">Yasağı kaldır</button></div>`).join("") : `<div class="muted">Yasaklı kimse yok.</div>`;
+  }catch(e){ B.innerHTML=`<div class="empty">Liste alınamadı.</div>`; }
+}
+document.addEventListener("click", async e=>{
+  const c=e.target.closest("[data-admcopy]"); if(c){ try{ await navigator.clipboard.writeText(c.dataset.admcopy); toast("✓ Kod kopyalandı", c.dataset.admcopy); }catch(err){ toast("Kod: "+c.dataset.admcopy); } return; }
+  const u=e.target.closest("[data-admunban]"); if(u){ u.disabled=true; const r=await fetch("/api/library",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"unban",code:CUR,by:u.dataset.admunban})}); if(r.ok){ toast("✓ Yasak kaldırıldı"); loadAdmBans(); } else u.disabled=false; }
+});
 function openWelcomeSA(){
   if($("welcome")) return;
   const el=document.createElement("div"); el.id="welcome"; el.className="modal-bg";
   const box="font:inherit;width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)";
   el.innerHTML=`<div class="modal"><h2>👋 Sınav Haftası Asistanı</h2>
+      <div class="w-lang-row" style="margin-top:12px"><span>Dil / Language</span><div class="seg3 w-lang" data-noi18n><button type="button" data-wlang="tr">Türkçe</button><button type="button" data-wlang="en">English</button></div></div>
     <div id="wStep1">
       <label class="f" style="margin-top:10px">Kodunla giriş yap<input id="wCode" maxlength="6" autocapitalize="characters" autocomplete="off" placeholder="AB12" style="${box};font-size:30px;letter-spacing:.4em;text-align:center;text-transform:uppercase"></label>
       <div class="row" style="margin-top:8px"><button id="wGo" style="flex:1">Giriş</button></div>
       <p class="muted" id="wSt" style="margin:8px 0 0"></p>
+      <button class="link-btn" id="wForgot" type="button">Kodumu unuttum</button>
       <button class="choice" id="wNew" style="margin-top:14px">✨ İlk kez kullanıyorum<small>Sana 4 haneli kişisel bir kod verelim — her cihazda onunla girersin</small></button>
     </div>
     <div id="wStepName" style="display:none">
-      <div class="w-lang-row" style="margin-top:10px"><span>Dil / Language</span><div class="seg3 w-lang" data-noi18n><button type="button" data-wlang="tr">Türkçe</button><button type="button" data-wlang="en">English</button></div></div>
       <label class="f" style="margin-top:10px">Takma adın<input id="wName" maxlength="24" autocomplete="nickname" placeholder="ör. Yasin" style="${box};font-size:20px"></label>
       <p class="muted" style="margin:6px 0 0;font-size:13px">Sitede bu isimle görünürsün (ör. paylaştıklarında). Sonra değiştirebilirsin.</p>
       <div class="row" style="margin-top:10px"><button class="ghost" id="wNameBack">← Geri</button><button id="wNameGo" style="flex:1">Kodumu oluştur →</button></div>
@@ -2790,6 +2877,7 @@ function openWelcomeSA(){
     $("wGo").disabled=true; $("wSt").textContent="Giriş yapılıyor…";
     try{ await saLogin(v); }catch(e){ $("wSt").textContent=String(e); $("wGo").disabled=false; }
   };
+  $("wForgot").onclick=showForgot;
   $("wGo").onclick=go; $("wCode").onkeydown=e=>{ if(e.key==="Enter") go(); };
   $("wNew").onclick = ()=>{ $("wStep1").style.display="none"; $("wStepName").style.display=""; setTimeout(()=>$("wName").focus(),30); };
   const wl=()=>el.querySelectorAll("[data-wlang]").forEach(b=>b.classList.toggle("on", b.dataset.wlang===LANG));
@@ -3207,7 +3295,7 @@ function applyImport(){
 
 load(); flushSeenRibs();
 if(root && root.settings && root.settings.lang && root.settings.lang!==LANG){ LANG=root.settings.lang; try{ localStorage.setItem(LANG_KEY,LANG); }catch(e){} }
-render(); updateDirty(); updateCodeBtn(); updateLangBtn(); I18N.apply();
+render(); updateDirty(); updateCodeBtn(); updateLangBtn(); I18N.apply(); checkAdmin();
 $("deviceBtn").style.display="none";
 // Önce Claude hesabıyla kaydetmeyi dene; olmuyorsa 4 haneli kod sistemine geç
 Promise.race([syncReady, new Promise(r=>setTimeout(()=>r(false),4000))]).then(ok=>{

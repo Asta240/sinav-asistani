@@ -6,11 +6,12 @@ const handlers = {
   library: require("../../api/library.js"),
   notes: require("../../api/notes.js"),
   board: require("../../api/board.js"),
+  admin: require("../../api/admin.js"),
 };
 
 exports.handler = async (event) => {
   const path = event.path || "";
-  const m = path.match(/\/(new|data|library|notes|board)\/?$/) || (event.rawUrl || "").match(/\/api\/(new|data|library|notes|board)(?:[/?]|$)/);
+  const m = path.match(/\/(new|data|library|notes|board|admin)\/?$/) || (event.rawUrl || "").match(/\/api\/(new|data|library|notes|board|admin)(?:[/?]|$)/);
   const fn = m && handlers[m[1]];
   if (!fn) return { statusCode: 404, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ error: "Bulunamadı" }) };
 

@@ -1,7 +1,7 @@
 // GET  /api/data?code=XXXXXX             → o kodun verisi + sürüm (updatedAt)
 // PUT  /api/data  {code, json, base}       → kaydet. base = cihazın bildiği son sürüm.
 //      Sunucudaki sürüm farklıysa (başka cihaz daha önce kaydetmiş) 409 + güncel veri döner.
-const { redis, CODE_RE, cleanCode, ipOf, overLimit, send } = require("./_lib");
+const { redis, CODE_RE, cleanCode, ipOf, overLimit, send, indexUser } = require("./_lib");
 const MAX = 900 * 1024; // ~900 KB
 
 module.exports = async (req, res) => {
@@ -33,6 +33,7 @@ module.exports = async (req, res) => {
       if (cur.json && Number(b.base || 0) !== curV) return send(res, 409, { json: cur.json, updatedAt: curV });
       const v = Math.max(Date.now(), curV + 1);   // sürüm = sunucu zamanı (cihaz saatlerinden bağımsız)
       await redis("SET", `u:${code}`, JSON.stringify({ json: b.json, updatedAt: v }));
+      try { await indexUser(code, b.json); } catch (e) {}
       return send(res, 200, { ok: true, updatedAt: v });
     }
     send(res, 405, { error: "GET veya PUT kullan" });

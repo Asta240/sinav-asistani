@@ -24,7 +24,8 @@ claude.ai artifact'lerini sadece Yasin'in kendi Claude hesabındaki bir oturum g
 - `api/_lib.js` Upstash Redis REST bağlantısı, kod üretimi (4 karakter, `23456789ABCDEFGHJKMNPQRSTUVWXYZ`; eski 6 karakterliler de geçerli), hız sınırları.
 - `api/new.js` yeni kod · `api/data.js` GET/PUT veri (sunucu sürümü `updatedAt`; PUT `base` farklıysa 409) · `api/library.js` herkese açık "Hazır kurullar" kütüphanesi (silme: paylaşan ya da env `ADMIN_CODE`; silinen 10 dk `lib:trash:ID`de durur → `POST {action:"restore"}` ile geri alınır; admin `ban:true` ile paylaşanı (kod + IP hash) `lib:banned` set'ine ekler, kaydı `lib:bans` hash; `?bans=1` liste, `POST {action:"unban",by}` kaldırır).
 - `api/notes.js` "Notlar & slaytlar": sadece link paylaşımı (`notes:list`), paylaşanın takma adı görünür; silme/geri al/yasak kütüphaneyle aynı mantık ve **aynı yasak listesi** (`lib:banned`).
-- Ortam değişkenleri (Netlify ve Vercel'de aynı): `KV_REST_API_URL`, `KV_REST_API_TOKEN` (Upstash), isteğe bağlı `ADMIN_CODE`.
+- `api/admin.js` yönetici sayfası: kullanıcı listesi (kod + takma ad; `users` hash, `indexUser()` her PUT'ta günceller, eski hesaplar SCAN ile doldurulur), iletişim bilgisi (`admin:contact`, giriş ekranındaki “Kodumu unuttum” gösterir).
+- Ortam değişkenleri (Netlify ve Vercel'de aynı): `KV_REST_API_URL`, `KV_REST_API_TOKEN` (Upstash), isteğe bağlı `ADMIN_CODE` (**virgülle birden fazla yönetici kodu**: `AB12,CD34`).
 
 ## Uygulama mantığı (src içinde)
 - Veri: `root = {folders:[kurul...], activeId, settings, kurulSort, kurulOrder}`; her kurul `{name, startDate, examDate, dailyHours, perLec, courses, topics, sessions, attend, absLimit, absMode, grade, archived, fromLib, manual, isDefault}`.

@@ -4,14 +4,13 @@
 // POST   /api/notes {action:"restore",code,id}   → silineni geri al (10 dk içinde; yasak da kalkar)
 // DELETE /api/notes {code,id,ban}       → sil (paylaşan ya da admin). ban:true (admin) → paylaşanı yasakla (kütüphaneyle ortak yasak listesi)
 const crypto = require("crypto");
-const { redis, CODE_RE, cleanCode, ipOf, overLimit, send, today } = require("./_lib");
+const { redis, CODE_RE, cleanCode, ipOf, overLimit, send, today, isAdmin } = require("./_lib");
 const LIST = "notes:list", BANNED = "lib:banned", BANS = "lib:bans";
 const MAX_ITEMS = 1000, TRASH_TTL = 600;
 const KINDS = ["slayt", "not", "soru", "diger"];
 const owner = code => crypto.createHash("sha256").update("lib:" + code).digest("hex").slice(0, 16);
 const ipHash = req => "ip:" + crypto.createHash("sha256").update("libip:" + ipOf(req)).digest("hex").slice(0, 16);
 const clip = (s, n) => String(s || "").replace(/[<>]/g, "").replace(/\s+/g, " ").trim().slice(0, n);
-const isAdmin = code => !!process.env.ADMIN_CODE && !!code && code === cleanCode(process.env.ADMIN_CODE);
 
 module.exports = async (req, res) => {
   try {
