@@ -1,12 +1,13 @@
 # Sınav Haftası Asistanı — kurulum (ücretsiz)
 
-Bu klasör asıl sitedir. Vercel'de çalışır, veriler Upstash (Redis) veritabanında 6 haneli kodun altında saklanır.
+Bu klasör asıl sitedir. Vercel'de çalışır, veriler Upstash (Redis) veritabanında 4 haneli kodun altında saklanır.
 İkisi de ücretsiz plandadır, kart istemez.
 
 ## Dosyalar
 - `index.html` → site
 - `api/new.js` → yeni 6 haneli kod üretir
 - `api/data.js` → kodun verisini okur/kaydeder
+- `api/library.js` → herkese açık "Hazır kurullar" kütüphanesi
 - `api/_lib.js` → veritabanı bağlantısı ve sınırlar (kod tahmin koruması: saatte 30 yanlış deneme)
 - `package.json`
 
@@ -21,3 +22,6 @@ Bu klasör asıl sitedir. Vercel'de çalışır, veriler Upstash (Redis) veritab
 ## PDF Ayırıcı
 Kitapçığı okuyan sayfa claude.ai'de: https://claude.ai/artifact/Ds98xGWsqprjqbzfDFFvtT
 Oradan alınan kurul kodu, sitede **📥 Kurul kodu ekle**'ye yapıştırılır.
+
+## Yönetici (isteğe bağlı)
+Vercel → Settings → Environment Variables → `ADMIN_CODE` = kendi kodun. Böylece kütüphanedeki uygunsuz paylaşımları silebilirsin.

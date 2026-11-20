@@ -1,4 +1,4 @@
-// POST /api/new  → yeni 6 haneli kod üretir ve boş kayıt açar
+// POST /api/new  → yeni 4 haneli kod üretir ve boş kayıt açar
 const { redis, newCode, ipOf, overLimit, send, today } = require("./_lib");
 
 module.exports = async (req, res) => {

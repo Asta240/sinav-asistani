@@ -13,6 +13,10 @@
     --warn:#e67700; --warn-soft:#fff3e0; --bad:#e03131; --bad-soft:#ffe9e9;
     --r:14px;
   }
+  :root[data-theme=light]{ --bg:#f6f5f1; --card:#ffffff; --ink:#1d1f24; --muted:#6b6f78; --line:#e6e3dc;
+    --accent:#3b5bdb; --accent-soft:#e8edff; --good:#2f9e44; --good-soft:#e6f6ea; --warn:#e67700; --warn-soft:#fff3e0; --bad:#e03131; --bad-soft:#ffe9e9; color-scheme:light }
+  :root[data-theme=dark]{ --bg:#141518; --card:#1d1f24; --ink:#eceef2; --muted:#9a9fab; --line:#2c2f36;
+    --accent:#748ffc; --accent-soft:#232a45; --good:#51cf66; --good-soft:#1b2e20; --warn:#ffa94d; --warn-soft:#33281b; --bad:#ff6b6b; --bad-soft:#3a2020; color-scheme:dark }
   @media (prefers-color-scheme: dark){
     :root{ --bg:#141518; --card:#1d1f24; --ink:#eceef2; --muted:#9a9fab; --line:#2c2f36;
       --accent:#748ffc; --accent-soft:#232a45; --good:#51cf66; --good-soft:#1b2e20;
@@ -130,6 +134,7 @@
   .cc{--s:72%;--l:93%;background:hsl(var(--h) var(--s) var(--l));border-left:3px solid hsl(var(--h) 60% 48%)}
   .dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:hsl(var(--h) 60% 50%);margin-right:6px;flex:none}
   @media (prefers-color-scheme: dark){ .cc{--s:28%;--l:21%} }
+  :root[data-theme=dark] .cc{--s:28%;--l:21%} :root[data-theme=light] .cc{--s:72%;--l:93%}
   /* bugün kartı */
   .today-hero{margin-bottom:16px;padding:0;overflow:hidden}
   .hero-h{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;padding:18px 20px 14px;border-bottom:1px solid var(--line)}
@@ -248,6 +253,32 @@
   .tabs3 button.on{background:var(--accent);border-color:var(--accent);color:#fff}
   .tabs3 button.on small{color:#fff;opacity:.85}
   @media (max-width:600px){ .tabs3 button{padding:10px;font-size:14px} .tabs3 button small{display:none} }
+  .gear-btn{position:fixed;top:16px;right:16px;z-index:55;background:var(--card);color:var(--ink);border:1px solid var(--line);width:46px;height:46px;padding:0;border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.08)}
+  .gear-btn:hover{border-color:var(--accent);color:var(--accent)} .gear-btn:hover svg{transform:rotate(45deg)} .gear-btn svg{transition:transform .3s}
+  .page-h{margin:4px 0 14px} .page-h h2{font-size:24px;margin:0;letter-spacing:-.02em} .page-h p{margin:4px 0 0}
+  .acct{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin-bottom:16px}
+  .acct .lbl{font-size:12px;color:var(--muted);font-weight:600}
+  .acct .code{font-size:20px;font-weight:800;letter-spacing:.14em}
+  .acct .row button,.acct .row a{padding:7px 12px;font-size:13px}
+  .acct .wa{padding:7px 12px;font-size:13px}
+  .hero-art{position:absolute;right:26px;top:50%;transform:translateY(-50%);width:210px;opacity:.9;z-index:0}
+  @media (max-width:760px){ .hero-art{width:120px;right:-10px;top:16px;transform:none;opacity:.35} }
+  .hero-quote blockquote{padding-right:220px}
+  @media (max-width:760px){ .hero-quote blockquote{padding-right:0} }
+  /* ayarlar */
+  .set-row{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}
+  .set-row:last-child{border-bottom:0}
+  .set-row b{display:block;font-size:14.5px} .set-row small{color:var(--muted);font-size:12.5px}
+  .sw{position:relative;width:46px;height:26px;flex:none;background:var(--line);border-radius:99px;padding:0;transition:background .15s}
+  .sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .15s}
+  .sw.on{background:var(--accent)} .sw.on::after{transform:translateX(20px)}
+  .seg3{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;flex:none}
+  .seg3 button{background:transparent;color:var(--muted);padding:6px 10px;font-size:13px;border-radius:0}
+  .seg3 button.on{background:var(--accent);color:#fff}
+  body.hide-verdict #verdict{display:none}
+  body.hide-count .count{display:none !important}
+  body.no-prio .pill{display:none}
+  body.hide-quote #heroQuote{display:none}
   .add-topic{background:transparent;color:var(--accent);padding:6px 0;font-size:14px}
   .add label.f{font-size:11px}
   .two{grid-template-columns:1.25fr 1fr;align-items:start}
@@ -286,13 +317,22 @@
   <!-- ===== ANA SAYFA ===== -->
   <div id="homeView">
   <section class="hero-quote" id="heroQuote"></section>
-  <section class="card account" id="accountCard">
+  <section class="acct" id="accountCard">
     <div id="accountBody"></div>
-    <div class="row" id="accountBtns" style="margin-top:12px">
-      <button class="ghost" id="deviceBtn">👤 Kodum <b id="codeLabel"></b><span id="dirtyDot" class="dirty" style="display:none" title="Son koddan beri değişiklik var"></span></button>
+    <div class="row" id="accountBtns">
+      <span class="row" id="acctExtra"></span>
+      <button class="ghost" id="deviceBtn">Kodum <b id="codeLabel"></b><span id="dirtyDot" class="dirty" style="display:none" title="Son koddan beri değişiklik var"></span></button>
     </div>
   </section>
 
+  <section class="card" id="homeEmpty" style="display:none">
+    <div class="row" style="justify-content:space-between"><div><h2 style="margin:0">Henüz kurulun yok</h2><p class="muted" style="margin:4px 0 0">Kurul kitapçığından ya da hazır kurullardan başla.</p></div><button data-goadd="1">Kurul ekle →</button></div>
+  </section>
+  </div>
+
+  <!-- ===== KURUL EKLE SAYFASI ===== -->
+  <div id="addView" style="display:none">
+  <div class="page-h"><h2>Kurul ekle</h2><p class="muted">Hazır kurullardan seç, PDF'ten ayıkla ya da bir kurul kodu yapıştır.</p></div>
   <!-- İÇE AKTAR -->
   <section class="card import" id="importCard" style="display:none">
     <div class="row" style="justify-content:space-between">
@@ -315,11 +355,10 @@
   <section class="card import" id="saCard" style="display:none">
     <div class="row" style="justify-content:space-between;gap:12px">
       <div><h2>📄 Kurulunu ekle</h2>
-        <p class="muted" style="margin:4px 0 0">Önce <b>📚 Hazır kurullar</b>'a bak — biri ayıklayıp paylaştıysa tek tıkla eklersin. Yoksa: menüdeki <b>PDF Ayırıcı</b>'da kitapçığı yükle → kodu "Kurul kodu ekle" ile yapıştır → <b>🌍 Kütüphaneye paylaş</b> ile herkese aç. Kurulun zaten varsa ilerlemen korunarak güncellenir.</p></div>
-      <div class="row"><button id="saLibBtn">📚 Hazır kurullar</button><button class="ghost" id="saCodeBtn">📥 Kurul kodu ekle</button></div>
+        <p class="muted" style="margin:4px 0 0">Önce <b>📚 Hazır kurullar</b>'a bak — biri ayıklayıp paylaştıysa tek tıkla eklersin. Yoksa: <b>PDF Ayırıcı</b>'da kitapçığı yükle → kodu "Kurul kodu ekle" ile yapıştır → <b>🌍 Kütüphaneye paylaş</b> ile herkese aç. Kurulun zaten varsa ilerlemen korunarak güncellenir.</p></div>
+      <div class="row"><button id="saLibBtn">📚 Hazır kurullar</button><a class="ghost-link" id="addAyirici" target="_blank" rel="noopener" style="display:none">PDF Ayırıcı ↗</a><button class="ghost" id="saCodeBtn">📥 Kurul kodu ekle</button></div>
     </div>
   </section>
-
   </div>
 
   <!-- ===== KURUL SAYFASI ===== -->
@@ -355,7 +394,7 @@
   <div class="tabpane" data-pane="today">
   <!-- ÖZET -->
   <section class="grid stats">
-    <div class="card stat"><div class="k">Kalan süre</div><div class="v" id="sDays">–</div><div class="d" id="sDaysD">Sınav tarihini gir</div></div>
+    <div class="card stat count"><div class="k">Kalan süre</div><div class="v" id="sDays">–</div><div class="d" id="sDaysD">Sınav tarihini gir</div></div>
     <div class="card stat"><div class="k">Genel ilerleme</div><div class="v" id="sProg">0%</div><div class="bar"><i id="sProgBar" style="width:0"></i></div></div>
     <div class="card stat"><div class="k">Kalan iş</div><div class="v" id="sNeed">0 sa</div><div class="d" id="sNeedD">Elindeki süre: –</div></div>
   </section>
@@ -413,12 +452,14 @@
 
 <!-- ===== YAN MENÜ ===== -->
 <button class="menu-btn" id="menuBtn" title="Menü" aria-label="Menü"><i></i><i></i><i></i></button>
+<button class="gear-btn" id="gearBtn" title="Ayarlar" aria-label="Ayarlar"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
 <div id="drawerBg" class="drawer-bg"></div>
 <aside id="drawer" class="drawer" aria-hidden="true">
   <div class="drawer-h"><span class="drawer-title">Sınav Haftası Asistanı</span><button class="icon" id="drawerClose" title="Kapat">✕</button></div>
   <button class="nav-item" data-nav="home">Ana sayfa</button>
   <button class="nav-item" id="navTrack" data-navtoggle="1"><span>Sınav takibi</span><span class="chev">▸</span></button>
   <div id="navKurullar" class="nav-sub" style="display:none"></div>
+  <button class="nav-item" data-nav="add">Kurul ekle</button>
   <a class="nav-item" id="navAyirici" target="_blank" rel="noopener" style="display:none;text-decoration:none"><span>PDF Ayırıcı</span><span class="muted" style="font-size:12px">yeni sekme ↗</span></a>
   <div class="drawer-sig">Sınav Haftası Asistanı<br><b>CardiacAI</b> · 2026</div>
 </aside>
@@ -617,7 +658,7 @@ async function startSync(){
     }, ()=>{ syncOff=true; setSync(""); resolveSync(false); });
   }catch(e){ resolveSync(false); }
 }
-function switchTo(id){ view="kurul"; $("homeView").style.display="none"; $("kurulView").style.display=""; window.scrollTo({top:0}); state = root.folders.find(f=>f.id===id); root.activeId=id; weekOff=null; openForm=null; folderForm=null; confirmDel=false; $("aiOut").textContent=""; save(); render(); }
+function switchTo(id){ view="kurul"; $("homeView").style.display="none"; $("addView").style.display="none"; $("kurulView").style.display=""; window.scrollTo({top:0}); state = root.folders.find(f=>f.id===id); root.activeId=id; weekOff=null; openForm=null; folderForm=null; confirmDel=false; $("aiOut").textContent=""; save(); render(); }
 
 // ---- Görünüm: ana sayfa / kurul sayfası + yan menü ----
 let view = "home", navOpen = true, tab = "today";
@@ -626,10 +667,10 @@ function showTab(t){ tab=t; document.querySelectorAll("#kTabs [data-tab]").forEa
 document.getElementById("kTabs").addEventListener("click", e=>{ const b=e.target.closest("[data-tab]"); if(b) showTab(b.dataset.tab); });
 const createdOf = f => f.createdAt || +String(f.id).slice(0,13) || 0;
 const sortedFolders = () => [...root.folders].sort((a,b)=>createdOf(a)-createdOf(b));
-function showView(v){ view=v; $("homeView").style.display = v==="home"?"":"none"; $("kurulView").style.display = v==="kurul"?"":"none"; renderDrawer(); window.scrollTo({top:0}); }
+function showView(v){ view=v; $("homeView").style.display = v==="home"?"":"none"; $("addView").style.display = v==="add"?"":"none"; $("kurulView").style.display = v==="kurul"?"":"none"; renderDrawer(); if(v==="home") renderQuote(); window.scrollTo({top:0}); }
 function openDrawer(o){ document.body.classList.toggle("drawer-open", o); $("drawer").setAttribute("aria-hidden", o?"false":"true"); if(o) renderDrawer(); }
 function renderDrawer(){
-  document.querySelectorAll("[data-nav=home]").forEach(b=>b.classList.toggle("on", view==="home"));
+  document.querySelectorAll("[data-nav]").forEach(b=>b.classList.toggle("on", view===b.dataset.nav));
   $("navTrack").classList.toggle("open", navOpen); $("navTrack").classList.toggle("on", view==="kurul");
   $("navKurullar").style.display = navOpen ? "" : "none";
   $("navKurullar").innerHTML = `<button class="new" data-navnew="1">+ Yeni kurul</button>` + sortedFolders().map(f=>{
@@ -669,7 +710,11 @@ function renderQuote(){
   const idx = (Math.floor(now.getTime()/3600000)) % QUOTES.length;   // her saat başı sıradaki söz
   const hi = h<5 ? "İyi geceler" : h<12 ? "Günaydın" : h<18 ? "İyi günler" : h<23 ? "İyi akşamlar" : "İyi geceler";
   const left = 60 - now.getMinutes();
-  $("heroQuote").innerHTML = `<div class="hi">${hi} · ${now.toLocaleDateString("tr-TR",{weekday:"long",day:"numeric",month:"long"})}</div>
+  $("heroQuote").innerHTML = `<svg class="hero-art" viewBox="0 0 220 160" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M110 140 C 40 95, 18 60, 38 34 C 56 12, 92 16, 110 44 C 128 16, 164 12, 182 34 C 202 60, 180 95, 110 140 Z" stroke-width="3" opacity=".9"/>
+      <path d="M8 86 H 70 L 82 64 L 96 112 L 112 40 L 126 98 L 136 86 H 212" stroke-width="3.5"/>
+      <circle cx="212" cy="86" r="4" fill="#fff" stroke="none"/></svg>
+    <div class="hi">${hi} · ${now.toLocaleDateString("tr-TR",{weekday:"long",day:"numeric",month:"long"})}</div>
     <blockquote>“${esc(QUOTES[idx])}”</blockquote>
     <div class="by"><span>— <b>CardiacAI</b></span><span class="tick">yeni söz ${left} dk sonra</span></div>`;
   lastQuoteHour=h;
@@ -677,32 +722,62 @@ function renderQuote(){
 setInterval(()=>{ if(view==="home" && !document.hidden) renderQuote(); }, 60000);
 function renderHome(){
   renderQuote();
-  let body="";
+  let body="", btns="";
   if(SA){
-    body = CUR ? `<div class="muted" style="font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-size:12px">👤 Hesabım</div>
-      <div class="row" style="align-items:baseline;gap:12px"><span class="code-big">${esc(CUR)}</span><span class="muted">kişisel kodun</span></div>
-      <p class="muted" style="margin:4px 0 0">Telefonda, bilgisayarda, tablette girişte bu kodu yazarsın; verilerin her değişiklikte otomatik kaydediliyor.</p>
-      <div class="row" style="margin-top:12px"><a class="wa" href="https://wa.me/?text=${encodeURIComponent(saMsg())}" target="_blank" rel="noopener">🟢 Kodumu WhatsApp'a gönder</a>
-        <button class="ghost" id="hCopy">Kodu kopyala</button><button class="ghost" id="hOut">Çıkış yap</button><span class="muted" id="hSt"></span></div>` : `<p class="muted">Giriş yapılmadı.</p>`;
+    body = `<div><div class="lbl">Hesabım · kişisel kodun</div><span class="code">${esc(CUR||"—")}</span></div>`;
+    btns = CUR ? `<a class="wa" href="https://wa.me/?text=${encodeURIComponent(saMsg())}" target="_blank" rel="noopener">WhatsApp'a gönder</a><button class="ghost" id="hCopy">Kopyala</button><button class="ghost" id="hOut">Çıkış</button><span class="muted" id="hSt"></span>` : "";
   } else if(claudeMode){
-    body = `<div class="muted" style="font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-size:12px">👤 Hesabım</div><h2 style="margin:6px 0 0">☁️ Claude hesabınla giriş yaptın</h2><p class="muted" style="margin:4px 0 0">Verilerin her cihazda otomatik kaydediliyor.</p>`;
+    body = `<div><div class="lbl">Hesabım</div><b>Claude hesabınla giriş yaptın</b> <span class="muted">· verilerin otomatik kaydediliyor</span></div>`;
   } else {
-    body = `<div class="muted" style="font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-size:12px">👤 Hesabım</div>
-      <div class="row" style="align-items:baseline;gap:12px"><span class="code-big">${esc(CUR||"—")}</span><span class="muted">kişisel kodun</span></div>
-      <p class="muted" style="margin:4px 0 0">Bu cihazda girişte bu kodu yazarsın. Başka cihaza geçerken "Kodum"dan güncel halini WhatsApp'a gönder.</p>`;
+    body = `<div><div class="lbl">Hesabım · kişisel kodun</div><span class="code">${esc(CUR||"—")}</span></div>`;
   }
   $("accountBody").innerHTML = body;
-  $("accountBtns").style.display = (SA || claudeMode) ? "none" : "";
+  $("acctExtra").innerHTML = btns;
+  $("deviceBtn").style.display = (SA || claudeMode) ? "none" : "";
+  $("homeEmpty").style.display = root.folders.some(f=>f.courses.length) ? "none" : "";
   if($("hCopy")) $("hCopy").onclick = async ()=>{ try{ await navigator.clipboard.writeText(CUR); $("hSt").textContent="Kopyalandı ✓"; }catch(e){ $("hSt").textContent=CUR; } };
   if($("hOut")) $("hOut").onclick = async ()=>{ if(!await askConfirm("Çıkış yapılsın mı?", `Tekrar girmek için ${CUR} koduna ihtiyacın olacak.`)) return; lsSet(CUR_KEY,""); location.reload(); };
 }
+document.addEventListener("click", e=>{ if(e.target.closest("[data-goadd]")) showView("add"); });
+
+// ---- Ayarlar ----
+const SET_DEF = { verdict:true, count:true, prio:true, quote:true, theme:"auto" };
+const settings = () => Object.assign({}, SET_DEF, root.settings||{});
+function applySettings(){
+  const st=settings(), B=document.body.classList;
+  B.toggle("hide-verdict", !st.verdict); B.toggle("hide-count", !st.count); B.toggle("no-prio", !st.prio); B.toggle("hide-quote", !st.quote);
+  if(st.theme==="auto") document.documentElement.removeAttribute("data-theme"); else document.documentElement.setAttribute("data-theme", st.theme);
+}
+function openSettings(){
+  const el=document.createElement("div"); el.className="modal-bg"; el.id="settingsModal";
+  const row=(k,t,sub)=>`<div class="set-row"><div><b>${t}</b><small>${sub}</small></div><button class="sw ${settings()[k]?"on":""}" data-sw="${k}" aria-label="${t}"></button></div>`;
+  const draw=()=>{ const st=settings();
+    el.innerHTML=`<div class="modal" style="max-width:480px"><div class="row" style="justify-content:space-between;margin-bottom:6px"><h2 style="margin:0">Ayarlar</h2><button class="icon" data-close="1">✕</button></div>
+      <p class="muted" style="margin:0 0 6px">Sınav stresini artıran şeyleri kapatabilirsin; plan arkada aynı şekilde çalışmaya devam eder.</p>
+      ${row("verdict","Yetişir mi uyarısı","“Yetişir / sıkı / yetişmez” kutusu")}
+      ${row("count","Geri sayım","Sınava kalan gün sayısı")}
+      ${row("prio","Öncelik etiketleri","Konulardaki “Acil / Yüksek” etiketleri")}
+      ${row("quote","Motivasyon sözü","Ana sayfadaki saatlik söz")}
+      <div class="set-row"><div><b>Tema</b><small>Açık, koyu ya da cihazına göre</small></div><div class="seg3">${[["auto","Otomatik"],["light","Açık"],["dark","Koyu"]].map(([v,l])=>`<button class="${st.theme===v?"on":""}" data-theme-set="${v}">${l}</button>`).join("")}</div></div>
+    </div>`; };
+  draw(); document.body.append(el);
+  el.onclick=e=>{
+    if(e.target===el || e.target.closest("[data-close]")) return el.remove();
+    const sw=e.target.closest("[data-sw]"), th=e.target.closest("[data-theme-set]");
+    if(sw){ const st=settings(); st[sw.dataset.sw]=!st[sw.dataset.sw]; root.settings=st; }
+    else if(th){ const st=settings(); st.theme=th.dataset.themeSet; root.settings=st; }
+    else return;
+    applySettings(); save(); draw();
+  };
+}
+$("gearBtn").onclick = openSettings;
 $("menuBtn").onclick = ()=>openDrawer(true);
 $("drawerClose").onclick = ()=>openDrawer(false);
 $("drawerBg").onclick = ()=>openDrawer(false);
 document.addEventListener("keydown", e=>{ if(e.key==="Escape") openDrawer(false); });
 $("drawer").addEventListener("click", e=>{
   const b=e.target.closest("button"); if(!b) return; const d=b.dataset;
-  if(d.nav==="home"){ openDrawer(false); showView("home"); }
+  if(d.nav){ openDrawer(false); showView(d.nav); }
   else if(d.navtoggle){ navOpen=!navOpen; renderDrawer(); }
   else if(d.navnew){ openDrawer(false); showView("kurul"); folderForm="new"; renderFolders(); }
   else if(d.navk){ openDrawer(false); switchTo(d.navk); }
@@ -849,7 +924,7 @@ function fmtH(h){ return (Math.round(h*10)/10).toString().replace(".",",") + " s
 
 function render(){
   if(!state) return;
-  renderFolders(); renderHome(); renderDrawer();
+  applySettings(); renderFolders(); renderHome(); renderDrawer();
   $("examDate").value = state.examDate; $("startDate").value = state.startDate||""; $("perLec").value = state.perLec||2;
   $("dailyHours").value = state.dailyHours;
   $("reviewDay").value = String(state.reviewDay);
@@ -1031,7 +1106,7 @@ function renderToday(c){
       <div class="total">${doneH?`✓ ${fmtH(doneH)} yapıldı · `:""}${total?`kalan ${fmtH(total)}`:"bugünlük bitti 🎉"} · ✓ çalıştım, ⇄ başka konu</div>`
     : `<p class="muted" style="margin:0">Bugün için planlanmış çalışma yok — soru çöz ya da tekrar yap.</p>`;
   el.innerHTML = `<div class="hero-h"><h2>Bugün · ${todayStart().toLocaleDateString("tr-TR",{day:"numeric",month:"long",weekday:"long"})}</h2>
-      <span class="muted">Sınava <b>${c.days} gün</b> · ${esc(state.name)}</span></div>
+      <span class="muted"><span class="count">Sınava <b>${c.days} gün</b> · </span>${esc(state.name)}</span></div>
     <div class="hero-b"><div class="hero-col"><h3>🏫 ${esc(dayLabel)}</h3>${preNote}${classes}</div><div class="hero-col"><h3>📚 Okul sonrası çalış</h3>${study}</div></div>`;
 }
 
@@ -1535,7 +1610,7 @@ if(SA){
   $("deviceBtn").onclick = openAccountPanel;
   $("saCard").style.display="";
   $("saCodeBtn").onclick = openCodeImport;
-  if(AYIRICI_URL){ $("navAyirici").href = AYIRICI_URL; $("navAyirici").style.display = "flex"; }
+  if(AYIRICI_URL){ $("navAyirici").href = AYIRICI_URL; $("navAyirici").style.display = "flex"; $("addAyirici").href = AYIRICI_URL; $("addAyirici").style.display = ""; }
 }
 
 // ---- İlk açılış sihirbazı ----
