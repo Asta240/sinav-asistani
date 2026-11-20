@@ -334,6 +334,7 @@
   .dayatt-row .att{float:none;margin:0}
   .dayatt-row .att button{width:auto;padding:0 10px;height:26px;font-size:12px}
   body.no-attend .dayatt, body.no-attend .dayatt-row{display:none !important}
+  .pub-on{color:var(--good)!important;border-color:var(--good)!important}
   .add-topic{background:transparent;color:var(--accent);padding:6px 0;font-size:14px}
   .add label.f{font-size:11px}
   .two{grid-template-columns:1.25fr 1fr;align-items:start}
@@ -731,7 +732,7 @@ async function startSync(){
     }, ()=>{ syncOff=true; setSync(""); resolveSync(false); });
   }catch(e){ resolveSync(false); }
 }
-function switchTo(id){ view="kurul"; $("sharePanel").style.display="none"; $("homeView").style.display="none"; $("addView").style.display="none"; $("settingsView").style.display="none"; $("faqView").style.display="none"; $("kurulView").style.display=""; window.scrollTo({top:0}); state = root.folders.find(f=>f.id===id); root.activeId=id; weekOff=null; openForm=null; folderForm=null; confirmDel=false; $("aiOut").textContent=""; save(); render(); }
+function switchTo(id){ setTimeout(()=>checkPublished(root.folders.find(f=>f.id===id)),0); view="kurul"; $("sharePanel").style.display="none"; $("homeView").style.display="none"; $("addView").style.display="none"; $("settingsView").style.display="none"; $("faqView").style.display="none"; $("kurulView").style.display=""; window.scrollTo({top:0}); state = root.folders.find(f=>f.id===id); root.activeId=id; weekOff=null; openForm=null; folderForm=null; confirmDel=false; $("aiOut").textContent=""; save(); render(); }
 
 // ---- Görünüm: ana sayfa / kurul sayfası + yan menü ----
 let view = "home", navOpen = false, archOpen = false, tab = "today";
@@ -1023,7 +1024,7 @@ function renderFolders(){
   const d = state.examDate ? new Date(state.examDate+"T00:00:00").toLocaleDateString("tr-TR",{day:"numeric",month:"long"}) : "";
   const title = folderForm ? `<form class="folder-form" id="folderForm"><input id="fName" placeholder="${folderForm==="new"?"Yeni kurul adı, ör. Dönem 2 – 3. Kurul":""}" value="${folderForm==="rename"?esc(state.name):""}" required><button type="submit">${folderForm==="rename"?"Kaydet":"Kurulu oluştur"}</button><button type="button" class="ghost" data-fcancel="1">Vazgeç</button></form>`
     : `<h2>${esc(state.name)}</h2>${d?`<span class="muted">Sınav: ${d}</span>`:""}${gradeChip(state)}`;
-  const tools = folderForm ? "" : `<div class="folder-tools">${SA && state.courses.length && !state.fromLib ? `<button class="ghost" data-fpub="1">🌍 Kütüphaneye paylaş</button>` : ""}<button class="ghost" data-fshare="1">🔗 Paylaş</button><button class="ghost" data-fcode="1">Kod ile ekle</button><button class="ghost" data-frename="1">Adını değiştir</button><button class="ghost" data-farch="1">${state.archived?"Arşivden çıkar":"Arşivle"}</button>${
+  const tools = folderForm ? "" : `<div class="folder-tools">${SA && state.courses.length && !state.fromLib ? (state.publishedId ? `<button class="ghost pub-on" data-funpub="1" title="Kütüphaneden kaldır">🌍 Kütüphanede · Kaldır</button>` : `<button class="ghost" data-fpub="1">🌍 Kütüphaneye paylaş</button>`) : ""}<button class="ghost" data-fshare="1">🔗 Paylaş</button><button class="ghost" data-fcode="1">Kod ile ekle</button><button class="ghost" data-frename="1">Adını değiştir</button><button class="ghost" data-farch="1">${state.archived?"Arşivden çıkar":"Arşivle"}</button>${
     `<button class="ghost" data-fdel="1">Kurulu sil</button>`}</div>`;
   const banner = state.archived && !folderForm ? `<div class="arch-banner">Bu kurul arşivde — menüde "Sınav takibi" yerine "Arşiv" altında duruyor. <button class="ghost" data-farch="1">Arşivden çıkar</button></div>` : "";
   const setup = setupMissing(state) && !folderForm ? `<div class="setup-banner"><div><b>Kurulunu hazırla</b> <span class="muted">· planın çıkması için:</span>
@@ -1544,6 +1545,7 @@ $("folders").addEventListener("click", e=>{
   else if(d.fnew){ folderForm="new"; confirmDel=false; renderFolders(); }
   else if(d.fshare) openShare();
   else if(d.fpub) openPublish();
+  else if(d.funpub) unpublish(state);
   else if(d.fsetup) setupWizard();
   else if(d.fgrade) openGrade();
   else if(d.farch){ state.archived = !state.archived; if(!state.archived) navOpen=true; save(); render(); }
@@ -1871,6 +1873,18 @@ function openAccountPanel(){
   };
 }
 // ---- Hazır kurul kütüphanesi (SA) ----
+async function unpublish(f){
+  if(!await askConfirm("Kütüphaneden kaldırılsın mı?","Başkalarının daha önce eklediği kopyalar silinmez; senin kurulun da sende kalır.")) return;
+  try{ await fetch("/api/library",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({code:CUR,id:f.publishedId})}); }catch(e){}
+  clearPublished(f.publishedId); toast("✓ Kütüphaneden kaldırıldı", "İstersen tekrar paylaşabilirsin");
+}
+function clearPublished(id){ root.folders.forEach(f=>{ if(f.publishedId===id) delete f.publishedId; }); save(); render(); }
+// Kütüphaneden başka yoldan silindiyse (ör. yönetici) paylaş butonu geri gelsin
+const pubChecked=new Set();
+async function checkPublished(f){
+  if(!SA || !f || !f.publishedId || pubChecked.has(f.publishedId)) return; pubChecked.add(f.publishedId);
+  try{ const r=await fetch("/api/library?id="+encodeURIComponent(f.publishedId),{cache:"no-store"}); if(r.status===404) clearPublished(f.publishedId); }catch(e){}
+}
 async function importFolderObj(f, libId){
   if(libId) f.fromLib = libId;   // kütüphaneden gelen kurul tekrar paylaşılamaz
   const ex = matchFolder({kurul_adi:f.name});
@@ -1888,7 +1902,7 @@ async function openLibrary(){
     $("libList").innerHTML = list.length ? list.map(it=>`<div class="day" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
         <div style="flex:1;min-width:200px"><b>${esc(it.name)}</b>${it.school?` <span class="muted">· ${esc(it.school)}</span>`:""}
           <div class="muted">${it.courses} ders · ${it.topics} konu${it.sessions?` · ${it.sessions} saatlik program`:""} · ${new Date(it.createdAt).toLocaleDateString("tr-TR",{day:"numeric",month:"short"})}${it.mine?" · <b>senin paylaşımın</b>":""}</div></div>
-        <button data-libadd="${it.id}">Ekle</button>${it.mine?`<button class="ghost" data-libdel="${it.id}">Kaldır</button>`:""}</div>`).join("")
+        <button data-libadd="${it.id}">Ekle</button>${it.mine?`<button class="ghost" data-libdel="${it.id}">Paylaşımımı kaldır</button>`:""}</div>`).join("")
       : `<div class="empty">${items.length?"Aramaya uyan kurul yok.":"Henüz paylaşılmış kurul yok. İlk paylaşan sen ol: kurulunu ekle → 🌍 Kütüphaneye paylaş."}</div>`;
   };
   try{ const r=await fetch("/api/library?me="+encodeURIComponent(CUR||""),{cache:"no-store"}); items=(await r.json()).items||[]; }
@@ -1903,10 +1917,11 @@ async function openLibrary(){
       }catch(err){ e.target.textContent="Olmadı"; } }
     if(del && await askConfirm("Kütüphaneden kaldırılsın mı?","Başkalarının eklediği kopyalar silinmez.")){
       await fetch("/api/library",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({code:CUR,id:del})});
-      items=items.filter(it=>it.id!==del); draw(); }
+      items=items.filter(it=>it.id!==del); draw(); clearPublished(del); toast("✓ Kütüphaneden kaldırıldı"); }
   };
 }
 function openPublish(){
+  if(state.publishedId){ toast("Bu kurul zaten kütüphanede", "Önce kütüphaneden kaldırman gerekir"); return; }
   if(state.fromLib){ toast("Bu kurul zaten kütüphaneden geldi", "Kütüphanedeki kurullar tekrar paylaşılamaz"); return; }
   const P=$("sharePanel"); P.style.display="";
   P.innerHTML=`<div class="row" style="justify-content:space-between"><h2 style="margin:0">🌍 Kütüphaneye paylaş</h2><button class="ghost" data-pclose="1">Kapat</button></div>
@@ -1921,7 +1936,8 @@ function openPublish(){
         courses:state.courses.length, topics:state.topics.filter(t=>!isPlaceholder(t)).length, sessions:(state.sessions||[]).length };
       const r=await fetch("/api/library",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}); const j=await r.json();
       if(!r.ok) throw j.error||"Olmadı";
-      $("pubSt").innerHTML='<b style="color:var(--good)">Paylaşıldı ✓</b> Artık herkes "📚 Hazır kurullar"dan ekleyebilir.';
+      state.publishedId = j.id; save(); renderFolders();
+      $("sharePanel").style.display="none"; toast("✓ Kütüphaneye paylaşıldı", "Herkes “Hazır kurullar”dan ekleyebilir");
     }catch(e){ $("pubSt").textContent=String(e); $("pubGo").disabled=false; }
   };
 }
