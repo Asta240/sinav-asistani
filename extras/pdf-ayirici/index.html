@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PDF Ayırıcı · Sınav Asistanı</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f6f5f1;--card:#fff;--ink:#1d1f24;--muted:#6b6f78;--line:#e6e3dc;--accent:#3b5bdb;--accent-soft:#e8edff;--good:#2f9e44;--bad:#e03131;--r:14px}
+  @media (prefers-color-scheme: dark){:root{--bg:#141518;--card:#1d1f24;--ink:#eceef2;--muted:#9a9fab;--line:#2c2f36;--accent:#748ffc;--accent-soft:#232a45;--good:#51cf66;--bad:#ff6b6b}}
+  *{box-sizing:border-box} body{margin:0;font-family:"Plus Jakarta Sans",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.45}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 18px 60px}
+  h1{font-size:28px;margin:0;letter-spacing:-.02em} h1 span{color:var(--accent)} h2{font-size:17px;margin:0 0 6px}
+  .sub{color:var(--muted);margin:6px 0 20px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:16px}
+  .muted{color:var(--muted);font-size:13.5px}
+  .steps{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+  .steps span{font-size:13px;font-weight:600;padding:6px 12px;border-radius:99px;background:var(--card);border:1px solid var(--line);color:var(--muted)}
+  .steps span.on{background:var(--accent);border-color:var(--accent);color:#fff}
+  .drop{display:flex;align-items:center;justify-content:center;padding:26px;border-radius:12px;border:2px dashed var(--accent);background:var(--accent-soft);cursor:pointer;font-weight:700;color:var(--accent);text-align:center;margin-top:10px}
+  .drop.over{outline:2px solid var(--accent)} .drop input{display:none}
+  .thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .thumbs img{height:64px;border-radius:8px;border:1px solid var(--line)}
+  .thumbs .pdf{height:64px;padding:0 14px;display:flex;align-items:center;border-radius:8px;border:1px solid var(--line);background:var(--bg);font-weight:600;font-size:13px}
+  textarea,input{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 11px;width:100%}
+  textarea{min-height:64px;resize:vertical;margin-top:10px}
+  button{font:inherit;font-weight:600;border:0;border-radius:10px;padding:10px 16px;cursor:pointer;background:var(--accent);color:#fff}
+  button.ghost{background:transparent;color:var(--muted);border:1px solid var(--line)} button:disabled{opacity:.5;cursor:default}
+  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  label.f{display:flex;flex-direction:column;gap:5px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;flex:1;min-width:140px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:8px}
+  th{text-align:left;font-size:11px;color:var(--muted);text-transform:uppercase;padding:0 6px 6px;border-bottom:1px solid var(--line)}
+  td{padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+  .k{border-top:1px solid var(--line);padding-top:14px;margin-top:14px} .k:first-child{border:0;margin:0;padding:0}
+  .code{font:12px/1.35 ui-monospace,monospace;min-height:58px;word-break:break-all}
+  .wa{display:inline-flex;align-items:center;gap:6px;background:#25D366;color:#fff;text-decoration:none;font-weight:700;padding:10px 16px;border-radius:10px}
+  .big{font-size:15px;padding:12px 20px}
+  .ok{color:var(--good);font-weight:600}
+  .warn{background:#fff3e0;color:#9a5b00;border-radius:10px;padding:12px 14px;font-size:14px}
+  @media (prefers-color-scheme: dark){.warn{background:#33281b;color:#ffc078}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>📄 PDF <span>Ayırıcı</span></h1>
+  <p class="sub">Kurul kitapçığını yükle — Claude kurulları, dersleri, ders saatlerini, soru sayılarını ve ders programını (saat, konu, hoca) ayıklasın. Çıkan <b>kurul kodunu</b> Sınav Asistanı'nda "📥 Kurul kodu ekle"ye yapıştır.</p>
+  <div class="steps"><span id="s1" class="on">1 · Yükle</span><span id="s2">2 · Kontrol et</span><span id="s3">3 · Kodu al</span></div>
+
+  <div class="warn" id="noClaude" style="display:none">Bu sayfa senin Claude hesabınla çalışır (PDF'i Claude okur). claude.ai'ye giriş yapıp sayfayı yenile.</div>
+
+  <section class="card" id="up">
+    <h2>Kitapçığı yükle</h2>
+    <p class="muted" style="margin:0">PDF ya da sayfa fotoğrafları. Kitapçıkta birden fazla kurul varsa hepsi ayrı ayrı çıkar. Okuma Claude kullanım hakkından gider — sınıfta bir kişinin yapıp kodu gruba atması yeterli.</p>
+    <label class="drop" id="drop"><input type="file" id="fileIn" accept="image/*,application/pdf,.pdf" multiple>⬆️ PDF ya da fotoğraf seç / buraya sürükle</label>
+    <div class="thumbs" id="thumbs"></div>
+    <textarea id="note" placeholder="(İsteğe bağlı) Ek not — ör. sadece 3. kurulu oku"></textarea>
+    <div class="row" style="margin-top:10px"><button id="readBtn" class="big" disabled>Claude ile oku ✦</button><span class="muted" id="st"></span></div>
+  </section>
+
+  <section class="card" id="prevCard" style="display:none"><h2>Kontrol et</h2><p class="muted" style="margin:0">İstemediğin kurulun işaretini kaldır, adı/tarihleri düzelt.</p><div id="preview" style="margin-top:12px"></div>
+    <div class="row" style="margin-top:14px"><button id="makeBtn" class="big">Kurul kodlarını oluştur →</button></div></section>
+
+  <section class="card" id="outCard" style="display:none"><h2>✅ Kurul kodların hazır</h2>
+    <p class="muted" style="margin:0">Hepsini kopyala, Sınav Asistanı'nda <b>📥 Kurul kodu ekle</b>'ye yapıştır. Sonra kurulun sayfasında <b>🌍 Kütüphaneye paylaş</b> de — herkes "📚 Hazır kurullar"dan tek tıkla ekler, kimse PDF'i tekrar ayıklamaz.</p>
+    <div class="row" style="margin-top:12px"><button id="copyAll" class="big">📋 Hepsini kopyala</button><a class="wa" id="waAll" target="_blank" rel="noopener">🟢 WhatsApp'a gönder</a><a id="mainLink" class="ghost" style="text-decoration:none;padding:10px 16px;border-radius:10px;border:1px solid var(--line);color:var(--ink);display:none" target="_blank" rel="noopener">📚 Sınav Asistanı'nı aç</a><span class="muted" id="copySt"></span></div>
+    <div id="codes" style="margin-top:14px"></div></section>
+</div>
+<script>
+const MAIN_URL = "https://sinav-asistani-ten.vercel.app";
+const $ = id => document.getElementById(id);
+const uid = () => String(Date.now()) + Math.floor(Math.random()*1e6);
+
+const toISO = d => d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+
+const fmtShort = iso => new Date(iso+"T00:00:00").toLocaleDateString("tr-TR",{day:"numeric",month:"short"});
+
+function esc(s){ return String(s).replace(/[&<>"]/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m])); }
+
+const b64u = bytes => { let s=""; bytes.forEach(b=>s+=String.fromCharCode(b)); return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); };
+
+const unb64u = str => { str=str.replace(/-/g,"+").replace(/_/g,"/"); while(str.length%4) str+="="; const bin=atob(str); return Uint8Array.from(bin,c=>c.charCodeAt(0)); };
+
+async function pipe(bytes, stream){ return new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(stream)).arrayBuffer()); }
+
+async function encodeFolder(f){
+  const o = { n:f.name, d:f.examDate, s:f.startDate||"", l:f.perLec||2, p:(f.sessions||[]).map(x=>[x.date,x.time,x.course,x.topic,x.type==="uygulama"?1:0,x.teacher||""]), c:f.courses.map(c=>[c.name,c.lectureH||0,c.slides||0,c.questions||0,
+    f.topics.filter(t=>t.courseId===c.id).map(t=>[t.name,t.diff,t.weight,t.date||"",t.lecH||0,t.hours||0])]) };
+  const raw = new TextEncoder().encode(JSON.stringify(o));
+  if(window.CompressionStream){ try{ return "KRL1." + b64u(await pipe(raw, new CompressionStream("deflate-raw"))); }catch(e){} }
+  return "KRL0." + b64u(raw);
+}
+
+const isPdf = f => f.type==="application/pdf" || /\.pdf$/i.test(f.name);
+
+let pdfjsP=null;
+
+function loadPdfjs(){
+  if(!pdfjsP) pdfjsP = import(new URL("pdf.min.js", location.href).href).then(m=>{ m.GlobalWorkerOptions.workerSrc = new URL("pdf.worker.min.js", location.href).href; return m; });
+  return pdfjsP;
+}
+
+async function pdfToImages(file, onPage){
+  const pdfjs = await loadPdfjs();
+  const doc = await pdfjs.getDocument({data: new Uint8Array(await file.arrayBuffer())}).promise;
+  const out=[];
+  for(let n=1; n<=doc.numPages && n<=60; n++){
+    onPage(n, doc.numPages);
+    const page = await doc.getPage(n);
+    const v0 = page.getViewport({scale:1}); const scale = Math.min(2.2, 1500/Math.max(v0.width,v0.height));
+    const vp = page.getViewport({scale});
+    const cv = document.createElement("canvas"); cv.width=Math.ceil(vp.width); cv.height=Math.ceil(vp.height);
+    const ctx = cv.getContext("2d"); ctx.fillStyle="#fff"; ctx.fillRect(0,0,cv.width,cv.height);
+    await page.render({canvasContext:ctx, viewport:vp}).promise;
+    out.push(await new Promise(r=>cv.toBlob(r,"image/jpeg",0.85)));
+    page.cleanup();
+  }
+  return out;
+}
+
+function importPrompt(from, to, total, note){
+  const y = new Date().getFullYear();
+  return `Bunlar bir tıp fakültesi (veya üniversite) kurul/ders kitapçığının sayfaları (${total} sayfanın ${from}–${to}. sayfaları). Kitapçıkta birden fazla ders kurulu olabilir; bu sayfalarda bir kurulun sadece bir kısmı da görünebilir.
+Görevin: bu sayfalarda GÖRDÜĞÜN kurul bilgilerini çıkarıp SADECE şu JSON'u döndürmek:
+{"kurullar":[{"kurul_no": number|null, "kurul_adi": string, "baslangic_tarihi": "YYYY-MM-DD"|null, "sinav_tarihi": "YYYY-MM-DD"|null,
+ "dersler":[{"ad": string, "ders_saati": number|null, "soru_sayisi": number|null, "slayt_sayisi": number|null, "konular":[{"ad": string, "tarih": "YYYY-MM-DD"|null}]}],
+ "program":[{"tarih":"YYYY-MM-DD", "saat":"08:30-09:20", "ders": string, "konu": string, "hoca": string|null, "tur":"teorik"|"uygulama"}]}]}
+Kurallar:
+- kurul_adi kısa olsun, ör. "2. Kurul – Sindirim Sistemi ve Metabolizma". kurul_no: kurulun sırası (II. Ders Kurulu → 2).
+- baslangic_tarihi: kurulun ilk ders günü. sinav_tarihi: "kurul sonu sınavı" / teorik sınav tarihi yazıyorsa o, yoksa kurulun bitiş tarihi.
+- Her anabilim dalı tek ders. Ders kodunu (TIP2204 gibi) atma, adı düzgün yaz ("Anatomi", "Tıbbi Biyokimya", "Fizyoloji").
+- ders_saati: TEORİK ders saati toplamı (uygulamayı katma). soru_sayisi: kurul sınavındaki toplam soru sayısı. Bu sayfalarda yoksa null.
+- Mesleki beceri, portfolyo, seçmeli, PDÖ, serbest çalışma gibi modülleri ders olarak alma.
+- program: sayfalarda günlük/haftalık ders programı varsa HER ders saatini ayrı satır olarak yaz (tarih, saat aralığı, ders = anabilim dalı adı kodsuz, konu = o saatin konu başlığı, tur = teorik ya da uygulama/pratik/laboratuvar için "uygulama"). Öğle arası, serbest çalışma, boş saatleri yazma. Program yoksa [].
+- program yazdıysan dersler[].konular'ı boş bırak ([]); program yoksa ama konu listesi varsa konular'a yaz.
+- Tarihlerde yıl yazmıyorsa akademik yılı düşün (şu an ${y}).
+- Öğretim üyesi adını SADECE program satırındaki "hoca" alanına unvanıyla yaz (ör. "Doç. Dr. Keziban Karacan"); yazmıyorsa null. Bu sayfalarda kurul bilgisi yoksa {"kurullar":[]} döndür.
+${note?`Öğrencinin ek notu / konu listesi (ilgili derse ve kurula yerleştir):\n${note}`:""}`;
+}
+
+const norm = x => String(x||"").toLocaleLowerCase("tr").replace(/tıbbi|tibbi/g,"").replace(/[^a-zçğıöşü0-9]+/g," ").trim();
+
+function mergeKurullar(list){
+  const map=new Map();
+  for(const k of list){
+    if(!k || !Array.isArray(k.dersler)) continue;
+    let key = k.kurul_no!=null ? "no"+k.kurul_no : "ad"+norm(k.kurul_adi);
+    if(!map.has(key) && map.size){
+      // numarası/adı farklı yazılmış aynı kurulu bul: adında ortak anlamlı kelime ya da tek kurul varsa ona ekle
+      const words = norm(k.kurul_adi).split(" ").filter(w=>w.length>4 && !/kurul|ders/.test(w));
+      const hit = [...map.entries()].find(([_,m])=> (k.kurul_no==null || m.kurul_no==null) && words.some(w=>norm(m.kurul_adi).includes(w)));
+      if(hit) key=hit[0]; else if(k.kurul_no==null && map.size===1) key=[...map.keys()][0];
+    }
+    let m=map.get(key);
+    if(!m){ m={kurul_no:k.kurul_no??null, kurul_adi:k.kurul_adi||"Kurul", baslangic_tarihi:null, sinav_tarihi:null, dersler:new Map(), program:new Map()}; map.set(key,m); }
+    for(const r of (k.program||[])){
+      if(!r || !/^\d{4}-\d{2}-\d{2}$/.test(r.tarih||"") || !r.ders) continue;
+      const pk = r.tarih+"|"+String(r.saat||"").replace(/\s/g,"")+"|"+norm(r.ders);
+      if(!m.program.has(pk)) m.program.set(pk,{tarih:r.tarih, saat:String(r.saat||"").replace(/\s/g,""), ders:String(r.ders), konu:String(r.konu||""), hoca:r.hoca?String(r.hoca):"", tur:r.tur==="uygulama"?"uygulama":"teorik"});
+    }
+    if((k.kurul_adi||"").length > (m.kurul_adi||"").length) m.kurul_adi=k.kurul_adi;
+    if(k.baslangic_tarihi && (!m.baslangic_tarihi || k.baslangic_tarihi<m.baslangic_tarihi)) m.baslangic_tarihi=k.baslangic_tarihi;
+    if(k.sinav_tarihi && (!m.sinav_tarihi || k.sinav_tarihi>m.sinav_tarihi)) m.sinav_tarihi=k.sinav_tarihi;
+    for(const d of k.dersler){
+      if(!d || !d.ad) continue; const dk=norm(d.ad);
+      let md=m.dersler.get(dk); if(!md){ md={ad:d.ad, ders_saati:0, soru_sayisi:null, slayt_sayisi:null, konular:new Map()}; m.dersler.set(dk,md); }
+      md.ders_saati = Math.max(md.ders_saati, +d.ders_saati||0);
+      if(d.soru_sayisi!=null) md.soru_sayisi = Math.max(md.soru_sayisi||0, +d.soru_sayisi||0);
+      if(d.slayt_sayisi!=null) md.slayt_sayisi = Math.max(md.slayt_sayisi||0, +d.slayt_sayisi||0);
+      for(let t of (d.konular||[])){
+        if(typeof t==="string") t={ad:t}; if(!t||!t.ad) continue;
+        const tk=norm(t.ad); const ex=md.konular.get(tk);
+        const tarih=/^\d{4}-\d{2}-\d{2}$/.test(t.tarih||"")?t.tarih:null;
+        if(!ex) md.konular.set(tk,{ad:t.ad, tarih}); else if(tarih && (!ex.tarih || tarih<ex.tarih)) ex.tarih=tarih;
+      }
+    }
+  }
+  // Programdaki teorik saatlerden konuları türet (konu başına kaç saat işlendiği = lecH)
+  for(const m of map.values()){
+    const prog=[...m.program.values()].sort((a,b)=>(a.tarih+a.saat).localeCompare(b.tarih+b.saat)); m.program=prog;
+    const findD = name => { const n=norm(name); if(m.dersler.has(n)) return m.dersler.get(n);
+      const w=n.split(" ")[0]; for(const [k,d] of m.dersler) if(k.split(" ")[0]===w) return d; return null; };
+    for(const r of prog){
+      if(r.tur!=="teorik") continue;
+      let d=findD(r.ders); if(!d){ d={ad:r.ders, ders_saati:0, soru_sayisi:null, slayt_sayisi:null, konular:new Map(), _count:0}; m.dersler.set(norm(r.ders),d); }
+      d._count=(d._count||0)+1; r.ders=d.ad;
+      if(!r.konu) continue;
+      const tk=norm(r.konu); const ex=d.konular.get(tk);
+      if(!ex) d.konular.set(tk,{ad:r.konu, tarih:r.tarih, lecH:1}); else { ex.lecH=(ex.lecH||1)+1; if(r.tarih<(ex.tarih||"9")) ex.tarih=r.tarih; }
+    }
+    for(const d of m.dersler.values()) if(!d.ders_saati && d._count) d.ders_saati=d._count;
+    if(!m.baslangic_tarihi && prog.length) m.baslangic_tarihi=prog[0].tarih;
+  }
+  return [...map.values()].map(m=>({...m, dersler:[...m.dersler.values()].map(d=>({...d, konular:[...d.konular.values()].sort((a,b)=>(a.tarih||"9").localeCompare(b.tarih||"9"))}))}))
+    .filter(m=>m.dersler.length).sort((a,b)=>(a.kurul_no??99)-(b.kurul_no??99) || (a.baslangic_tarihi||"").localeCompare(b.baslangic_tarihi||""));
+}
+
+let sample=null, imgLimits=null, files=[], parsed=null;
+(async()=>{
+  try{ sample = window.claude && await window.claude.use("sample"); }catch(e){ sample=null; }
+  if(sample){ try{ const l=await sample.limits(); imgLimits=l&&l.images||null; }catch(e){} }
+  if(!sample || !imgLimits){ $("noClaude").style.display=""; $("readBtn").disabled=true; }
+})();
+if(/^https?:/.test(MAIN_URL)){ $("mainLink").href=MAIN_URL; $("mainLink").style.display="inline-flex"; }
+const step = n => ["s1","s2","s3"].forEach((id,i)=>$(id).classList.toggle("on", i===n-1));
+
+function setFiles(list){
+  files=[...list].filter(f=>f.type.startsWith("image/")||isPdf(f)).slice(0,30);
+  $("thumbs").innerHTML="";
+  files.forEach(f=>{ if(isPdf(f)){ const d=document.createElement("div"); d.className="pdf"; d.textContent="📄 "+f.name; $("thumbs").append(d); }
+    else { const i=document.createElement("img"); i.src=URL.createObjectURL(f); $("thumbs").append(i); } });
+  $("readBtn").disabled = !files.length || !sample || !imgLimits;
+}
+$("fileIn").onchange=e=>{ setFiles(e.target.files); e.target.value=""; };
+const drop=$("drop");
+drop.ondragover=e=>{ e.preventDefault(); drop.classList.add("over"); };
+drop.ondragleave=()=>drop.classList.remove("over");
+drop.ondrop=e=>{ e.preventDefault(); drop.classList.remove("over"); setFiles(e.dataTransfer.files); };
+
+$("readBtn").onclick = async ()=>{
+  const st=$("st"), note=$("note").value.trim(); $("readBtn").disabled=true;
+  $("prevCard").style.display="none"; $("outCard").style.display="none";
+  try{
+    let pages=[];
+    for(const f of files){
+      if(isPdf(f)){ try{ pages.push(...await pdfToImages(f,(n,N)=>{ st.textContent=`PDF hazırlanıyor… sayfa ${n}/${N}`; })); }
+        catch(e){ st.textContent="PDF açılamadı — sayfaların ekran görüntüsünü dene."; return; } }
+      else pages.push(f);
+    }
+    pages=pages.slice(0,60);
+    const per=Math.max(1,Math.min(imgLimits?.maxCount||5,6));
+    const groups=[]; for(let i=0;i<pages.length;i+=per) groups.push(pages.slice(i,i+per));
+    const found=[]; let failed=0;
+    for(let g=0; g<groups.length; g++){
+      const from=g*per+1, to=Math.min(pages.length,(g+1)*per);
+      st.textContent = groups.length>1 ? `Claude okuyor… sayfa ${from}–${to} / ${pages.length} (${g+1}/${groups.length})` : "Claude okuyor…";
+      try{
+        const r=await sample.json(importPrompt(from,to,pages.length,note),{images:groups[g]});
+        if(r && Array.isArray(r.kurullar)) found.push(...r.kurullar); else if(r && Array.isArray(r.dersler)) found.push(r);
+      }catch(e){
+        const c=e&&e.code;
+        if(c==="not_granted"||c==="sampling_disabled"){ st.textContent="Claude'a izin verilmedi."; return; }
+        if(c==="rate_limited"){ st.textContent="Claude kullanım hakkın doldu; okunan kısımla devam ediyorum."; break; }
+        failed++;
+      }
+    }
+    parsed=mergeKurullar(found);
+    if(!parsed.length){ st.textContent="Kurul/ders çıkaramadım. Ders dağılımı veya ders programı sayfalarını dene."; return; }
+    st.textContent = failed ? `${failed} grup okunamadı, gerisi aşağıda.` : "";
+    renderPreview(); step(2);
+  } finally { $("readBtn").disabled = !files.length; }
+};
+
+function renderPreview(){
+  $("prevCard").style.display="";
+  $("preview").innerHTML = parsed.map((k,i)=>{
+    const nT=k.dersler.reduce((a,d)=>a+d.konular.length,0);
+    return `<div class="k">
+      <label class="row" style="cursor:pointer;margin-bottom:8px"><input type="checkbox" data-pk="${i}" checked style="width:18px;height:18px;flex:none;margin:0"><b>${esc(k.kurul_adi)}</b><span class="muted">${k.dersler.length} ders · ${nT} konu${k.program.length?` · ${k.program.length} saatlik program`:""}</span></label>
+      <div class="row"><label class="f" style="flex:2">Kurul adı<input data-pn="${i}" value="${esc(k.kurul_adi)}"></label>
+        <label class="f">Başlangıç<input type="date" data-ps="${i}" value="${esc(k.baslangic_tarihi||"")}"></label>
+        <label class="f">Sınav<input type="date" data-pd="${i}" value="${esc(k.sinav_tarihi||"")}"></label></div>
+      <table><thead><tr><th>Ders</th><th>Saat</th><th>Soru</th><th>Konular</th></tr></thead><tbody>${
+        k.dersler.map(d=>`<tr><td><b>${esc(d.ad)}</b></td><td>${d.ders_saati||"–"}</td><td>${d.soru_sayisi??"–"}</td><td class="muted">${
+          d.konular.length ? esc(d.konular.slice(0,4).map(t=>t.ad+(t.tarih?` (${fmtShort(t.tarih)})`:"")).join(", "))+(d.konular.length>4?` +${d.konular.length-4}`:"") : "—"}</td></tr>`).join("")}</tbody></table></div>`;
+  }).join("");
+  $("prevCard").scrollIntoView({behavior:"smooth"});
+}
+
+function folderFromKurul(k,i){
+  const f={ id:uid(), name: document.querySelector(`[data-pn="${i}"]`).value.trim()||k.kurul_adi,
+    startDate: document.querySelector(`[data-ps="${i}"]`).value||"", examDate: document.querySelector(`[data-pd="${i}"]`).value||"",
+    perLec:2, courses:[], topics:[], sessions:[] };
+  const totalQ=k.dersler.reduce((a,d)=>a+(+d.soru_sayisi||0),0);
+  k.dersler.forEach(d=>{
+    const c={ id:uid(), name:String(d.ad), lectureH:+d.ders_saati||0, slides:+d.slayt_sayisi||0, questions:+d.soru_sayisi||0 };
+    f.courses.push(c);
+    const share=totalQ? c.questions/totalQ : 0; const weight=!totalQ?2: share>=0.25?3: share>=0.15?2:1;
+    (d.konular.length?d.konular:[{ad:"Tüm konular"}]).forEach(t=>f.topics.push({ id:uid(), courseId:c.id, name:String(t.ad), date:t.tarih||"", lecH:t.lecH||0, diff:2, weight, done:0 }));
+  });
+  f.sessions=(k.program||[]).map(r=>({date:r.tarih, time:r.saat, course:r.ders, topic:r.konu, teacher:r.hoca||"", type:r.tur}));
+  return f;
+}
+
+let allText="";
+$("makeBtn").onclick = async ()=>{
+  const out=[];
+  for(let i=0;i<parsed.length;i++){
+    if(!document.querySelector(`[data-pk="${i}"]`).checked) continue;
+    const f=folderFromKurul(parsed[i],i); out.push({name:f.name, code: await encodeFolder(f)});
+  }
+  if(!out.length) return;
+  allText = `📚 Kurul kodları (${out.map(o=>o.name).join(", ")})\n`+(/^https?:/.test(MAIN_URL)?`${MAIN_URL}\n`:"")+`Sınav Asistanı → "📥 Kurul kodu ekle" → bu mesajın tamamını yapıştır.\n\n`+out.map(o=>`${o.name}:\n${o.code}`).join("\n\n");
+  $("codes").innerHTML = out.map((o,i)=>`<div class="k"><div class="row" style="justify-content:space-between"><b>${esc(o.name)}</b><button class="ghost" data-c="${i}">Bunu kopyala</button></div><textarea readonly class="code">${o.code}</textarea></div>`).join("");
+  $("codes").onclick = async e=>{ const i=e.target.dataset.c; if(i===undefined) return; try{ await navigator.clipboard.writeText(out[+i].code); e.target.textContent="Kopyalandı ✓"; }catch(err){ e.target.closest(".k").querySelector("textarea").select(); } };
+  const wa=$("waAll");
+  if(allText.length<6000){ wa.style.display=""; wa.href="https://wa.me/?text="+encodeURIComponent(allText); } else wa.style.display="none";
+  $("outCard").style.display=""; step(3); $("outCard").scrollIntoView({behavior:"smooth"});
+};
+$("copyAll").onclick = async ()=>{
+  try{ await navigator.clipboard.writeText(allText); $("copySt").innerHTML='<span class="ok">Kopyalandı ✓</span>'; }
+  catch(e){ $("copySt").textContent="Kopyalanamadı — kodları tek tek kopyala."; }
+};
+</script>
+</body>
+</html>

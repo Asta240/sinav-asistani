@@ -327,6 +327,13 @@
   .faq details p{margin:0;padding:0 18px 16px;color:var(--muted);line-height:1.55} .faq details p b{color:var(--ink)}
   .faq-link{display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:12px 18px;margin-bottom:16px;font-size:18px}
   .faq-link:hover{border-color:var(--accent)} .faq-link b{display:block;font-size:15px} .faq-link small{color:var(--muted);font-size:12.5px;font-weight:500}
+  .dayatt{margin-top:5px;display:flex;justify-content:center}
+  .dayatt .att{float:none;margin:0}
+  th.today .dayatt .att button{background:rgba(255,255,255,.25);color:#fff}
+  .dayatt-row{display:flex;align-items:center;gap:8px;margin:-2px 0 10px;font-size:13px}
+  .dayatt-row .att{float:none;margin:0}
+  .dayatt-row .att button{width:auto;padding:0 10px;height:26px;font-size:12px}
+  body.no-attend .dayatt, body.no-attend .dayatt-row{display:none !important}
   .add-topic{background:transparent;color:var(--accent);padding:6px 0;font-size:14px}
   .add label.f{font-size:11px}
   .two{grid-template-columns:1.25fr 1fr;align-items:start}
@@ -1318,6 +1325,8 @@ function renderToday(c){
   const dd=dayDiff(showISO);
   const dayLabel = showISO===iso ? "Okulda" : dd===1 ? "Yarın okulda" : new Date(showISO+"T00:00:00").toLocaleDateString("tr-TR",{weekday:"long",day:"numeric",month:"short"})+" okulda";
   const preNote = showISO===iso ? "" : `<p class="muted" style="margin:-4px 0 10px">${doneToday?"Bugünün dersleri bitti ✓":"Bugün ders yok 🎉"}</p>`;
+  const dayKeys = all.filter(r=>r.date===showISO).map(attKey);
+  const dayAtt = dayKeys.length ? `<div class="dayatt-row"><span class="muted">Bütün gün:</span>${attBtns(dayKeys).replace('title="Katıldım"','title="Bütün gün katıldım"').replace('title="Gelmedim"','title="Bütün gün gelmedim"').replace('>✓<','>✓ katıldım<').replace('>✗<','>✗ gelmedim<')}</div>` : "";
   const ses0=all.filter(r=>r.date===showISO).sort((a,b)=>(a.time||"").localeCompare(b.time||""));
   const ses=[]; for(const r of ses0){ const p=ses[ses.length-1];
     if(p && p.course===r.course && p.topic===r.topic && p.type===r.type && (p.teacher||"")===(r.teacher||"")){ p.time=(p.time||"").split("-")[0]+"-"+((r.time||"").split("-")[1]||""); p.n++; p.keys.push(attKey(r)); }
@@ -1341,7 +1350,7 @@ function renderToday(c){
     : `<p class="muted" style="margin:0">Bugün için planlanmış çalışma yok — soru çöz ya da tekrar yap.</p>`;
   el.innerHTML = `<div class="hero-h"><h2>Bugün · ${todayStart().toLocaleDateString("tr-TR",{day:"numeric",month:"long",weekday:"long"})}</h2>
       <span class="muted"><span class="count">Sınava <b>${c.days} gün</b> · </span>${esc(state.name)}</span></div>
-    <div class="hero-b"><div class="hero-col"><h3>🏫 ${esc(dayLabel)}</h3>${preNote}${classes}</div><div class="hero-col"><h3>📚 Okul sonrası çalış</h3>${study}</div></div>`;
+    <div class="hero-b"><div class="hero-col"><h3>🏫 ${esc(dayLabel)}</h3>${preNote}${dayAtt}${classes}</div><div class="hero-col"><h3>📚 Okul sonrası çalış</h3>${study}</div></div>`;
 }
 
 // ---- Devamsızlık takibi ----
@@ -1419,7 +1428,8 @@ function renderWeek(){
     while(k<slots.length && grid[k][ci] && grid[k][ci].course===grid[ri][ci].course && grid[k][ci].topic===grid[ri][ci].topic && grid[k][ci].type===grid[ri][ci].type && (grid[k][ci].teacher||"")===(grid[ri][ci].teacher||"")){ skip[k][ci]=true; span[ri][ci]++; k++; }
   }
   const keysAt=(ri,ci)=>{ const ks=[]; for(let k=ri;k<ri+span[ri][ci];k++) ks.push(attKey(grid[k][ci])); return ks; };
-  const head=showDays.map(d=>`<th class="${toISO(d)===todayISO?"today":""}">${d.toLocaleDateString("tr-TR",{weekday:"long"})}<small>${d.toLocaleDateString("tr-TR",{day:"numeric",month:"short"})}</small></th>`).join("");
+  const head=showDays.map(d=>{ const dk=wk.filter(r=>r.date===toISO(d)).map(attKey);
+    return `<th class="${toISO(d)===todayISO?"today":""}">${d.toLocaleDateString("tr-TR",{weekday:"long"})}<small>${d.toLocaleDateString("tr-TR",{day:"numeric",month:"short"})}</small>${dk.length?`<div class="dayatt">${attBtns(dk).replace('title="Katıldım"','title="Bütün gün katıldım"').replace('title="Gelmedim"','title="Bütün gün gelmedim"')}</div>`:""}</th>`; }).join("");
   const body=slots.map((sl,ri)=>`<tr><td class="tm">${esc(sl)}</td>${showDays.map((d,ci)=>{
       if(skip[ri][ci]) return ""; const r=grid[ri][ci];
       if(!r) return `<td class="empty-c"></td>`;
