@@ -1,6 +1,6 @@
 # Netlify ayarları (vercel.app Türkiye'de engellendiği için site burada da yayınlanır)
 [build]
-  command = "mkdir -p dist && cp index.html dist/index.html"
+  command = "mkdir -p dist && cp index.html manifest.webmanifest sw.js icon-192.png icon-512.png icon-maskable-512.png apple-touch-icon.png dist/"
   publish = "dist"
   functions = "netlify/functions"
 

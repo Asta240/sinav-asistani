@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sınav Haftası Asistanı · CardiacAI</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#141518">
+<link rel="icon" type="image/png" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Sınav Asistanı">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:ital,opsz,wght@1,9..144,500&display=swap" rel="stylesheet">
 <style>
@@ -339,6 +347,19 @@
   .dayatt-row .att{float:none;margin:0}
   .dayatt-row .att button{width:auto;padding:0 10px;height:26px;font-size:12px}
   body.no-attend .dayatt, body.no-attend .dayatt-row{display:none !important}
+  .stats-card{margin-bottom:16px}
+  .st-h{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .st-total{font-size:26px;font-weight:800;letter-spacing:-.01em;margin-right:6px} .st-sub{font-size:13px}
+  .st-streak{display:flex;flex-direction:column;align-items:center;min-width:64px;padding:6px 10px;border-radius:12px;border:1px solid var(--line);opacity:.55}
+  .st-streak.on{opacity:1;border-color:var(--warn);background:var(--warn-soft)} .st-streak span{font-size:18px} .st-streak b{font-size:18px;line-height:1.1} .st-streak small{font-size:11px;color:var(--muted)}
+  .st-bars{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:14px;align-items:end}
+  .st-col{display:flex;flex-direction:column;align-items:center;gap:4px}
+  .st-v{font-size:11.5px;color:var(--muted);height:15px}
+  .st-bar{width:100%;max-width:38px;height:84px;background:var(--line);border-radius:8px;display:flex;align-items:flex-end;overflow:hidden}
+  .st-bar i{display:block;width:100%;background:var(--accent);border-radius:8px;min-height:0;transition:height .3s}
+  .st-col.today .st-bar i{background:var(--good)} .st-col.today .st-d{color:var(--ink);font-weight:800}
+  .st-d{font-size:12px;color:var(--muted);text-transform:capitalize}
+  .st-note{font-size:12px;margin:10px 0 0}
   .new-rib{display:inline-block;margin-left:8px;padding:2px 7px;border-radius:999px;background:var(--bad);color:#fff;font-size:10.5px;font-weight:800;letter-spacing:.06em;vertical-align:middle;line-height:1.4}
   #verFoot{color:inherit;text-decoration:underline dotted;text-underline-offset:3px}
   .upd-filter{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
@@ -418,6 +439,7 @@
   </section>
 
   <section class="continue" id="homeContinue" style="display:none"></section>
+  <section class="card stats-card" id="homeStats" style="display:none"></section>
   <button class="faq-link" data-gofaq="1"><span><b>Nasıl kullanılır?</b><small>Sık sorulan sorular</small></span><span>→</span></button>
   <section class="card" id="homeEmpty" style="display:none">
     <div class="row" style="justify-content:space-between"><div><h2 style="margin:0">Henüz kurulun yok</h2><p class="muted" style="margin:4px 0 0">Kurul kitapçığından ya da hazır kurullardan başla.</p></div><button data-goadd="1">Kurul ekle →</button></div>
@@ -783,6 +805,21 @@ const EN = {
 // --- yönlendirme / boş durum
 "Tümü":"All","boş":"empty","Bu cihazda":"On this device","Yeni bir cihazda":"On a new device","AB12":"AB12",
 "Çok sık istek gönderildi, biraz sonra tekrar dene.":"Too many requests, try again shortly.",
+"📊 Bu hafta":"📊 This week","· geçen hafta {*}":"· last week {*}","· çalıştıkça burada birikir":"· builds up as you study","gün seri":"day streak",
+"Bugün kartında ✓ ya da Konular'da ilerleme işaretledikçe saatler buraya eklenir.":"Hours are added here as you tick ✓ on the Today card or mark progress in Topics.",
+"📅 Takvime ekle":"📅 Add to calendar","Takvime ekle":"Add to calendar","Ders programını ve sınav tarihini takvimine ekle":"Add the timetable and exam date to your calendar",
+"Takvime eklenecek bir şey yok":"Nothing to add to the calendar","Önce ders programı ya da sınav tarihi ekle":"Add a timetable or exam date first",
+"📅 Takvim dosyası indirildi":"📅 Calendar file downloaded","Dosyayı aç → takvimine eklenir ({#} etkinlik)":"Open the file → it is added to your calendar ({#} events)",
+"Uygulama":"App","Ana ekrana ekle":"Add to home screen","📲 Yükle":"📲 Install","✓ Yüklü":"✓ Installed","✓ Uygulama yüklendi":"✓ App installed","Ana ekranından açabilirsin":"You can open it from your home screen",
+"Uygulama olarak açıksın; internet olmadan da açılır.":"You're using the app; it also opens without internet.",
+"Safari'de alttaki Paylaş (□↑) → “Ana Ekrana Ekle”. Uygulama gibi açılır, internetsiz de çalışır.":"In Safari tap Share (□↑) → “Add to Home Screen”. It opens like an app and works offline.",
+"Telefonuna ya da bilgisayarına uygulama gibi yükle; internetsiz de açılır.":"Install it like an app on your phone or computer; it also opens offline.",
+"Tarayıcı menüsünden (⋮) “Ana ekrana ekle” / “Uygulamayı yükle”. Uygulama gibi açılır, internetsiz de çalışır.":"From the browser menu (⋮) choose “Add to home screen” / “Install app”. It opens like an app and works offline.",
+"Uygulama olarak kullanım":"Use as an app","Site telefona ve bilgisayara uygulama olarak eklenebilir; ana ekrandan açılır ve internet bağlantısı olmadan da çalışır. Ayarlar → Uygulama bölümünden yüklenebilir.":"The site can be added to your phone or computer as an app; it opens from the home screen and works without an internet connection. Install it from Settings → App.",
+"Dil seçeneği":"Language option","Site Türkçe ve İngilizce olarak kullanılabilir. Dil, sağ üstteki TR | EN düğmesinden ya da Ayarlar → Dil bölümünden değiştirilebilir.":"The site can be used in Turkish and English. Change the language with the TR | EN button at the top right or in Settings → Language.",
+"Haftalık istatistik":"Weekly statistics","Ana sayfada bu haftaki toplam çalışma süresi, günlük dağılım ve kesintisiz çalışılan gün sayısı gösterilir.":"The home page shows this week's total study time, the daily breakdown and your streak of consecutive study days.",
+"Ders programı ve sınav tarihi tek dosya hâlinde Google Takvim, iPhone ya da Outlook takvimine aktarılabilir.":"The timetable and exam date can be exported as a single file to Google Calendar, iPhone or Outlook.",
+"{#} hafta / {#}":"week {#} / {#}","· {#}. hafta / {#}":"· week {#} / {#}",
 "Bitti ✓":"Done ✓","Kodun var mı?":"Have a code?","Konu {#}/{#}":"Topic {#}/{#}","Konu adı - {#}.{#}":"Topic name - {#}.{#}","Mide - {#}.{#}":"Stomach - {#}.{#}",
 "Yeni kurul olarak ekle":"Add as a new block","Mevcut \"{*}\" kurulunu güncelle (ilerlemen korunur)":"Update the existing block \"{*}\" (your progress is kept)","\"{*}\" kurulunu güncelle":"Update the block \"{*}\"",
 "Nereye eklensin?":"Where should it go?","Kontrol et — yanlış bir şey varsa ekledikten sonra düzeltebilirsin.":"Check it — if something is wrong you can fix it after adding.",
@@ -899,6 +936,14 @@ document.addEventListener("click", e=>{ const u=e.target.closest("#verFoot"); if
 // KURALLAR: yeni sürüm EN ÜSTE eklenir · bir sürümde en fazla 3 madde (4. madde yeni yama sürümü açar: v1.0.1, v1.0.2…)
 // Kullanıcı görmediği sürümü açılışta bir kez görür; "Anladım" deyince root.settings.seenVer kaydedilir (cihazlar arası).
 const UPDATE_LOG = [
+  { ver:"v1.0.2", date:"2026-11-20", items:[
+    ["YENİ","Uygulama olarak kullanım","Site telefona ve bilgisayara uygulama olarak eklenebilir; ana ekrandan açılır ve internet bağlantısı olmadan da çalışır. Ayarlar → Uygulama bölümünden yüklenebilir."],
+  ]},
+  { ver:"v1.0.1", date:"2026-11-20", items:[
+    ["YENİ","Dil seçeneği","Site Türkçe ve İngilizce olarak kullanılabilir. Dil, sağ üstteki TR | EN düğmesinden ya da Ayarlar → Dil bölümünden değiştirilebilir."],
+    ["YENİ","Haftalık istatistik","Ana sayfada bu haftaki toplam çalışma süresi, günlük dağılım ve kesintisiz çalışılan gün sayısı gösterilir."],
+    ["YENİ","Takvime ekle","Ders programı ve sınav tarihi tek dosya hâlinde Google Takvim, iPhone ya da Outlook takvimine aktarılabilir."],
+  ]},
   { ver:"v1.0.0", date:"2026-11-20", items:[
     ["YENİ","Sürüm notları","Sitede yapılan değişiklikler bundan sonra sürüm numarasıyla bu pencerede duyurulacaktır. Önceki sürümlere menüdeki “Sürüm notları” bölümünden ulaşılabilir."],
     ["DEĞİŞİKLİK","Yeni adres","vercel.app alan adına Türkiye’den erişim engellendiği için site sinav-asistani.netlify.app adresine taşınmıştır. Mevcut kodunuzla giriş yaptığınızda tüm verileriniz aynen yüklenir."],
@@ -906,9 +951,9 @@ const UPDATE_LOG = [
   ]},
 ];
 const LATEST = UPDATE_LOG[0].ver;
-// "YENİ" şeridi: o özellik en son sürümde eklendiyse gösterilir
-const NEW_IN = { updlog:"v1.0.0" };
-const newRib = k => NEW_IN[k]===LATEST ? `<span class="new-rib">YENİ</span>` : "";
+// "YENİ" şeridi: özelliğin eklendiği sürüm çıktıktan sonraki 7 gün boyunca gösterilir
+const NEW_IN = { updlog:"v1.0.0", lang:"v1.0.1", stats:"v1.0.1", ics:"v1.0.1", pwa:"v1.0.2" };
+const newRib = k => { const v=UPDATE_LOG.find(x=>x.ver===NEW_IN[k]); return v && (Date.now()-new Date(v.date+"T00:00").getTime()) < 7*864e5 ? `<span class="new-rib">YENİ</span>` : ""; };
 function showUpdateLog(all){
   $("whatsNew")?.remove();
   const list = all ? UPDATE_LOG : UPDATE_LOG.slice(0,1);
@@ -988,6 +1033,12 @@ const courseOf = t => state.courses.find(c=>c.id===t.courseId);
 // Konunun ders saati (programdan) × "1 saat ders = X saat çalışma" × zorluk. Slayt girildiyse dersin slayt yükü konulara ders saatine göre dağılır.
 // Kullanıcı bir konunun süresini elle yazdıysa o kullanılır.
 const DIFF_F = {1:0.75, 2:1, 3:1.4};
+// ---- Çalışma kaydı (haftalık istatistik): ilerleme arttıkça o günün saatine eklenir, geri alınca düşer
+function logStudy(t, dPct){
+  if(!dPct) return; const h=topicHours(t)*dPct/100; const k=toISO(todayStart());
+  root.studyLog=root.studyLog||{}; root.studyLog[k]=Math.max(0, Math.round(((root.studyLog[k]||0)+h)*100)/100);
+  if(!root.studyLog[k]) delete root.studyLog[k];
+}
 function lecOf(t){
   const c=courseOf(t); const ts=state.topics.filter(x=>x.courseId===t.courseId);
   const known = ts.reduce((a,x)=>a+(x.lecH>0?x.lecH:0),0), nUnknown = ts.filter(x=>!(x.lecH>0)).length, unknown = nUnknown || 1;
@@ -1246,6 +1297,26 @@ function codeBox(){
     ${codeShown?`<div class="code-warn">⚠️ Kodunu unutma — kodun olmadan verilerine başka cihazdan ulaşamazsın. WhatsApp'a gönderip sakla.</div>`:""}</div>`;
 }
 document.addEventListener("click", e=>{ if(e.target.closest("[data-eye]")){ codeShown=!codeShown; renderHome(); } });
+
+function renderStats(){
+  const el=$("homeStats"); if(!el) return;
+  const L=root.studyLog||{}; if(!root.folders.some(f=>f.courses.length)){ el.style.display="none"; return; }
+  el.style.display="";
+  const mon=mondayOf(todayStart()), tIso=toISO(todayStart());
+  const days=[...Array(7)].map((_,i)=>{ const d=new Date(mon); d.setDate(d.getDate()+i); return d; });
+  const vals=days.map(d=>L[toISO(d)]||0), total=vals.reduce((a,b)=>a+b,0);
+  const pm=new Date(mon); pm.setDate(pm.getDate()-7);
+  const prev=[...Array(7)].reduce((a,_,i)=>{ const d=new Date(pm); d.setDate(d.getDate()+i); return a+(L[toISO(d)]||0); },0);
+  // seri: bugünden (bugün boşsa dünden) geriye kesintisiz çalışılan gün
+  let streak=0; const c=todayStart(); if(!L[toISO(c)]) c.setDate(c.getDate()-1);
+  while(L[toISO(c)]>0){ streak++; c.setDate(c.getDate()-1); }
+  const max=Math.max(1,...vals);
+  el.innerHTML=`<div class="st-h"><div><div class="lbl">📊 Bu hafta${newRib("stats")}</div><b class="st-total">${fmtH(total)}</b>
+      <span class="muted st-sub">${prev>0 ? `· geçen hafta ${fmtH(prev)}` : "· çalıştıkça burada birikir"}</span></div>
+      <div class="st-streak ${streak?"on":""}"><span>🔥</span><b>${streak}</b><small>gün seri</small></div></div>
+    <div class="st-bars">${days.map((d,i)=>`<div class="st-col ${toISO(d)===tIso?"today":""}" title="${fmtH(vals[i])}"><div class="st-v">${vals[i]?(Math.round(vals[i]*10)/10).toString().replace(".",","):""}</div><div class="st-bar"><i style="height:${Math.round(vals[i]/max*100)}%"></i></div><div class="st-d">${d.toLocaleDateString(LOC(),{weekday:"short"})}</div></div>`).join("")}</div>
+    <p class="muted st-note">Bugün kartında ✓ ya da Konular'da ilerleme işaretledikçe saatler buraya eklenir.</p>`;
+}
 function renderHome(){
   renderQuote();
   let body="", btns="";
@@ -1261,6 +1332,7 @@ function renderHome(){
   $("acctExtra").innerHTML = btns;
   $("deviceBtn").style.display = (SA || claudeMode) ? "none" : "";
   $("homeEmpty").style.display = root.folders.some(f=>f.courses.length) ? "none" : "";
+  renderStats();
   // kaldığın yerden devam: en son açılan kurul
   const last = root.folders.find(f=>f.id===root.activeId && f.courses.length) || sortedFolders().find(f=>f.courses.length && !f.archived);
   const hc=$("homeContinue");
@@ -1307,8 +1379,11 @@ function renderSettings(){
   const st=settings();
   const row=(k,t,sub)=>`<div class="set-row"><div><b>${t}</b><small>${sub}</small></div><button class="sw ${st[k]?"on":""}" data-sw="${k}" aria-label="${t}"></button></div>`;
   $("settingsBody").innerHTML=`
-    <section class="card set-card"><h3>Dil</h3>
+    <section class="card set-card"><h3>Dil${newRib("lang")}</h3>
       <div class="set-row"><div><b>Dil</b><small>Sitenin dili</small></div><div class="seg3" data-noi18n>${[["tr","Türkçe"],["en","English"]].map(([v,l])=>`<button class="${LANG===v?"on":""}" data-lang-set="${v}">${l}</button>`).join("")}</div></div>
+    </section>
+    <section class="card set-card"><h3>Uygulama${newRib("pwa")}</h3>
+      <div class="set-row"><div><b>Ana ekrana ekle</b><small>${appInstallHint()}</small></div>${installEvt && !isStandalone() ? `<button id="installBtn">📲 Yükle</button>` : isStandalone() ? `<span class="muted">✓ Yüklü</span>` : ""}</div>
     </section>
     <section class="card set-card"><h3>Görünüm</h3>
       <div class="set-row"><div><b>Tema</b><small>Açık, koyu ya da cihazına göre</small></div><div class="seg3">${[["auto","Otomatik"],["light","Açık"],["dark","Koyu"]].map(([v,l])=>`<button class="${st.theme===v?"on":""}" data-theme-set="${v}">${l}</button>`).join("")}</div></div>
@@ -1327,6 +1402,7 @@ function renderSettings(){
 function openSettings(){ showView("settings"); }
 document.getElementById("settingsBody").addEventListener("click", e=>{
   const lg=e.target.closest("[data-lang-set]"); if(lg){ setLang(lg.dataset.langSet); return; }
+  if(e.target.closest("#installBtn")){ installApp(); return; }
   const sw=e.target.closest("[data-sw]"), th=e.target.closest("[data-theme-set]");
   if(sw){ const st=settings(); st[sw.dataset.sw]=!st[sw.dataset.sw]; root.settings=st; }
   else if(th){ const st=settings(); st.theme=th.dataset.themeSet; root.settings=st; }
@@ -1712,11 +1788,11 @@ $("todayHero").addEventListener("click", e=>{
   if(d.ok!==undefined){
     const it=items[+d.ok]; if(!it) return; const t=it.topic;
     const before=t.done; t.done = it.last ? 100 : Math.min(100, Math.round(t.done + it.h/topicHours(t)*100));
-    TL.done.push({id:t.id, h:it.h, add:t.done-before});
+    TL.done.push({id:t.id, h:it.h, add:t.done-before}); logStudy(t, t.done-before);
     TL.pins = TL.pins.filter(p=>p.id!==t.id); swapOpen=null; save(); render();
   } else if(d.undo!==undefined){
     const x=TL.done[+d.undo]; if(!x) return; const t=state.topics.find(y=>y.id===x.id);
-    if(t) t.done=Math.max(0,t.done-x.add); TL.done.splice(+d.undo,1); save(); render();
+    if(t){ const b0=t.done; t.done=Math.max(0,t.done-x.add); logStudy(t, t.done-b0); } TL.done.splice(+d.undo,1); save(); render();
   } else if(d.swap!==undefined){
     swapOpen = swapOpen===+d.swap ? null : +d.swap; renderToday(lastC);
   }
@@ -1859,14 +1935,50 @@ function renderWeek(){
     }).join("")}</tr>`).join("");
   const used=[...new Set(S.map(r=>shortCourse(r.course)))];
   el.innerHTML=`<div class="wk-h"><h2>📅 Ders programı <span class="muted">· ${weekOff+1}. hafta / ${nWeeks}</span></h2>
-      <div class="wk-nav"><button class="ghost" id="wkPrev" ${weekOff===0?"disabled":""}>‹ Önceki</button><button class="ghost" id="wkNow">Bu hafta</button><button class="ghost" id="wkNext" ${weekOff>=nWeeks-1?"disabled":""}>Sonraki ›</button></div></div>
+      <div class="wk-nav"><button class="ghost" id="wkIcs" title="Ders programını ve sınav tarihini takvimine ekle">📅 Takvime ekle${newRib("ics")}</button><button class="ghost" id="wkPrev" ${weekOff===0?"disabled":""}>‹ Önceki</button><button class="ghost" id="wkNow">Bu hafta</button><button class="ghost" id="wkNext" ${weekOff>=nWeeks-1?"disabled":""}>Sonraki ›</button></div></div>
     <div class="wk-wrap">${slots.length?`<table class="wk"><thead><tr><th style="background:none;width:52px"></th>${head}</tr></thead><tbody>${body}</tbody></table>`:`<div class="empty">Bu hafta ders yok.</div>`}</div>
     <div class="legend">${used.map(n=>`<span><span class="dot" style="--h:${hueByName(n)}"></span>${esc(n)}</span>`).join("")}<span><span class="cell uyg" style="display:inline-block;width:18px;height:12px;border-radius:3px;margin-right:6px;border:1px solid var(--line)"></span>uygulama</span></div>`;
   $("wkPrev").onclick=()=>{ weekOff--; renderWeek(); };
   $("wkNext").onclick=()=>{ weekOff++; renderWeek(); };
   $("wkNow").onclick=()=>{ weekOff=null; renderWeek(); };
+  $("wkIcs").onclick=()=>downloadIcs(state);
 }
 
+// ---- Takvime ekle: ders programı + sınav günü → .ics dosyası (Google Takvim, iPhone, Outlook açar)
+function downloadIcs(f){
+  const pad=n=>String(n).padStart(2,"0"), stamp=new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d+/,"");
+  const escI=t=>String(t||"").replace(/\\/g,"\\\\").replace(/[,;]/g,m=>"\\"+m).replace(/\n/g,"\\n");
+  const dt=(date,hm)=>date.replace(/-/g,"")+"T"+(hm||"00:00").replace(/[.:]/,"").padEnd(4,"0").slice(0,4)+"00";
+  const ev=[];
+  (f.sessions||[]).forEach((r,i)=>{
+    const [a,b]=(r.time||"").split("-").map(x=>(x||"").trim().replace(".",":")); if(!r.date || !/^\d{1,2}:\d{2}$/.test(a||"")) return;
+    const st=a.padStart(5,"0"), en=/^\d{1,2}:\d{2}$/.test(b||"") ? b.padStart(5,"0") : (()=>{ const [h,m]=st.split(":").map(Number); const e=h*60+m+50; return pad(Math.floor(e/60))+":"+pad(e%60); })();
+    ev.push(["BEGIN:VEVENT",`UID:${f.id}-${i}@sinav-asistani`,`DTSTAMP:${stamp}`,`DTSTART:${dt(r.date,st)}`,`DTEND:${dt(r.date,en)}`,
+      `SUMMARY:${escI(r.course+(r.topic?" — "+r.topic:"")+(r.type==="uygulama"?" (uygulama)":""))}`, r.teacher?`DESCRIPTION:${escI(r.teacher)}`:"", "END:VEVENT"].filter(Boolean).join("\r\n"));
+  });
+  if(f.examDate){ const d=new Date(f.examDate+"T00:00:00"); d.setDate(d.getDate()+1);
+    ev.push(["BEGIN:VEVENT",`UID:${f.id}-exam@sinav-asistani`,`DTSTAMP:${stamp}`,`DTSTART;VALUE=DATE:${f.examDate.replace(/-/g,"")}`,`DTEND;VALUE=DATE:${toISO(d).replace(/-/g,"")}`,
+      `SUMMARY:${escI("📝 Sınav: "+f.name)}`,"BEGIN:VALARM","ACTION:DISPLAY","DESCRIPTION:Sınav yarın","TRIGGER:-P1D","END:VALARM","END:VEVENT"].join("\r\n")); }
+  if(!ev.length){ toast("Takvime eklenecek bir şey yok", "Önce ders programı ya da sınav tarihi ekle"); return; }
+  const ics=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//CardiacAI//Sinav Haftasi Asistani//TR","CALSCALE:GREGORIAN",`X-WR-CALNAME:${escI(f.name)}`,...ev,"END:VCALENDAR"].join("\r\n");
+  const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([ics],{type:"text/calendar;charset=utf-8"}));
+  a.download=(f.name||"kurul").replace(/[^\wçğıöşüÇĞİÖŞÜ -]+/g,"").trim().replace(/\s+/g,"-")+".ics"; document.body.append(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },1000);
+  toast("📅 Takvim dosyası indirildi", "Dosyayı aç → takvimine eklenir ("+ev.length+" etkinlik)");
+}
+// ---- Uygulama gibi kullan (PWA): ana ekrana ekle + internetsiz açılış
+let installEvt=null;
+const isStandalone = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone===true;
+const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1);
+function appInstallHint(){
+  if(isStandalone()) return "Uygulama olarak açıksın; internet olmadan da açılır.";
+  if(isIOS()) return "Safari'de alttaki Paylaş (□↑) → “Ana Ekrana Ekle”. Uygulama gibi açılır, internetsiz de çalışır.";
+  if(installEvt) return "Telefonuna ya da bilgisayarına uygulama gibi yükle; internetsiz de açılır.";
+  return "Tarayıcı menüsünden (⋮) “Ana ekrana ekle” / “Uygulamayı yükle”. Uygulama gibi açılır, internetsiz de çalışır.";
+}
+async function installApp(){ if(!installEvt) return; installEvt.prompt(); try{ await installEvt.userChoice; }catch(e){} installEvt=null; if(view==="settings") renderSettings(); }
+addEventListener("beforeinstallprompt", e=>{ e.preventDefault(); installEvt=e; if(typeof view!=="undefined" && view==="settings") renderSettings(); });
+addEventListener("appinstalled", ()=>{ installEvt=null; toast("✓ Uygulama yüklendi", "Ana ekranından açabilirsin"); });
+if(SA && "serviceWorker" in navigator && (location.protocol==="https:" || location.hostname==="localhost")) addEventListener("load", ()=>navigator.serviceWorker.register("/sw.js").catch(()=>{}));
 let planAll=false;
 function renderPlan(c){
   const el = $("plan");
@@ -1948,7 +2060,7 @@ box.addEventListener("click", e=>{
     else { c._prevDone={}; ts.forEach(t=>{ c._prevDone[t.id]=t.done; t.done=100; }); }
     save(); render(); return; }
   if(tg && !e.target.closest("[data-delc]")){ const id=tg.dataset.toggle; if(openCourses.has(id)){ openCourses.delete(id); if(openForm===id) openForm=null; } else openCourses.add(id); renderTopics(); return; } const find=id=>state.topics.find(x=>x.id===id);
-  if(d.set){ find(d.set).done=+d.v; save(); render(); }
+  if(d.set){ const t=find(d.set), b0=t.done; t.done=+d.v; logStudy(t, t.done-b0); save(); render(); }
   else if(d.cdiff){ const t=find(d.cdiff); t.diff=t.diff%3+1; save(); render(); }
   else if(d.cw){ const t=find(d.cw); t.weight=t.weight%3+1; save(); render(); }
   else if(d.close){ openForm=null; render(); }

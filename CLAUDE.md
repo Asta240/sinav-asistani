@@ -33,6 +33,11 @@ claude.ai artifact'lerini sadece Yasin'in kendi Claude hesabındaki bir oturum g
 - Kurul kodu: `encodeFolder/decodeFolder` (deflate-raw + base64url, `KRL1.`). Eşleştirme `matchFolder` kurul **numarasına** göre.
 - Ayarlar `root.settings`: verdict, count, prio, quote, attend, theme (varsayılan koyu).
 
+## Ek özellikler
+- Haftalık istatistik: `root.studyLog = {"YYYY-MM-DD": saat}`; `logStudy(t, Δ%)` ilerleme değişince yazar (✓ çalıştım, geri al, Hiç/Az/…). Ana sayfa `renderStats()`.
+- Takvime ekle: `downloadIcs(state)` (Program sekmesi → 📅 Takvime ekle) → .ics (dersler + sınav günü, 1 gün önce hatırlatma).
+- PWA: `manifest.webmanifest`, `sw.js` (önce internet, yoksa önbellek; /api hariç), `icon-*.png`. Netlify build bunları `dist/`e kopyalar (netlify.toml). Ayarlar → Uygulama.
+
 ## Dil (TR / EN)
 - Sağ üstte ⚙️ yanında TR|EN butonu + Ayarlar → Dil. `root.settings.lang` (+ localStorage `sa-lang`).
 - Çeviri DOM üzerinden: `EN` sözlüğü (src'de, `const $` altında). Anahtar = ekrandaki Türkçe metin; `{#}` sayı, `{*}` herhangi metin. MutationObserver yeni metinleri çevirir; kullanıcı verisi (ders/konu adları) değişmez.
