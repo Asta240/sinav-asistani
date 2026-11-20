@@ -350,6 +350,16 @@
   .dayatt-row .att button{width:auto;padding:0 10px;height:26px;font-size:12px}
   body.no-attend .dayatt, body.no-attend .dayatt-row{display:none !important}
   .stats-card{margin-bottom:16px}
+  .nt-form{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+  .nt-how{font-size:13px;margin:0;background:var(--accent-soft);border-radius:10px;padding:8px 12px;color:var(--ink)}
+  .nt-kinds button{padding:6px 12px;font-size:13px;border:1px solid var(--line);border-radius:99px;background:transparent;color:var(--ink)}
+  .nt-kinds button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .nt-item{display:flex;gap:12px;align-items:center;padding:12px 14px;margin:8px 0;flex-wrap:wrap}
+  .nt-ic{font-size:24px;width:36px;text-align:center}
+  .nt-main{flex:1;min-width:200px} .nt-title{font-weight:700;color:var(--ink);text-decoration:none;font-size:15px} .nt-title:hover{color:var(--accent);text-decoration:underline}
+  .nt-meta{font-size:12.5px;margin-top:3px} .nt-host{opacity:.8}
+  .nt-act{display:flex;gap:6px;align-items:center}
+  .btn-like{display:inline-block;padding:7px 12px;border-radius:10px;background:var(--accent);color:#fff;text-decoration:none;font-weight:700;font-size:13px}
   .today-sum,.badges-card{margin-bottom:16px}
   .ts-h{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
   .ts-h .ghost{padding:6px 12px;font-size:13px}
@@ -472,6 +482,10 @@
   </div>
 
   <!-- ===== SSS SAYFASI ===== -->
+  <div id="notesView" style="display:none">
+    <div class="page-h"><h2>Notlar & slaytlar</h2><p class="muted">Sınıf arkadaşlarının paylaştığı slayt, not ve soru linkleri. Sen de paylaş — adın görünür.</p></div>
+    <div id="notesBody"></div>
+  </div>
   <div id="updView" style="display:none">
     <div class="page-h"><h2>Sürüm notları</h2><p class="muted">Sitede yapılan tüm değişikliklerin kaydı. Önce ana sürümü, ardından istersen alt sürümü seç.</p></div>
     <div id="updBody"></div>
@@ -613,6 +627,7 @@
   <button class="nav-item" data-nav="settings">Ayarlar</button>
   <button class="nav-item" data-nav="home">Ana sayfa</button>
   <button class="nav-item" data-nav="add">Kurul ekle</button>
+  <button class="nav-item" id="navNotes" data-nav="notes" style="display:none">Notlar & slaytlar</button>
   <div class="nav-row"><button class="nav-item" id="navTrack" data-navtoggle="1"><span>Sınav takibi</span><span class="chev">▸</span></button><button class="nav-edit" id="navEdit" data-navedit="track" title="Sırala / düzenle"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>
   <div id="navKurullar" class="nav-sub" style="display:none"></div>
   <div class="nav-row" id="navArchRow" style="display:none"><button class="nav-item" id="navArch" data-navarch="1"><span>Arşiv <span class="muted" id="archCount"></span></span><span class="chev">▸</span></button><button class="nav-edit" id="navArchEdit" data-navedit="arch" title="Sırala / düzenle"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>
@@ -825,6 +840,18 @@ const EN = {
 // --- yönlendirme / boş durum
 "Tümü":"All","boş":"empty","Bu cihazda":"On this device","Yeni bir cihazda":"On a new device","AB12":"AB12",
 "Çok sık istek gönderildi, biraz sonra tekrar dene.":"Too many requests, try again shortly.",
+"Notlar & slaytlar":"Notes & slides","Sınıf arkadaşlarının paylaştığı slayt, not ve soru linkleri. Sen de paylaş — adın görünür.":"Slide, note and question links shared by your classmates. Share yours too — your name is shown.",
+"📤 Link paylaş":"📤 Share a link","+ Paylaş":"+ Share","Başlık":"Title","Link":"Link","Ders":"Course","Tür":"Type","ör. Kalp fizyolojisi slaytları":"e.g. Cardiac physiology slides","ör. Dönem 2 – 3. Kurul":"e.g. Year 2 – Block 3",
+"💡 Dosyayı kendi Google Drive'ına (ya da OneDrive, Dropbox, iCloud) yükle →":"💡 Upload the file to your own Google Drive (or OneDrive, Dropbox, iCloud) →","→ linki kopyala → buraya yapıştır. Yeni bir Drive açmana gerek yok.":"→ copy the link → paste it here. You don't need to create a new Drive.",
+"“Bağlantıya sahip olan herkes”":"“Anyone with the link”","Paylaşan:":"Shared by:","Ara: başlık, ders, kurul, kişi…":"Search: title, course, block, person…","Slayt":"Slides","Not":"Notes","Soru":"Questions","Diğer":"Other",
+"📊 Slayt":"📊 Slides","📝 Not":"📝 Notes","❓ Soru":"❓ Questions","📎 Diğer":"📎 Other","Aç ↗":"Open ↗","Paylaşımlara ulaşılamadı.":"Could not load the shares.","Aramaya uyan paylaşım yok.":"No share matches your search.",
+"Henüz paylaşım yok. İlk paylaşan sen ol: yukarıdan “+ Paylaş”.":"Nothing shared yet. Be the first: “+ Share” above.","Başlık yaz.":"Enter a title.","Geçerli bir link yapıştır (https://…).":"Paste a valid link (https://…).","Önce takma ad seç.":"Choose a nickname first.",
+"✓ Paylaşıldı":"✓ Shared","Herkes “Notlar & slaytlar”da görebilir":"Everyone can see it in “Notes & slides”","Paylaşım kaldırılsın mı?":"Remove this share?","Link listeden kalkar; dosyanın kendisi Drive'ında kalır.":"The link is removed from the list; the file itself stays in your Drive.",
+"✓ Paylaşım kaldırıldı":"✓ Share removed","Paylaşım geri geldi":"The share is back","🚫 Yasakla":"🚫 Ban","Bu paylaşım silinir ve o kişi bir daha paylaşım yapamaz (kütüphane dahil).":"This share is deleted and that person can no longer share (including the library).",
+"🛡️ Yönetici modu — her paylaşımı kaldırabilir, kötü paylaşanı yasaklayabilirsin.":"🛡️ Admin mode — you can remove any share and ban abusive sharers.","Paylaşım yapman yönetici tarafından engellendi.":"An admin has blocked you from sharing.",
+"Notlar ve slaytlar":"Notes and slides","Menüye “Notlar & slaytlar” bölümü eklendi. Slayt, not ve soru dosyalarının linkleri paylaşanın takma adıyla birlikte herkesle paylaşılabilir; ders, kurul ve türe göre aranabilir.":"A “Notes & slides” section was added to the menu. Links to slides, notes and question files can be shared with everyone along with the sharer's nickname, and searched by course, block and type.",
+"Hesap oluştururken takma ad ve dil seçilir; takma ad ana sayfada selamlamada ve hesap kartında görünür. Ana sayfadaki ✏️ düğmesiyle değiştirilebilir.":"A nickname and language are chosen when creating an account; the nickname appears in the greeting and on the account card on the home page. It can be changed with the ✏️ button on the home page.",
+"· 👤":"· 👤",
 "Takma adın":"Your nickname","Sitede bu isimle görünürsün (ör. paylaştıklarında). Sonra değiştirebilirsin.":"This is the name others see on the site (e.g. when you share). You can change it later.",
 "← Geri":"← Back","Kodumu oluştur →":"Create my code →","Bir takma ad yaz.":"Enter a nickname.","ör. Yasin":"e.g. Yasin","Sitede bu isimle görünürsün.":"This is the name others see on the site.",
 "✓ Takma adın kaydedildi":"✓ Nickname saved","+ Takma ad ekle":"+ Add nickname","Takma adı değiştir":"Change nickname","· kişisel kodun":"· your personal code",
@@ -949,7 +976,7 @@ function setLang(l){
   if(typeof root!=="undefined" && root && root.settings && root.settings.lang!==LANG){ root.settings.lang=LANG; try{ save(); }catch(e){} }
   // tarih/gün adları dile göre yeniden üretilsin
   try{ render(); }catch(e){} try{ renderDrawer(); }catch(e){}
-  try{ if(view==="settings") renderSettings(); else if(view==="faq") renderFaq(); else if(view==="updates") renderUpdates(); else if(view==="home") renderHome?.(); }catch(e){}
+  try{ if(view==="settings") renderSettings(); else if(view==="faq") renderFaq(); else if(view==="updates") renderUpdates(); else if(view==="notes") renderNotes(true); else if(view==="home") renderHome?.(); }catch(e){}
   I18N.apply(); updateLangBtn();
 }
 function updateLangBtn(){ const b=document.getElementById("langBtn"); if(b) b.innerHTML=`<span class="${LANG==="tr"?"on":""}">TR</span><span class="${LANG==="en"?"on":""}">EN</span>`; }
@@ -971,7 +998,8 @@ document.addEventListener("click", e=>{ const u=e.target.closest("#verFoot"); if
 // Kullanıcı görmediği sürümü açılışta bir kez görür; "Anladım" deyince root.settings.seenVer kaydedilir (cihazlar arası).
 const UPDATE_LOG = [
   { ver:"v1.0.3", date:"2026-11-20", items:[
-    ["YENİ","Takma ad","Hesap oluştururken takma ad seçilir; ana sayfada selamlamada ve hesap kartında görünür. Ana sayfadaki ✏️ düğmesiyle değiştirilebilir."],
+    ["YENİ","Takma ad","Hesap oluştururken takma ad ve dil seçilir; takma ad ana sayfada selamlamada ve hesap kartında görünür. Ana sayfadaki ✏️ düğmesiyle değiştirilebilir."],
+    ["YENİ","Notlar ve slaytlar","Menüye “Notlar & slaytlar” bölümü eklendi. Slayt, not ve soru dosyalarının linkleri paylaşanın takma adıyla birlikte herkesle paylaşılabilir; ders, kurul ve türe göre aranabilir."],
   ]},
   { ver:"v1.0.2", date:"2026-11-20", items:[
     ["YENİ","Uygulama olarak kullanım","Site telefona ve bilgisayara uygulama olarak eklenebilir; ana ekrandan açılır ve internet bağlantısı olmadan da çalışır. Ayarlar → Uygulama bölümünden yüklenebilir."],
@@ -991,7 +1019,7 @@ const UPDATE_LOG = [
 ];
 const LATEST = UPDATE_LOG[0].ver;
 // "YENİ" şeridi: özelliğin eklendiği sürüm çıktıktan sonraki 7 gün boyunca gösterilir
-const NEW_IN = { updlog:"v1.0.0", lang:"v1.0.1", stats:"v1.0.1", ics:"v1.0.1", pwa:"v1.0.2", today:"v1.0.2", badges:"v1.0.2", name:"v1.0.3" };
+const NEW_IN = { updlog:"v1.0.0", lang:"v1.0.1", stats:"v1.0.1", ics:"v1.0.1", pwa:"v1.0.2", today:"v1.0.2", badges:"v1.0.2", name:"v1.0.3", notes:"v1.0.3" };
 const newRib = k => { const v=UPDATE_LOG.find(x=>x.ver===NEW_IN[k]); return v && (Date.now()-new Date(v.date+"T00:00").getTime()) < 7*864e5 ? `<span class="new-rib">YENİ</span>` : ""; };
 function showUpdateLog(all){
   $("whatsNew")?.remove();
@@ -1038,6 +1066,90 @@ document.addEventListener("click", e=>{
   const a=e.target.closest("[data-umaj]"), b=e.target.closest("[data-umin]");
   if(a){ updMajor=+a.dataset.umaj; updMinor=null; renderUpdates(); }
   else if(b){ updMinor = b.dataset.umin==="all" ? null : +b.dataset.umin; renderUpdates(); }
+});
+// ===== 📎 Notlar & slaytlar (sadece link; dosya sitede tutulmaz) =====
+const NOTE_KINDS = [["slayt","📊","Slayt"],["not","📝","Not"],["soru","❓","Soru"],["diger","📎","Diğer"]];
+let notesItems=[], notesAdmin=false, notesKind="all", notesQ="", notesForm=false, notesLoaded=false;
+async function loadNotes(){
+  try{ const r=await fetch("/api/notes?me="+encodeURIComponent(CUR||""),{cache:"no-store"}); const j=await r.json(); notesItems=j.items||[]; notesAdmin=!!j.admin; notesLoaded=true; }
+  catch(e){ notesLoaded="err"; }
+  if(view==="notes"){ if(notesForm) drawNotes(); else renderNotes(true); }
+}
+function renderNotes(fromLoad){
+  const myCourses=[...new Set(root.folders.flatMap(f=>f.courses.map(c=>c.name)))];
+  const myKurul=root.folders.filter(f=>f.courses.length).map(f=>f.name);
+  $("notesBody").innerHTML=`
+    <section class="card nt-share">
+      <div class="row" style="justify-content:space-between;align-items:center"><b>📤 Link paylaş</b>${notesForm?"":`<button id="ntOpen">+ Paylaş</button>`}</div>
+      ${notesForm?`<div class="nt-form">
+        <label class="f">Başlık<input id="ntTitle" maxlength="120" placeholder="ör. Kalp fizyolojisi slaytları"></label>
+        <label class="f">Link<input id="ntUrl" inputmode="url" placeholder="https://drive.google.com/…"></label>
+        <div class="row">
+          <label class="f" style="flex:1;min-width:140px">Ders<input id="ntCourse" list="ntCourses" maxlength="60" placeholder="ör. Fizyoloji"><datalist id="ntCourses">${myCourses.map(c=>`<option value="${esc(c)}">`).join("")}</datalist></label>
+          <label class="f" style="flex:1;min-width:140px">Kurul<input id="ntKurul" list="ntKuruls" maxlength="90" placeholder="ör. Dönem 2 – 3. Kurul"><datalist id="ntKuruls">${myKurul.map(c=>`<option value="${esc(c)}">`).join("")}</datalist></label>
+          <label class="f" style="min-width:120px">Tür<select id="ntKind">${NOTE_KINDS.map(([v,ic,l])=>`<option value="${v}">${ic} ${l}</option>`).join("")}</select></label>
+        </div>
+        <p class="muted nt-how">💡 Dosyayı kendi Google Drive'ına (ya da OneDrive, Dropbox, iCloud) yükle → <b>Paylaş</b> → <b>“Bağlantıya sahip olan herkes”</b> → linki kopyala → buraya yapıştır. Yeni bir Drive açmana gerek yok.</p>
+        <p class="muted" style="margin:0;font-size:13px">Paylaşan: <b>${esc(myName()||"—")}</b>${myName()?"":` · <button class="nm-edit add" data-editname="1">+ Takma ad ekle</button>`}</p>
+        <div class="row" style="margin-top:10px"><button class="ghost" id="ntCancel">Vazgeç</button><button id="ntSend">Paylaş</button><span class="muted" id="ntSt"></span></div>
+      </div>`:""}
+    </section>
+    <input id="ntQ" placeholder="Ara: başlık, ders, kurul, kişi…" value="${esc(notesQ)}" style="margin:14px 0 8px">
+    <div class="sortbar nt-kinds"><button class="${notesKind==="all"?"on":""}" data-ntk="all">Tümü</button>${NOTE_KINDS.map(([v,ic,l])=>`<button class="${notesKind===v?"on":""}" data-ntk="${v}">${ic} ${l}</button>`).join("")}</div>
+    ${notesAdmin?`<div class="admin-note"><span>🛡️ Yönetici modu — her paylaşımı kaldırabilir, kötü paylaşanı yasaklayabilirsin.</span></div>`:""}
+    <div id="ntList"><div class="empty">Yükleniyor…</div></div>`;
+  if(notesLoaded) drawNotes(); if(!fromLoad) loadNotes();
+  $("ntQ").oninput=e=>{ notesQ=e.target.value; drawNotes(); };
+}
+function drawNotes(){
+  const L=$("ntList"); if(!L) return;
+  if(notesLoaded==="err"){ L.innerHTML=`<div class="empty">Paylaşımlara ulaşılamadı.</div>`; return; }
+  const q=norm(notesQ);
+  const list=notesItems.filter(it=>(notesKind==="all"||it.kind===notesKind) && (!q || norm([it.title,it.course,it.kurul,it.name].join(" ")).includes(q)));
+  const kind=k=>NOTE_KINDS.find(x=>x[0]===k)||NOTE_KINDS[3];
+  const host=u=>{ try{ return new URL(u).hostname.replace(/^www\./,""); }catch(e){ return ""; } };
+  L.innerHTML = list.length ? list.map(it=>`<div class="card nt-item">
+      <div class="nt-ic">${kind(it.kind)[1]}</div>
+      <div class="nt-main"><a href="${esc(it.url)}" target="_blank" rel="noopener noreferrer nofollow" class="nt-title">${esc(it.title)}</a>
+        <div class="muted nt-meta">${it.course?`<span>${esc(it.course)}</span> · `:""}${it.kurul?`<span>${esc(it.kurul)}</span> · `:""}👤 <b>${esc(it.name||"?")}</b> · ${new Date(it.createdAt).toLocaleDateString(LOC(),{day:"numeric",month:"short"})} · <span class="nt-host">${esc(host(it.url))}</span>${it.mine?" · <b>senin paylaşımın</b>":""}</div></div>
+      <div class="nt-act"><a class="btn-like" href="${esc(it.url)}" target="_blank" rel="noopener noreferrer nofollow">Aç ↗</a>
+        ${it.mine||notesAdmin?`<button class="ghost" data-ntdel="${it.id}">Kaldır</button>`:""}${notesAdmin&&!it.mine?`<button class="ghost ban-btn" data-ntban="${it.id}">🚫 Yasakla</button>`:""}</div>
+    </div>`).join("")
+    : `<div class="empty">${notesItems.length?"Aramaya uyan paylaşım yok.":"Henüz paylaşım yok. İlk paylaşan sen ol: yukarıdan “+ Paylaş”."}</div>`;
+}
+document.addEventListener("click", async e=>{
+  if(view!=="notes") return;
+  const t=e.target;
+  if(t.closest("#ntOpen")){ if(!myName()){ const v=await askName(); if(!v) return; (root.profile=root.profile||{}).name=v; save(); } notesForm=true; renderNotes(); setTimeout(()=>$("ntTitle")?.focus(),30); return; }
+  if(t.closest("#ntCancel")){ notesForm=false; renderNotes(); return; }
+  const k=t.closest("[data-ntk]"); if(k){ notesKind=k.dataset.ntk; document.querySelectorAll("[data-ntk]").forEach(b=>b.classList.toggle("on",b===k)); drawNotes(); return; }
+  if(t.closest("#ntSend")){
+    const title=$("ntTitle").value.trim(), url=$("ntUrl").value.trim();
+    if(!title){ $("ntSt").textContent="Başlık yaz."; $("ntTitle").focus(); return; }
+    if(!/^https?:\/\/\S+\.\S+/.test(url)){ $("ntSt").textContent="Geçerli bir link yapıştır (https://…)."; $("ntUrl").focus(); return; }
+    if(!myName()){ $("ntSt").textContent="Önce takma ad seç."; return; }
+    $("ntSend").disabled=true; $("ntSt").textContent="Paylaşılıyor…";
+    try{ const r=await fetch("/api/notes",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({code:CUR,title,url,course:$("ntCourse").value,kurul:$("ntKurul").value,kind:$("ntKind").value,name:myName()})});
+      const j=await r.json().catch(()=>({})); if(!r.ok) throw j.error||"Olmadı";
+      notesForm=false; toast("✓ Paylaşıldı", "Herkes “Notlar & slaytlar”da görebilir"); renderNotes(); loadNotes();
+    }catch(err){ $("ntSt").textContent=String(err); $("ntSend").disabled=false; }
+    return;
+  }
+  const del=t.closest("[data-ntdel]"), ban=t.closest("[data-ntban]");
+  if(del||ban){
+    const id=(del||ban).dataset[del?"ntdel":"ntban"], it=notesItems.find(x=>x.id===id); if(!it) return;
+    const ok = ban ? await askConfirm(`"${it.title}" kaldırılıp paylaşan yasaklansın mı?`,"Bu paylaşım silinir ve o kişi bir daha paylaşım yapamaz (kütüphane dahil).","Evet, yasakla")
+                   : await askConfirm("Paylaşım kaldırılsın mı?","Link listeden kalkar; dosyanın kendisi Drive'ında kalır.","Evet, kaldır");
+    if(!ok) return;
+    const r=await fetch("/api/notes",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({code:CUR,id,ban:!!ban})});
+    if(!r.ok){ const j=await r.json().catch(()=>({})); toast("Olmadı", j.error||""); return; }
+    const pos=notesItems.indexOf(it); notesItems=notesItems.filter(x=>x!==it); drawNotes();
+    toastUndo(ban?"🚫 Kaldırıldı ve yasaklandı":"✓ Paylaşım kaldırıldı","Yanlışlıkla mı bastın?", async()=>{
+      const rr=await fetch("/api/notes",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"restore",code:CUR,id})});
+      const jj=await rr.json().catch(()=>({})); if(!rr.ok) throw (jj.error||"Olmadı");
+      notesItems.splice(Math.max(0,pos),0,it); drawNotes(); toast("↶ Geri alındı", ban?"Paylaşım geri geldi, yasak kaldırıldı":"Paylaşım geri geldi");
+    });
+  }
 });
 function maybeWhatsNew(){
   if(!root || !root.settings || $("welcome") || $("whatsNew") || (SA && !CUR)) return;
@@ -1235,7 +1347,7 @@ async function startSync(){
     }, ()=>{ syncOff=true; setSync(""); resolveSync(false); });
   }catch(e){ resolveSync(false); }
 }
-function switchTo(id){ setTimeout(()=>checkPublished(root.folders.find(f=>f.id===id)),0); view="kurul"; $("sharePanel").style.display="none"; $("homeView").style.display="none"; $("addView").style.display="none"; $("settingsView").style.display="none"; $("faqView").style.display="none"; $("updView").style.display="none"; $("kurulView").style.display=""; window.scrollTo({top:0}); state = root.folders.find(f=>f.id===id); root.activeId=id; weekOff=null; openForm=null; folderForm=null; confirmDel=false; $("aiOut").textContent=""; save(); render(); }
+function switchTo(id){ setTimeout(()=>checkPublished(root.folders.find(f=>f.id===id)),0); view="kurul"; $("sharePanel").style.display="none"; $("homeView").style.display="none"; $("addView").style.display="none"; $("settingsView").style.display="none"; $("faqView").style.display="none"; $("updView").style.display="none"; $("notesView").style.display="none"; $("kurulView").style.display=""; window.scrollTo({top:0}); state = root.folders.find(f=>f.id===id); root.activeId=id; weekOff=null; openForm=null; folderForm=null; confirmDel=false; $("aiOut").textContent=""; save(); render(); }
 
 // ---- Görünüm: ana sayfa / kurul sayfası + yan menü ----
 let view = "home", navOpen = false, archOpen = false, tab = "today";
@@ -1253,9 +1365,10 @@ function sortedFolders(){
   return arr;
 }
 function setManualOrder(ids){ const rest=sortedFolders().map(f=>f.id).filter(id=>!ids.includes(id)); root.kurulOrder=[...ids, ...rest]; root.kurulSort="manual"; save(); renderDrawer(); }
-function showView(v){ view=v; $("sharePanel").style.display="none"; $("homeView").style.display = v==="home"?"":"none"; $("addView").style.display = v==="add"?"":"none"; $("settingsView").style.display = v==="settings"?"":"none"; if(v==="settings") renderSettings(); $("faqView").style.display = v==="faq"?"":"none"; if(v==="faq") renderFaq(); $("updView").style.display = v==="updates"?"":"none"; if(v==="updates") renderUpdates(); $("kurulView").style.display = v==="kurul"?"":"none"; renderDrawer(); if(v==="home") renderQuote(); window.scrollTo({top:0}); }
+function showView(v){ view=v; $("sharePanel").style.display="none"; $("homeView").style.display = v==="home"?"":"none"; $("addView").style.display = v==="add"?"":"none"; $("settingsView").style.display = v==="settings"?"":"none"; if(v==="settings") renderSettings(); $("faqView").style.display = v==="faq"?"":"none"; if(v==="faq") renderFaq(); $("updView").style.display = v==="updates"?"":"none"; if(v==="updates") renderUpdates(); $("notesView").style.display = v==="notes"?"":"none"; if(v==="notes") renderNotes(); $("kurulView").style.display = v==="kurul"?"":"none"; renderDrawer(); if(v==="home") renderQuote(); window.scrollTo({top:0}); }
 function openDrawer(o){ if(!o) navEdit=null; document.body.classList.toggle("drawer-open", o); $("drawer").setAttribute("aria-hidden", o?"false":"true"); if(o) renderDrawer(); }
 function renderDrawer(){
+  if($("navNotes")){ $("navNotes").style.display = SA ? "" : "none"; $("navNotes").innerHTML = `Notlar & slaytlar${newRib("notes")}`; }
   if($("navUpd")) $("navUpd").innerHTML = `Sürüm notları${newRib("updlog")}`;
   if($("verSig")) $("verSig").textContent = LATEST; if($("verFoot")) $("verFoot").textContent = LATEST;
   document.querySelectorAll("[data-nav]").forEach(b=>b.classList.toggle("on", view===b.dataset.nav));
