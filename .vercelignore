@@ -2,3 +2,5 @@ src/
 extras/
 build.py
 CLAUDE.md
+netlify/
+netlify.toml

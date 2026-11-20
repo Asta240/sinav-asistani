@@ -1,0 +1,14 @@
+# Netlify ayarları (vercel.app Türkiye'de engellendiği için site burada da yayınlanır)
+[build]
+  command = "mkdir -p dist && cp index.html dist/index.html"
+  publish = "dist"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+  force = true
