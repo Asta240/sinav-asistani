@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -457,10 +457,10 @@
 <aside id="drawer" class="drawer" aria-hidden="true">
   <div class="drawer-h"><span class="drawer-title">Sınav Haftası Asistanı</span><button class="icon" id="drawerClose" title="Kapat">✕</button></div>
   <button class="nav-item" data-nav="home">Ana sayfa</button>
+  <button class="nav-item" data-nav="add">Kurul ekle</button>
   <button class="nav-item" id="navTrack" data-navtoggle="1"><span>Sınav takibi</span><span class="chev">▸</span></button>
   <div id="navKurullar" class="nav-sub" style="display:none"></div>
-  <button class="nav-item" data-nav="add">Kurul ekle</button>
-  <a class="nav-item" id="navAyirici" target="_blank" rel="noopener" style="display:none;text-decoration:none"><span>PDF Ayırıcı</span><span class="muted" style="font-size:12px">yeni sekme ↗</span></a>
+  <button class="nav-item" data-navset="1">Ayarlar</button>
   <div class="drawer-sig">Sınav Haftası Asistanı<br><b>CardiacAI</b> · 2026</div>
 </aside>
 
@@ -741,7 +741,7 @@ function renderHome(){
 document.addEventListener("click", e=>{ if(e.target.closest("[data-goadd]")) showView("add"); });
 
 // ---- Ayarlar ----
-const SET_DEF = { verdict:true, count:true, prio:true, quote:true, theme:"auto" };
+const SET_DEF = { verdict:true, count:true, prio:true, quote:true, theme:"dark" }; // varsayılan tema: koyu
 const settings = () => Object.assign({}, SET_DEF, root.settings||{});
 function applySettings(){
   const st=settings(), B=document.body.classList;
@@ -778,6 +778,7 @@ document.addEventListener("keydown", e=>{ if(e.key==="Escape") openDrawer(false)
 $("drawer").addEventListener("click", e=>{
   const b=e.target.closest("button"); if(!b) return; const d=b.dataset;
   if(d.nav){ openDrawer(false); showView(d.nav); }
+  else if(d.navset){ openDrawer(false); openSettings(); }
   else if(d.navtoggle){ navOpen=!navOpen; renderDrawer(); }
   else if(d.navnew){ openDrawer(false); showView("kurul"); folderForm="new"; renderFolders(); }
   else if(d.navk){ openDrawer(false); switchTo(d.navk); }
@@ -1610,7 +1611,7 @@ if(SA){
   $("deviceBtn").onclick = openAccountPanel;
   $("saCard").style.display="";
   $("saCodeBtn").onclick = openCodeImport;
-  if(AYIRICI_URL){ $("navAyirici").href = AYIRICI_URL; $("navAyirici").style.display = "flex"; $("addAyirici").href = AYIRICI_URL; $("addAyirici").style.display = ""; }
+  if(AYIRICI_URL){ $("addAyirici").href = AYIRICI_URL; $("addAyirici").style.display = ""; }
 }
 
 // ---- İlk açılış sihirbazı ----
