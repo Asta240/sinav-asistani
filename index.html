@@ -286,6 +286,8 @@
   .sw{position:relative;width:46px;height:26px;flex:none;background:var(--line);border-radius:99px;padding:0;transition:background .15s}
   .sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .15s}
   .sw.on{background:var(--accent)} .sw.on::after{transform:translateX(20px)}
+  .w-lang-row{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  .w-lang{display:flex} .w-lang button{flex:1;text-transform:none;letter-spacing:0}
   .seg3{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;flex:none}
   .seg3 button{background:transparent;color:var(--muted);padding:6px 10px;font-size:13px;border-radius:0}
   .seg3 button.on{background:var(--accent);color:#fff}
@@ -827,7 +829,7 @@ const EN = {
 "← Geri":"← Back","Kodumu oluştur →":"Create my code →","Bir takma ad yaz.":"Enter a nickname.","ör. Yasin":"e.g. Yasin","Sitede bu isimle görünürsün.":"This is the name others see on the site.",
 "✓ Takma adın kaydedildi":"✓ Nickname saved","+ Takma ad ekle":"+ Add nickname","Takma adı değiştir":"Change nickname","· kişisel kodun":"· your personal code",
 "Günaydın, {*}":"Good morning, {*}","İyi günler, {*}":"Good afternoon, {*}","İyi akşamlar, {*}":"Good evening, {*}","İyi geceler, {*}":"Good night, {*}",
-"/ {#} sa":"/ {#} h","Bugün toplam çalışılan:":"Studied today:","Hesabım ·":"My account ·","Takma ad":"Nickname","Hesap oluştururken takma ad seçilir; ana sayfada selamlamada ve hesap kartında görünür. Ana sayfadaki ✏️ düğmesiyle değiştirilebilir.":"A nickname is chosen when creating an account; it appears in the greeting and on the account card on the home page. It can be changed with the ✏️ button on the home page.",
+"/ {#} sa":"/ {#} h","Bugün toplam çalışılan:":"Studied today:","“{*}”":"“{*}”","Dil / Language":"Language / Dil","Hesabım ·":"My account ·","Takma ad":"Nickname","Hesap oluştururken takma ad seçilir; ana sayfada selamlamada ve hesap kartında görünür. Ana sayfadaki ✏️ düğmesiyle değiştirilebilir.":"A nickname is chosen when creating an account; it appears in the greeting and on the account card on the home page. It can be changed with the ✏️ button on the home page.",
 "📌 Bugünün özeti":"📌 Today's summary","Bugün sekmesi →":"Today tab →","🏫 Bugün okulda":"🏫 At school today","📚 Bugünkü çalışma":"📚 Today's study","· sınava {#} gün":"· {#} days to exam",
 "{#} konu kaldı: {*}":"{#} topics left: {*}","Bugün toplam çalışılan: {*}":"Studied today: {*}",
 "🏆 Rozetler":"🏆 Badges","Kazanıldı":"Earned","🏆 Yeni rozet: {*}":"🏆 New badge: {*}","Ana sayfadaki Rozetler bölümünde":"In the Badges section on the home page",
@@ -1342,7 +1344,7 @@ function askName(){
 document.addEventListener("click", async e=>{ if(!e.target.closest("[data-editname]")) return; const v=await askName(); if(v){ (root.profile=root.profile||{}).name=v; save(); renderHome(); toast("✓ Takma adın kaydedildi", v); } });
 function codeBox(){
   const c=CUR||"—";
-  return `<div><div class="lbl">Hesabım${newRib("name")} · ${myName() ? `<b class="nm-lbl">${esc(myName())}</b> <button class="nm-edit" data-editname="1" title="Takma adı değiştir">✏️</button>` : `<button class="nm-edit add" data-editname="1">+ Takma ad ekle</button>`} · kişisel kodun</div>
+  return `<div><div class="lbl">Hesabım${CUR?newRib("name"):""}${!CUR ? "" : " · "}${!CUR ? "" : myName() ? `<b class="nm-lbl">${esc(myName())}</b> <button class="nm-edit" data-editname="1" title="Takma adı değiştir">✏️</button>` : `<button class="nm-edit add" data-editname="1">+ Takma ad ekle</button>`} · kişisel kodun</div>
     <div class="row" style="gap:6px;align-items:center"><span class="code">${codeShown?esc(c):"•".repeat(c.length)}</span>
     <button class="eye" data-eye="1" title="${codeShown?"Gizle":"Göster"}">${codeShown?EYE_OFF:EYE}</button></div>
     ${codeShown?`<div class="code-warn">⚠️ Kodunu unutma — kodun olmadan verilerine başka cihazdan ulaşamazsın. WhatsApp'a gönderip sakla.</div>`:""}</div>`;
@@ -2501,6 +2503,7 @@ function openWelcomeSA(){
       <button class="choice" id="wNew" style="margin-top:14px">✨ İlk kez kullanıyorum<small>Sana 4 haneli kişisel bir kod verelim — her cihazda onunla girersin</small></button>
     </div>
     <div id="wStepName" style="display:none">
+      <div class="w-lang-row" style="margin-top:10px"><span>Dil / Language</span><div class="seg3 w-lang" data-noi18n><button type="button" data-wlang="tr">Türkçe</button><button type="button" data-wlang="en">English</button></div></div>
       <label class="f" style="margin-top:10px">Takma adın<input id="wName" maxlength="24" autocomplete="nickname" placeholder="ör. Yasin" style="${box};font-size:20px"></label>
       <p class="muted" style="margin:6px 0 0;font-size:13px">Sitede bu isimle görünürsün (ör. paylaştıklarında). Sonra değiştirebilirsin.</p>
       <div class="row" style="margin-top:10px"><button class="ghost" id="wNameBack">← Geri</button><button id="wNameGo" style="flex:1">Kodumu oluştur →</button></div>
@@ -2522,12 +2525,15 @@ function openWelcomeSA(){
   };
   $("wGo").onclick=go; $("wCode").onkeydown=e=>{ if(e.key==="Enter") go(); };
   $("wNew").onclick = ()=>{ $("wStep1").style.display="none"; $("wStepName").style.display=""; setTimeout(()=>$("wName").focus(),30); };
+  const wl=()=>el.querySelectorAll("[data-wlang]").forEach(b=>b.classList.toggle("on", b.dataset.wlang===LANG));
+  el.querySelectorAll("[data-wlang]").forEach(b=>b.onclick=()=>{ setLang(b.dataset.wlang); wl(); }); wl();
   $("wNameBack").onclick = ()=>{ $("wStepName").style.display="none"; $("wStep1").style.display=""; };
   $("wName").onkeydown = e=>{ if(e.key==="Enter") $("wNameGo").click(); };
   $("wNameGo").onclick = async ()=>{
     const nm=cleanName($("wName").value); if(!nm){ $("wSt2").textContent="Bir takma ad yaz."; $("wName").focus(); return; }
     $("wNameGo").disabled=true; $("wSt2").textContent="Kod oluşturuluyor…";
     (root.profile=root.profile||{}).name=nm;
+    (root.settings=root.settings||{}).lang=LANG;
     try{
       const r = await fetch("/api/new",{method:"POST"}); const j = await r.json();
       if(!r.ok || !j.code) throw j.error || "Kod alınamadı";
