@@ -16,8 +16,8 @@ module.exports = async (req, res) => {
     if (req.method === "GET" && q.warnme) { const raw = await redis("GET", `warn:${cleanCode(q.warnme)}`); return send(res, 200, { warn: raw ? JSON.parse(raw) : null }); }
     if (req.method === "POST" && b.action === "ackwarn") { await redis("DEL", `warn:${cleanCode(b.code)}`); return send(res, 200, { ok: true }); }
     const code = cleanCode(req.method === "GET" ? q.code : b.code);
-    if (await overLimit(`rl:admin:${ipOf(req)}:${new Date().toISOString().slice(0, 13)}`, 120, 3600)) return send(res, 429, { error: "Çok sık." });
-    if (req.method === "GET" && q.check) return send(res, 200, { admin: isAdmin(code) });
+    if (req.method === "GET" && q.check) return send(res, 200, { admin: isAdmin(code) });   // hız sınırına takılmasın
+    if (await overLimit(`rl:admin:${ipOf(req)}:${new Date().toISOString().slice(0, 13)}`, 300, 3600)) return send(res, 429, { error: "Çok sık." });
     if (!isAdmin(code)) return send(res, 403, { error: "Sadece yönetici." });
     if (req.method === "GET") {
       const h = await redis("HGETALL", "users") || [];

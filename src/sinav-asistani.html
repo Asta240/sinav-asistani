@@ -2882,7 +2882,9 @@ async function showForgot(){
 let IS_ADMIN=false, admUsers=null, admQ="";
 async function checkAdmin(){
   if(!SA || !CUR) return;
-  try{ const r=await fetch("/api/admin?check=1&code="+encodeURIComponent(CUR),{cache:"no-store"}); IS_ADMIN=!!(await r.json()).admin; }catch(e){}
+  const ck="sa-admin-"+CUR; IS_ADMIN = lsGet(ck)==="1";   // son bilinen durum (sunucu geç/hata verirse menü kaybolmasın)
+  if($("navAdmin")) $("navAdmin").style.display = IS_ADMIN ? "" : "none";
+  try{ const r=await fetch("/api/admin?check=1&code="+encodeURIComponent(CUR),{cache:"no-store"}); const j=await r.json(); if(r.ok && typeof j.admin==="boolean"){ IS_ADMIN=j.admin; lsSet(ck, IS_ADMIN?"1":""); } }catch(e){}
   if($("navAdmin")) $("navAdmin").style.display = IS_ADMIN ? "" : "none";
 }
 async function renderAdmin(){
