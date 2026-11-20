@@ -245,14 +245,15 @@
   .kurul-card small{display:block;color:var(--muted);font-weight:500;margin-top:2px}
   .kurul-title{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
   .kurul-title h2{margin:0;font-size:22px;letter-spacing:-.02em}
-  .tabs3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 16px}
-  .tabs3 button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:14px 16px;font-size:16px;font-weight:700}
-  .tabs3 button span{font-size:22px;line-height:1;margin-bottom:4px}
-  .tabs3 button small{font-size:12px;font-weight:500;color:var(--muted)}
-  .tabs3 button:hover{border-color:var(--accent)}
-  .tabs3 button.on{background:var(--accent);border-color:var(--accent);color:#fff}
-  .tabs3 button.on small{color:#fff;opacity:.85}
-  @media (max-width:600px){ .tabs3 button{padding:10px;font-size:14px} .tabs3 button small{display:none} }
+  .tabs3{display:inline-flex;gap:4px;padding:4px;margin:0 0 16px;background:var(--card);border:1px solid var(--line);border-radius:99px;max-width:100%}
+  .tabs3 button{display:flex;align-items:center;gap:6px;background:transparent;color:var(--muted);border-radius:99px;padding:8px 18px;font-size:14px;font-weight:700;white-space:nowrap}
+  .tabs3 button span{font-size:15px;line-height:1}
+  .tabs3 button small{display:none}
+  .tabs3 button:hover{color:var(--ink)}
+  .tabs3 button.on{background:var(--accent);color:#fff}
+  @media (max-width:600px){ .tabs3{display:flex} .tabs3 button{flex:1;justify-content:center;padding:8px 6px;font-size:13px} }
+  .continue{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:14px;padding:14px 18px;margin-bottom:16px}
+  .continue .lbl{font-size:12px;color:var(--muted);font-weight:600} .continue .nm{font-size:17px}
   .gear-btn{position:fixed;top:16px;right:16px;z-index:55;background:var(--card);color:var(--ink);border:1px solid var(--line);width:46px;height:46px;padding:0;border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.08)}
   .gear-btn:hover{border-color:var(--accent);color:var(--accent)} .gear-btn:hover svg{transform:rotate(45deg)} .gear-btn svg{transition:transform .3s}
   .page-h{margin:4px 0 14px} .page-h h2{font-size:24px;margin:0;letter-spacing:-.02em} .page-h p{margin:4px 0 0}
@@ -353,6 +354,7 @@
     </div>
   </section>
 
+  <section class="continue" id="homeContinue" style="display:none"></section>
   <section class="card" id="homeEmpty" style="display:none">
     <div class="row" style="justify-content:space-between"><div><h2 style="margin:0">Henüz kurulun yok</h2><p class="muted" style="margin:4px 0 0">Kurul kitapçığından ya da hazır kurullardan başla.</p></div><button data-goadd="1">Kurul ekle →</button></div>
   </section>
@@ -578,7 +580,7 @@ function newPersonalCode(){
 }
 function useProfile(code, data){
   CUR=code; lsSet(CUR_KEY, code);
-  root = data || localProfile(code) || {activeId:null, folders:[blank("1. Kurul")]};
+  root = data || localProfile(code) || {activeId:null, folders:[Object.assign(blank("1. Kurul"),{isDefault:true})]};
   root.code = code;
   state = root.folders.find(f=>f.id===root.activeId) || root.folders[0]; root.activeId=state.id;
   openForm=null; folderForm=null; confirmDel=false; weekOff=null;
@@ -594,7 +596,7 @@ function load(){
     else { const old = JSON.parse(localStorage.getItem("sinav-asistani-v2"));
       if(old && old.courses && old.courses.length){ const f = Object.assign(blank("1. Kurul"), old); root = {activeId:f.id, folders:[f]}; } }
   }catch(e){}
-  if(!root.folders.length){ const f = blank("1. Kurul"); root = {activeId:f.id, folders:[f]}; }
+  if(!root.folders.length){ const f = blank("1. Kurul"); f.isDefault=true; root = {activeId:f.id, folders:[f]}; }
   state = root.folders.find(f=>f.id===root.activeId) || root.folders[0];
   root.activeId = state.id;
 }
@@ -808,10 +810,21 @@ function renderHome(){
   $("acctExtra").innerHTML = btns;
   $("deviceBtn").style.display = (SA || claudeMode) ? "none" : "";
   $("homeEmpty").style.display = root.folders.some(f=>f.courses.length) ? "none" : "";
+  // kaldığın yerden devam: en son açılan kurul
+  const last = root.folders.find(f=>f.id===root.activeId && f.courses.length) || sortedFolders().find(f=>f.courses.length && !f.archived);
+  const hc=$("homeContinue");
+  if(last){
+    const days = last.examDate ? dayDiffOf(last.examDate) : null;
+    const tot = last.topics.length, dn = last.topics.filter(t=>t.done>=100).length;
+    hc.style.display="";
+    hc.innerHTML = `<div><div class="lbl">Kaldığın yerden devam et</div><b class="nm">${esc(last.name)}</b>
+      <div class="muted" style="font-size:13px">${tot?`${dn}/${tot} konu bitti`:""}${days!=null && days>=0?`<span class="count"> · sınava ${days} gün</span>`:""}</div></div>
+      <button data-continue="${last.id}">Devam et →</button>`;
+  } else hc.style.display="none";
   if($("hCopy")) $("hCopy").onclick = async ()=>{ try{ await navigator.clipboard.writeText(CUR); $("hSt").textContent="Kopyalandı ✓"; }catch(e){ $("hSt").textContent=CUR; } };
   if($("hOut")) $("hOut").onclick = async ()=>{ if(!await askConfirm("Çıkış yapılsın mı?", `Tekrar girmek için ${CUR} koduna ihtiyacın olacak.`)) return; lsSet(CUR_KEY,""); location.reload(); };
 }
-document.addEventListener("click", e=>{ if(e.target.closest("[data-goadd]")) showView("add"); });
+document.addEventListener("click", e=>{ if(e.target.closest("[data-goadd]")) showView("add"); const c=e.target.closest("[data-continue]"); if(c) switchTo(c.dataset.continue); });
 
 // ---- Ayarlar ----
 const SET_DEF = { verdict:true, count:true, prio:true, quote:true, theme:"dark" }; // varsayılan tema: koyu
@@ -894,6 +907,7 @@ function openGrade(){
   inp.onkeydown=e=>{ if(e.key==="Enter") done("1"); if(e.key==="Escape") done("0"); };
 }
 function renderFolders(){
+  $("demoBtn").style.display = (state.isDefault || (state.name==="1. Kurul" && !state.courses.length)) ? "" : "none";
   const d = state.examDate ? new Date(state.examDate+"T00:00:00").toLocaleDateString("tr-TR",{day:"numeric",month:"long"}) : "";
   const title = folderForm ? `<form class="folder-form" id="folderForm"><input id="fName" placeholder="${folderForm==="new"?"Yeni kurul adı, ör. Dönem 2 – 3. Kurul":""}" value="${folderForm==="rename"?esc(state.name):""}" required><button type="submit">${folderForm==="rename"?"Kaydet":"Kurulu oluştur"}</button><button type="button" class="ghost" data-fcancel="1">Vazgeç</button></form>`
     : `<h2>${esc(state.name)}</h2>${d?`<span class="muted">Sınav: ${d}</span>`:""}${gradeChip(state)}`;
@@ -1369,7 +1383,7 @@ $("folders").addEventListener("click", e=>{
   else if(d.fdel){
     askConfirm(`"${state.name}" kurulu silinsin mi?`, "İçindeki bütün dersler, konular ve ilerlemen silinecek.").then(ok=>{
       if(!ok) return; root.folders = root.folders.filter(f=>f.id!==state.id);
-      if(!root.folders.length){ const f=blank("1. Kurul"); root.folders.push(f); state=f; root.activeId=f.id; save(); render(); showView("home"); return; }
+      if(!root.folders.length){ const f=blank("1. Kurul"); f.isDefault=true; root.folders.push(f); state=f; root.activeId=f.id; save(); render(); showView("home"); return; }
       const next = sortedFolders().find(f=>!f.archived) || root.folders[0]; switchTo(next.id); });
   }
 });
