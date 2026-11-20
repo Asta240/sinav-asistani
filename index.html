@@ -210,7 +210,7 @@
   .menu-btn{position:fixed;top:16px;left:16px;z-index:55;background:var(--card);border:1px solid var(--line);width:46px;height:46px;padding:0 12px;border-radius:12px;display:flex;flex-direction:column;justify-content:center;gap:5px;box-shadow:0 4px 14px rgba(0,0,0,.08)}
   .menu-btn i{display:block;height:2px;border-radius:2px;background:var(--ink)}
   .menu-btn:hover{border-color:var(--accent)} .menu-btn:hover i{background:var(--accent)}
-  @media (max-width:1180px){ .wrap{padding-top:76px} }
+  @media (max-width:1380px){ .wrap{padding-top:76px} }
   .drawer-title{font-weight:800;font-size:15px;letter-spacing:-.01em}
   /* ana sayfa sözü */
   .hero-quote{position:relative;overflow:hidden;border-radius:20px;padding:34px 34px 28px;margin-bottom:16px;color:#fff;
@@ -256,6 +256,10 @@
   .continue{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:14px;padding:14px 18px;margin-bottom:16px}
   .continue .lbl{font-size:12px;color:var(--muted);font-weight:600} .continue .nm{font-size:17px}
   .gear-btn{position:fixed;top:16px;right:16px;z-index:55;background:var(--card);color:var(--ink);border:1px solid var(--line);width:46px;height:46px;padding:0;border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.08)}
+  .lang-btn{position:fixed;top:16px;right:72px;z-index:55;display:flex;gap:3px;padding:5px;height:46px;border-radius:12px;box-sizing:border-box;background:var(--card);border:1px solid var(--line);box-shadow:0 4px 14px rgba(0,0,0,.08);cursor:pointer}
+  .lang-btn span{display:flex;align-items:center;padding:0 9px;border-radius:8px;font-size:12.5px;font-weight:800;letter-spacing:.04em;color:var(--muted)}
+  .lang-btn span.on{background:var(--accent);color:#fff}
+  .lang-btn:hover{border-color:var(--accent)}
   .gear-btn:hover{border-color:var(--accent);color:var(--accent)} .gear-btn:hover svg{transform:rotate(45deg)} .gear-btn svg{transition:transform .3s}
   .page-h{margin:4px 0 14px} .page-h h2{font-size:24px;margin:0;letter-spacing:-.02em} .page-h p{margin:4px 0 0}
   .acct{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin-bottom:16px}
@@ -560,6 +564,7 @@
 
 <!-- ===== YAN MENÜ ===== -->
 <button class="menu-btn" id="menuBtn" title="Menü" aria-label="Menü"><i></i><i></i><i></i></button>
+<button class="lang-btn" id="langBtn" title="Dil / Language" data-noi18n><span class="on">TR</span><span>EN</span></button>
 <button class="gear-btn" id="gearBtn" title="Ayarlar" aria-label="Ayarlar"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
 <div id="drawerBg" class="drawer-bg"></div>
 <aside id="drawer" class="drawer" aria-hidden="true">
@@ -582,6 +587,302 @@
 const SA = !!window.STANDALONE;
 const AYIRICI_URL = window.AYIRICI_URL || "";
 const $ = id => document.getElementById(id);
+// ===== İngilizce sözlük (TR → EN). Anahtar: ekranda görünen metin (boşluklar sadeleştirilmiş).
+// {#} = sayı, {*} = herhangi bir metin. Yeni Türkçe metin eklersen buraya İngilizcesini de ekle.
+const EN = {
+// --- genel / menü
+"Sınav Haftası Asistanı":"Exam Week Assistant","Sınav Haftası":"Exam Week","Asistanı":"Assistant","Sınav Haftası Asistanı ·":"Exam Week Assistant · developed by",
+"Sınav Haftası Asistanı · CardiacAI":"Exam Week Assistant · CardiacAI","Sınav Haftası Asistanı · Sürüm notları":"Exam Week Assistant · Release notes",
+"tarafından geliştirildi · {#} ·":"· {#} ·","Menü":"Menu","Ayarlar":"Settings","Ana sayfa":"Home","Kurul ekle":"Add block",
+"Sık sorulan sorular":"FAQ","Sınav takibi":"Exam tracker","Arşiv":"Archive","Sürüm notları":"Release notes","Sırala / düzenle":"Sort / edit",
+"+ Yeni kurul":"+ New block","Eklenme":"Added","İsim":"Name","Sınav tarihi":"Exam date","Elle":"Manual","Sürükle ya da ok tuşlarıyla sırala":"Drag or use the arrows to reorder",
+"Kapat":"Close","Kaydet":"Save","Vazgeç":"Cancel","Evet":"Yes","Hayır":"No","Evet, sil":"Yes, delete","Evet, kaldır":"Yes, remove","Evet, yasakla":"Yes, ban","Evet, güncelle":"Yes, update",
+"Ekle":"Add","Ekleniyor…":"Adding…","Yükleniyor…":"Loading…","Olmadı":"Failed","Kopyala":"Copy","Kopyalandı ✓":"Copied ✓","Göster":"Show","Gizle":"Hide","Sil?":"Delete?",
+"Kaldır":"Remove","Kaldırılıyor…":"Removing…","Geri al":"Undo","↶ Geri al":"↶ Undo","↶ Geri alındı":"↶ Undone","Geri alınamadı":"Could not undo","Yanlışlıkla mı bastın?":"Pressed by mistake?",
+"☁️ Kaydedildi":"☁️ Saved","☁️ Eşitleniyor…":"☁️ Syncing…","☁️ Hesabına kaydedildi":"☁️ Saved to your account","☁️ Hesabına kaydedilecek":"☁️ Will be saved to your account",
+"⚠️ Bağlantı yok — bağlanınca kaydedilecek":"⚠️ Offline — will save when connected","⚠️ Bağlantı yok — bu cihazda saklanıyor":"⚠️ Offline — stored on this device","⚠️ Bu kod sunucuda yok":"⚠️ This code is not on the server",
+"🔄 Başka cihazdaki güncel hali yüklendi":"🔄 Loaded the latest version from another device","Son koddan beri değişiklik var":"Changes since the last code",
+// --- giriş
+"👋 Sınav Haftası Asistanı":"👋 Exam Week Assistant","Kodunla giriş yap":"Sign in with your code","Giriş":"Sign in","Giriş yapılıyor…":"Signing in…",
+"✨ İlk kez kullanıyorum":"✨ I'm new here","Sana {#} haneli kişisel bir kod verelim — her cihazda onunla girersin":"We'll give you a personal {#}-character code — use it to sign in on any device",
+"Kod oluşturuluyor…":"Creating code…","Kişisel kodun:":"Your personal code:","Kaybetme":"Don't lose it","— kendine WhatsApp'tan at.":"— send it to yourself on WhatsApp.",
+"Telefonda, bilgisayarda, tablette bu kodla giriş yaparsın; verilerin hep kaldığı yerden devam eder.":"Sign in with this code on your phone, computer or tablet; your data always continues where you left off.",
+"🟢 Kodumu WhatsApp'a gönder":"🟢 Send my code via WhatsApp","Başla →":"Start →","Kod {#} karakter olmalı (harf ve rakam).":"The code must be {#} characters (letters and digits).",
+"Bu kod bulunamadı. Harfleri doğru yazdığından emin ol.":"Code not found. Make sure you typed it correctly.","Çok fazla deneme, sonra tekrar dene.":"Too many attempts, try again later.",
+"Sunucuya ulaşılamadı, internetini kontrol et.":"Could not reach the server, check your connection.","Kod alınamadı":"Could not get a code",
+// --- ana sayfa
+"Günaydın":"Good morning","İyi günler":"Good afternoon","İyi akşamlar":"Good evening","İyi geceler":"Good night","yeni söz {#} dk sonra":"new quote in {#} min",
+"Hesabım · kişisel kodun":"My account · your personal code","Hesabım":"My account","WhatsApp'a gönder":"Send via WhatsApp","🟢 WhatsApp'a gönder":"🟢 Send via WhatsApp","Çıkış":"Sign out","Çıkış yap":"Sign out",
+"Çıkış yapılsın mı?":"Sign out?","Tekrar girmek için {*} koduna ihtiyacın olacak.":"You will need the code {*} to sign in again.","Kodu göster":"Show code",
+"⚠️ Kodunu unutma — kodun olmadan verilerine başka cihazdan ulaşamazsın. WhatsApp'a gönderip sakla.":"⚠️ Don't forget your code — without it you can't reach your data from another device. Send it to yourself on WhatsApp.",
+"Nasıl kullanılır?":"How does it work?","Kaldığın yerden devam et":"Continue where you left off","Henüz kurulun yok":"You have no blocks yet",
+"Kurul kitapçığından ya da hazır kurullardan başla.":"Start from your block booklet or the ready-made blocks.","Kurul ekle →":"Add block →","Devam et →":"Continue →",
+"Kodum":"My code","Kodu kopyala":"Copy code","Kopyalandı ✓ — kendine bir yere yapıştır.":"Copied ✓ — paste it somewhere safe.","Kodu seçtim, kopyala ile al.":"Code selected, copy it.",
+"Verilerin bu koda kayıtlı ve her değişiklikte otomatik kaydediliyor. Başka cihazda girişte bu kodu yazman yeterli.":"Your data is stored under this code and saved automatically on every change. Just enter this code on another device.",
+// --- motivasyon sözleri
+"Bugün okuduğun her sayfa, yarın bir hastanın güvendiği bilgi olacak.":"Every page you read today becomes knowledge a patient will trust tomorrow.",
+"Büyük sınavlar küçük saatlerle kazanılır. Bu saati kazan.":"Big exams are won in small hours. Win this one.",
+"Yorgunluk geçer, öğrendiğin kalır.":"Tiredness passes; what you learn stays.",
+"Mükemmel plan yoktur; uygulanan plan vardır. Bir konu daha.":"There is no perfect plan, only a plan you follow. One more topic.",
+"Kalp bir an bile durmadan çalışıyor — sen de bir sayfa daha çevir.":"The heart never stops working — turn one more page.",
+"Disiplin, motivasyonun bittiği yerde başlar.":"Discipline begins where motivation ends.",
+"Şimdi zor gelen her tekrar, sınavda kolay gelen bir soruya dönüşür.":"Every hard review now becomes an easy question in the exam.",
+"Attığın her tik seni hedefe bir adım daha yaklaştırıyor.":"Every tick brings you one step closer to the goal.",
+"Ezber unutulur, anladığın kalır. Yavaş ama derin çalış.":"Memorized facts fade, understanding stays. Study slowly but deeply.",
+"Bu saat bir daha gelmeyecek; onu bir konuya dönüştür.":"This hour won't come back; turn it into a topic.",
+"Bir hekimin en güçlü aleti bilgisidir — bugün onu biraz daha bile.":"A doctor's strongest tool is knowledge — sharpen it a little more today.",
+"Telefonu kapat, yirmi beş dakika ver; gerisini plan halleder.":"Put your phone away for twenty-five minutes; the plan handles the rest.",
+"Başlamak bitirmenin yarısıdır. İlk konuyu aç.":"Starting is half of finishing. Open the first topic.",
+"Sınav haftası bir maraton: tempoyu koru, mola ver, devam et.":"Exam week is a marathon: keep the pace, take breaks, keep going.",
+"Dün yapamadıkların için üzülme; bu saati kurtar.":"Don't regret yesterday; save this hour.",
+"Öğrenmek bir ritimdir: oku, tekrar et, uyu, yine tekrar et.":"Learning is a rhythm: read, review, sleep, review again.",
+"Kendinle yarış; dünkü sen, bugünkü tek rakibin.":"Race yourself; yesterday's you is your only rival.",
+"“Kendinle yarış; dünkü sen, bugünkü tek rakibin.”":"“Race yourself; yesterday's you is your only rival.”",
+"Zor konu yoktur, henüz yeterince tekrar edilmemiş konu vardır.":"There are no hard topics, only topics not reviewed enough yet.",
+"Küçük adımlar büyük hekimler yetiştirir.":"Small steps make great doctors.",
+"Odak bir kas gibidir; her çalıştığında biraz daha güçlenir.":"Focus is a muscle; it gets stronger every time you use it.",
+"Bitirdiğin her konu, sınav sabahı içindeki sakinliğe dönüşecek.":"Every topic you finish becomes calm on exam morning.",
+"Yorulduğunda dinlen, ama vazgeçme.":"Rest when you're tired, but don't give up.",
+"Bugün verdiğin emek, bir gün önlüğünün cebinde taşıdığın güven olacak.":"The effort you put in today will be the confidence you carry in your white coat.",
+"Bir saat odaklı çalışma, üç saat dağınık çalışmadan iyidir.":"One focused hour beats three distracted ones.",
+// --- kurul ekle sayfası
+"Hazır kurullardan seç, PDF'ten ayıkla ya da bir kurul kodu yapıştır.":"Pick a ready-made block, extract one from a PDF, or paste a block code.",
+"📄 Kurulunu ekle":"📄 Add your block","Önce":"First check","'a bak — biri ayıklayıp paylaştıysa tek tıkla eklersin. Yoksa:":"— if someone already shared it, add it in one click. Otherwise, in",
+"'da kitapçığı yükle → kodu \"Kurul kodu ekle\" ile yapıştır →":", upload the booklet → paste the code with \"Add block code\" →",
+"ile herkese aç. Kurulun zaten varsa ilerlemen korunarak güncellenir.":"to make it public. If you already have the block, it is updated and your progress is kept.",
+"📚 Hazır kurullar":"📚 Ready-made blocks","Hazır kurullar":"Ready-made blocks","📥 Kurul kodu ekle":"📥 Add block code","Kurul kodu ekle":"Add block code","📄 PDF Ayırıcı ↗":"📄 PDF Splitter ↗","PDF Ayırıcı":"PDF Splitter",
+"Başkalarının PDF'ten ayıklayıp paylaştığı kurullar. Seç, ekle — kendi ilerlemen sende kalır.":"Blocks that others extracted from PDFs and shared. Pick one and add it — your own progress stays with you.",
+"Ara: kurul, okul, dönem…":"Search: block, school, year…","Aramaya uyan kurul yok.":"No block matches your search.",
+"Henüz paylaşılmış kurul yok. İlk paylaşan sen ol: kurulunu ekle → 🌍 Kütüphaneye paylaş.":"No shared blocks yet. Be the first: add your block → 🌍 Share to library.",
+"Kütüphaneye ulaşılamadı.":"Could not reach the library.","senin paylaşımın":"your share","Paylaşımımı kaldır":"Remove my share",
+"{*} ders · {*} konu":"{*} courses · {*} topics","· {*} saatlik program":"· {*}-hour timetable","Kurul kodunu yapıştır":"Paste the block code",
+"KRL{#}.… (mesajın tamamını yapıştırsan da olur — birden fazla kurul kodu olabilir)":"KRL{#}.… (you can paste the whole message — it may contain several block codes)",
+"Kurulu ekle":"Add block","Kod bulunamadı — mesajın tamamını yapıştır.":"No code found — paste the whole message.","Kod okunamadı — tamamını kopyaladığından emin ol.":"Could not read the code — make sure you copied all of it.",
+"✓ Başarıyla {*}":"✓ Successfully {*}","{*} kurul eklendi":"added {*} block(s)","{*} kurul güncellendi":"updated {*} block(s)","{*} kod okunamadı":"{*} code(s) could not be read",
+"Menüde \"Sınav takibi\" altında":"Under \"Exam tracker\" in the menu","Menüde \"📦 Arşiv\" altında":"Under \"📦 Archive\" in the menu",
+"Yeniler \"Sınav takibi\", güncellenen arşivdeki \"📦 Arşiv\" altında":"New ones under \"Exam tracker\", the updated archived one under \"📦 Archive\"",
+"\"{*}\" kurulun zaten var{*}. Güncelleyeyim mi?":"You already have the block \"{*}\"{*}. Update it?"," (📦 arşivde)":" (📦 archived)",
+"Evet: program, konular ve tarihler güncellenir, ilerlemen korunur. Hayır: ayrı bir kurul olarak eklenir.":"Yes: timetable, topics and dates are updated, your progress is kept. No: it is added as a separate block.",
+"Evet: program, konular ve tarihler güncellenir, ilerlemen korunur; kurul arşivde kalır. Hayır: ayrı bir kurul olarak eklenir.":"Yes: timetable, topics and dates are updated, your progress is kept; the block stays archived. No: it is added as a separate block.",
+// --- kütüphane / paylaşım
+"🌍 Kütüphaneye paylaş":"🌍 Share to library","🌍 Kütüphanede · Kaldır":"🌍 In library · Remove","Kütüphaneden kaldır":"Remove from library",
+"Kurulun dersleri, konuları, tarihleri ve ders programı herkese açık \"Hazır kurullar\" listesine eklenir.":"The block's courses, topics, dates and timetable are added to the public \"Ready-made blocks\" list.",
+"Senin ilerlemen ve kodun paylaşılmaz.":"Your progress and your code are not shared.","Okul / sınıf":"School / year","Kurul adı":"Block name","Paylaş":"Share","Paylaşılıyor…":"Sharing…",
+"ör. Sakarya Tıp · Dönem {#} · {#}-{#}":"e.g. Sakarya Medicine · Year {#} · {#}-{#}","✓ Kütüphaneye paylaşıldı":"✓ Shared to the library","Herkes “Hazır kurullar”dan ekleyebilir":"Everyone can add it from “Ready-made blocks”",
+"Bu kurul zaten kütüphanede":"This block is already in the library","Önce kütüphaneden kaldırman gerekir":"You need to remove it from the library first",
+"Bu kurul zaten kütüphaneden geldi":"This block came from the library","Kütüphanedeki kurullar tekrar paylaşılamaz":"Blocks from the library can't be shared again",
+"Kütüphaneden kaldırılsın mı?":"Remove from the library?","Başkalarının daha önce eklediği kopyalar silinmez; senin kurulun da sende kalır.":"Copies others already added are not deleted; your block stays with you.",
+"Başkalarının eklediği kopyalar silinmez.":"Copies others added are not deleted.","✓ Kütüphaneden kaldırıldı":"✓ Removed from the library","İstersen tekrar paylaşabilirsin":"You can share it again if you like",
+"Kurul tekrar kütüphanede":"The block is back in the library","Paylaşım geri geldi, yasak kaldırıldı":"The share is back and the ban is lifted",
+"🛡️ Yönetici modu — tüm paylaşımları kaldırabilir, kötü paylaşanı yasaklayabilirsin.":"🛡️ Admin mode — you can remove any share and ban abusive sharers.",
+"🚫 Yasaklılar":"🚫 Banned","🚫 Yasaklılar ({*})":"🚫 Banned ({*})","🚫 Kaldır + yasakla":"🚫 Remove + ban","🚫 Kaldırıldı ve yasaklandı":"🚫 Removed and banned","Paylaşan artık paylaşım yapamaz":"The sharer can no longer share",
+"\"{*}\" kaldırılıp paylaşan yasaklansın mı?":"Remove \"{*}\" and ban the sharer?","Bu paylaşım silinir ve o kişi bir daha kütüphaneye paylaşım yapamaz.":"This share is deleted and that person can no longer share to the library.",
+"Yasaklı kimse yok.":"Nobody is banned.","Yasağı kaldır":"Lift ban","✓ Yasak kaldırıldı":"✓ Ban lifted","Bu kişi tekrar paylaşım yapabilir":"This person can share again","Liste alınamadı.":"Could not load the list.",
+"Bu paylaşım yüzünden · {*}":"Because of this share · {*}","Kütüphaneye paylaşman yönetici tarafından engellendi.":"An admin has blocked you from sharing to the library.",
+"🔗 Paylaş":"🔗 Share","🔗 \"{*}\" kurulunu paylaş":"🔗 Share the block \"{*}\"","Paylaşmak için önce bu kurula ders ekle.":"Add a course to this block before sharing.",
+"Bu kodu sınıf grubuna at. Arkadaşların \"Kod ile ekle\"ye yapıştırınca dersler ve konular hazır gelir. Senin ilerlemen paylaşılmaz.":"Send this code to your class group. When friends paste it into \"Add with code\", the courses and topics are ready. Your progress is not shared.",
+"Kod ile ekle":"Add with code","Adını değiştir":"Rename","Arşivle":"Archive","Arşivden çıkar":"Unarchive","Kurulu sil":"Delete block","Bu kurulu sıfırla":"Reset this block",
+"Bu kurul arşivde — menüde \"Sınav takibi\" yerine \"Arşiv\" altında duruyor.":"This block is archived — it appears under \"Archive\" instead of \"Exam tracker\" in the menu.",
+"\"{*}\" kurulu silinsin mi?":"Delete the block \"{*}\"?","İçindeki bütün dersler, konular ve ilerlemen silinecek.":"All courses, topics and your progress in it will be deleted.",
+"+ Aldığım notu yaz":"+ Enter my grade","Bu kurul sınavından kaç aldın?":"What did you score on this block exam?","Notu sil":"Delete grade","· not girilmedi":"· no grade entered","ör. 78,5":"e.g. 78.5",
+// --- kurul sayfası
+"Bugün":"Today","Konular":"Topics","Program":"Timetable","günün dersleri ve çalışman":"today's lectures and your study","dersler, konular, ilerleme":"courses, topics, progress","ders programı ve sonraki günler":"timetable and the coming days",
+"Sınav tarihini gir":"Enter the exam date","Sınav haftası başlangıcı":"Exam week starts","Günde kaç saat çalışabilirsin?":"How many hours can you study per day?",
+"1 saat ders = kaç saat çalışma?":"1 lecture hour = how many study hours?","{#} saat ders = kaç saat çalışma?":"{#} lecture hour = how many study hours?","Son günü genel tekrara ayır":"Keep the last day for general review",
+"Kurul (dersler) başlangıcı":"Block (lectures) start","Kurul (dersler) başlangıcı — isteğe bağlı":"Block (lectures) start — optional",
+"Tarih girilmemiş konuların ne zaman işleneceğini tahmin etmek için":"To estimate when topics without a date will be taught",
+"{#} saatlik dersi kendi başına çalışman ortalama kaç saat sürüyor?":"On average, how many hours does it take you to study a {#}-hour lecture on your own?",
+"Derslerim":"My courses","+ Yeni ders":"+ New course","+ Konu ekle":"+ Add topic","Örnek veri yükle":"Load sample data","Örnek verilerle nasıl çalıştığını gör":"See how it works with sample data",
+"Henüz ders yok. \"+ Yeni ders\"e bas ya da \"Örnek veri yükle\"yi dene.":"No courses yet. Press \"+ New course\" or try \"Load sample data\".",
+"Ders adı":"Course name","Ders adı (zorunlu)":"Course name (required)","Ders saati":"Lecture hours","Slayt sayısı":"Number of slides","ör. Fizyoloji":"e.g. Physiology","ör. {#}":"e.g. {#}",
+"Ders adını yazmalısın.":"You must enter a course name.","Dersi sil":"Delete course","\"{*}\" dersi silinsin mi?":"Delete the course \"{*}\"?","İçindeki {*} konu da silinecek.":"Its {*} topics will be deleted too.",
+"Hepsini bitir":"Finish all","Bu dersin bütün konularını bitti işaretle":"Mark all topics of this course as done","Konuları göster":"Show topics","Daha az göster":"Show less",
+"Bu derste henüz konu yok.":"No topics in this course yet.","Konuyu sil":"Delete topic","\"{*}\" konusu silinsin mi?":"Delete the topic \"{*}\"?",
+"{#}/{#} konu":"{#}/{#} topics","{#}/{#} konu bitti":"{#}/{#} topics done","{#} konu işlenmedi":"{#} topic(s) not taught yet","1 konu işlenmedi":"1 topic not taught yet",
+"· {#} saat ders · {#} slayt · ~{#} sa çalışma · son ders: {*} ·":"· {#} lecture h · {#} slides · ~{#} h study · last lecture: {*} ·",
+"· {#} saat ders · {#} slayt · ~{#} sa çalışma · son ders: {*}":"· {#} lecture h · {#} slides · ~{#} h study · last lecture: {*}",
+"Hiç":"None","Az":"Little","Yarı":"Half","Çoğu":"Most","Bitti":"Done","✓ Bitti":"✓ Done","Kolay":"Easy","Orta":"Medium","Zor":"Hard","Çok":"High","Acil":"Urgent","Yüksek":"High",
+"süre":"time","Önem":"Importance","Zorluk":"Difficulty","Öncelik":"Priority","· süre:":"· time:","· işlenme:":"· taught:","yeni işlendi":"just taught","{#} sa":"{#} h","{#} gün":"{#} days","{*} gün":"{*} days",
+"Tüm konular":"All topics","Tüm dersler":"All courses","{*} ({*}. hafta konuları)":"{*} (week {*} topics)","Değiştirmek için tıkla":"Click to change",
+"Kalan süre":"Time left","Kalan iş":"Work left","Genel ilerleme":"Overall progress","Elindeki süre: {#} sa":"Available time: {#} h","Elindeki süre: –":"Available time: –","Elindeki süre:":"Available time:",
+"{#} çalışma günü + {#} gün tekrar":"{#} study days + {#} review day","çalışma günü":"study days","+ 1 gün tekrar":"+ 1 review day",
+"✅ Yetişir, rahatsın.":"✅ You'll make it, you're comfortable.","⚠️ Yetişir ama sıkı.":"⚠️ You'll make it, but it's tight.","⛔ Bu tempoyla yetişmez — {#} sa açık var.":"⛔ At this pace you won't make it — {#} h short.",
+"⛔ Bu tempoyla yetişmez — {*} açık var.":"⛔ At this pace you won't make it — {*} short.",
+"⛔ Toplam süre yetiyor ama bazı konular çok geç işleniyor — {*} sığmıyor.":"⛔ The total time is enough, but some topics are taught too late — {*} doesn't fit.",
+"Ya günde ~{#} sa daha fazla çalış, ya da şu düşük öncelikli konuları yüzeysel geç (özet + çıkmış soru):":"Either study ~{#} h more per day, or skim these low-priority topics (summary + past questions):",
+"Süreye sığmayan: {*}":"Doesn't fit in time: {*}","Son günlerde günlük saati biraz artır.":"Increase your daily hours a bit in the last days.",
+"Kalan işin elindeki sürenin %{*}'i — plana sadık kalman lazım, boş gün yok.":"Remaining work is {*}% of your available time — stick to the plan, no days off.",
+"Kalan işin elindeki sürenin %{*}'i. Fazla zamanı soru çözmeye ayır.":"Remaining work is {*}% of your available time. Use the extra time for practice questions.",
+"{*} konu henüz derste işlenmedi; plan onları işlendikleri günden sonraya koydu.":"{*} topic(s) haven't been taught yet; the plan puts them after the day they are taught.",
+"Sınava":"Until exam","· sınava {#} gün":"· {#} days to exam","Sınav: {*}":"Exam: {*}","Geçti":"Passed","Sınav tarihi bugün ya da geçmiş.":"The exam date is today or in the past.",
+"Plan için sınav tarihini gir.":"Enter the exam date to get a plan.","Plan için konu ekle.":"Add topics to get a plan.","Yeni bir tarih seç":"Pick a new date","Plan buna göre çıkar.":"The plan is built from this.",
+"Bugün · {*}":"Today · {*}","🏫 Okulda":"🏫 At school","Okulda":"At school","Yarın okulda":"Tomorrow at school","📚 Okul sonrası çalış":"📚 Study after school","📚 Okul sonrası çalışma:":"📚 Study after school:",
+"Bugün ders yok 🎉":"No lectures today 🎉","Bugün okulda ders yok 🎉":"No lectures at school today 🎉","Bugün için planlanmış çalışma yok — soru çöz ya da tekrar yap.":"No study planned for today — solve questions or review.",
+"Erken yat 😴":"Go to bed early 😴","bugünlük bitti 🎉":"done for today 🎉","kalan {#} sa · ✓ çalıştım, ⇄ başka konu":"{#} h left · ✓ studied, ⇄ other topic","· ✓ çalıştım, ⇄ başka konu":"· ✓ studied, ⇄ other topic",
+"✓ çalıştım, ⇄ başka konu":"✓ studied, ⇄ other topic","Çalıştım":"Studied","Başka konuyla değiştir":"Swap for another topic","Yerine hangi konu?":"Which topic instead?",
+"📖 Bugün derste: {*}":"📖 In lecture today: {*}","— {#} sa":"— {#} h","— {#} sa ✓ biter":"— {#} h ✓ finishes","✓ biter":"✓ finishes","{*} · yapıldı":"{*} · done",
+"Sonraki günler":"Coming days","Kalan {*} günü göster":"Show the remaining {*} days","Genel tekrar: özetler, kendi notların, çıkmış sorular":"General review: summaries, your notes, past questions",
+"sınavdan önceki gün":"the day before the exam","Kalan günlerde soru çöz ve tekrar yap.":"Solve questions and review in the remaining days.","🎉 Her şey bitmiş!":"🎉 Everything is done!",
+"Bu hafta":"This week","Bu hafta ders yok.":"No lectures this week.","‹ Önceki":"‹ Previous","Sonraki ›":"Next ›","Saat":"Time","Ders":"Course","Konu":"Topic",
+"Ders programı yok. PDF Ayırıcı'dan aldığın kurul kodunu yukarıdaki \"📥 Kurul kodu ekle\" ile yükle — ilerlemen silinmeden saat, ders, konu ve hoca buraya gelir.":"No timetable. Load the block code from the PDF Splitter with \"📥 Add block code\" above — times, courses, topics and lecturers appear here without losing your progress.",
+"Devamsızlık":"Absence","Katıldım":"Attended","Gelmedim":"Absent","✓ katıldım":"✓ attended","✗ gelmedim":"✗ absent","Bütün gün:":"Whole day:","Bütün gün katıldım":"Attended the whole day","Bütün gün gelmedim":"Absent the whole day",
+"Hakkım (saat)":"Allowance (hours)","Programda ya da Bugün kartında ✓ katıldım / ✗ gelmedim işaretle.":"Mark ✓ attended / ✗ absent in the timetable or on the Today card.",
+"Hakkını kurul kitapçığındaki devamsızlık sınırına göre saat olarak yaz (ör. 24 saatlik dersin %30'u ≈ 7 saat).":"Enter your allowance in hours based on the absence limit in the block booklet (e.g. 30% of a 24-hour course ≈ 7 hours).",
+"Analiz et ✦":"Analyze ✦","Claude'a danış":"Ask Claude","Durumunu analiz edip kişisel strateji önerir.":"Analyzes your situation and suggests a personal strategy.","Düşünüyor…":"Thinking…","Şu an cevap alınamadı, tekrar dene.":"No answer right now, try again.",
+// --- ayarlar
+"Ayarların hesabına kaydedilir, her cihazda aynı olur.":"Settings are saved to your account and are the same on every device.","Görünüm":"Appearance","Tema":"Theme",
+"Açık, koyu ya da cihazına göre":"Light, dark or follow your device","Otomatik":"Auto","Açık":"Light","Koyu":"Dark","Motivasyon sözü":"Motivational quote","Ana sayfadaki saatlik söz":"The hourly quote on the home page",
+"Takip":"Tracking","Devamsızlık takibi":"Absence tracking","Ders programında ✓ katıldım / ✗ gelmedim işaretleri ve devamsızlık tablosu":"✓ attended / ✗ absent marks in the timetable and the absence table",
+"Sınav stresi":"Exam stress","Gerginlik yaratan şeyleri kapatabilirsin; plan arkada aynı şekilde çalışmaya devam eder.":"You can turn off things that cause stress; the plan keeps working the same way in the background.",
+"Yetişir mi uyarısı":"“Will I make it?” warning","“Yetişir / sıkı / yetişmez” kutusu":"The “on track / tight / won't make it” box","Geri sayım":"Countdown","Sınava kalan gün sayısı":"Days left until the exam",
+"Öncelik etiketleri":"Priority labels","Konulardaki “Acil / Yüksek” etiketleri":"The “Urgent / High” labels on topics","Dil":"Language","Sitenin dili":"Language of the site",
+// --- SSS
+"Siteyi nasıl kullanacağın, kısa ve net.":"How to use the site, short and clear.","Bu site ne işe yarıyor?":"What is this site for?",
+"Kurulundaki dersleri ve konuları takip edip sınava kadar gün gün ne çalışman gerektiğini çıkarır. Okulda hangi gün hangi ders var, ne kadarını bitirdin, yetişir mi — hepsi tek yerde.":"It tracks the courses and topics in your block and works out what to study each day until the exam. Which lecture is on which day, how much you've finished, whether you'll make it — all in one place.",
+"Kurulumu nasıl eklerim?":"How do I add my block?","Menüden":"From the menu, open","'ye gir. Önce":". First check","'a bak; biri paylaştıysa tek tıkla eklersin. Yoksa":"; if someone shared it, add it in one click. Otherwise, in",
+"'da kurul kitapçığını yükle, çıkan kodu":"upload the block booklet and paste the resulting code into","'ye yapıştır. İstersen menüdeki":". You can also create one yourself with",
+"ile kendin de oluşturabilirsin.":"in the menu.","Kodum ne işe yarıyor, kaybedersem ne olur?":"What is my code for, and what if I lose it?",
+"Kodun senin hesabın. Telefonda, bilgisayarda, tablette girişte bu kodu yazınca verilerin gelir. Kaybedersen başka cihazdan verilerine ulaşamazsın — ana sayfadaki":"Your code is your account. Enter it on your phone, computer or tablet and your data appears. If you lose it you can't reach your data from another device — use",
+"ile kendine at, sakla.":"on the home page to send it to yourself and keep it.","Verilerim nerede, kaydetmem gerekiyor mu?":"Where is my data, do I need to save?",
+"Hayır, her değişiklik otomatik kaydedilir (sağ üstte “Kaydedildi” yazar). Başka cihazda aynı kodla girince her şey kaldığın yerden gelir.":"No, every change is saved automatically (“Saved” appears at the top right). Sign in with the same code on another device and everything continues where you left off.",
+"Plan nasıl hesaplanıyor?":"How is the plan calculated?",
+"Her konu derste işlendiği günden sonra plana girer. Konunun süresi = ders saati × “{#} saat ders = kaç saat çalışma” × zorluk. O gün ya da dün işlenen konu öne alınır ki aynı gün tekrar edesin. Dersler bir güne yığılmaz, karışık dağıtılır.":"Each topic enters the plan after the day it is taught. A topic's time = lecture hours × “{#} lecture hour = how many study hours” × difficulty. Topics taught today or yesterday come first so you review them right away. Courses aren't piled onto one day; they are mixed.",
+"Bir konu bana daha uzun/kısa geliyor.":"A topic takes me longer/shorter.","Konular sekmesinde o konunun altındaki":"In the Topics tab, type your own time into the",
+"kutusuna kendi süreni yaz; plan ona göre değişir. Zorluk ve önemi de üstlerine tıklayarak değiştirebilirsin.":"box under that topic; the plan adjusts. You can also change difficulty and importance by clicking them.",
+"Çalıştığımı nasıl işaretlerim?":"How do I mark what I studied?",
+"Bugün sekmesinde “Okul sonrası çalış” listesinde ✓'ye bas — konunun ilerlemesine eklenir. ⇄ ile o konuyu başka bir konuyla değiştirebilirsin. Konular sekmesinde Hiç / Az / Yarı / Çoğu / Bitti ile de işaretleyebilirsin.":"In the Today tab, press ✓ in the “Study after school” list — it is added to the topic's progress. With ⇄ you can swap it for another topic. In the Topics tab you can also mark None / Little / Half / Most / Done.",
+"“Yetişmez” uyarısı stres yapıyor.":"The “won't make it” warning stresses me out.","Ayarlar → Sınav stresi":"Settings → Exam stress",
+"'nden yetişir mi uyarısını, geri sayımı ve öncelik etiketlerini kapatabilirsin. Plan arkada aynı şekilde çalışmaya devam eder.":"lets you turn off the warning, the countdown and the priority labels. The plan keeps working the same way in the background.",
+"Devamsızlığımı nasıl takip ederim?":"How do I track my absences?",
+"Program sekmesinde ya da Bugün kartında her dersin yanında ✓ (katıldım) / ✗ (gelmedim) var. Altındaki":"In the Timetable tab or the Today card, each lecture has ✓ (attended) / ✗ (absent). In the",
+"tablosuna her dersin hakkını saat olarak yaz; kalanını gösterir, aşarsan uyarır.":"table below, enter each course's allowance in hours; it shows what's left and warns you if you exceed it.",
+"Kurulumu arkadaşlarımla nasıl paylaşırım?":"How do I share my block with friends?","Kurul sayfasında":"On the block page, press",
+"dersen herkes “Hazır kurullar”dan ekleyebilir. Sadece belirli kişilere vermek istersen":"and everyone can add it from “Ready-made blocks”. To give it only to certain people, use",
+"ile kod alıp gönder. Senin ilerlemen ve kodun paylaşılmaz.":"to get a code and send it. Your progress and your code are not shared.",
+"Sınav bitti, ne yapayım?":"The exam is over, what now?","Kurulun başlığındaki":"Use","ile notunu kaydet, sonra":"in the block header to save your grade, then",
+". Arşivdeki kurullar menüde ayrı durur, istediğin zaman geri açarsın.":". Archived blocks are kept separately in the menu and you can reopen them any time.",
+"PDF Ayırıcı Claude hakkımı harcar mı?":"Does the PDF Splitter use my Claude usage?",
+"Evet, PDF'i Claude okuduğu için okuyanın hakkından gider. Bu yüzden sınıfta bir kişinin ayıklayıp kütüphaneye paylaşması yeterli; diğerleri hak harcamadan ekler. Asıl sitenin geri kalanı hiç hak harcamaz.":"Yes, Claude reads the PDF, so it uses the reader's usage. That's why it's enough for one person in the class to extract and share it to the library; the others add it without using anything. The rest of the main site uses no Claude usage at all.",
+// --- sürüm notları
+"Bu sürümdeki yenilikler":"What's new in this version","Tüm sürüm notları":"All release notes","Tüm sürümler":"All versions","Anladım":"Got it","Güncel sürüm":"Current version",
+"Sitede yapılan tüm değişikliklerin kaydı. Önce ana sürümü, ardından istersen alt sürümü seç.":"A record of every change to the site. Pick a major version first, then a minor version if you like.",
+"Ana sürüm":"Major version","Alt sürüm":"Minor version","Sürüm {*}":"Version {*}","Tümü (v{*}.x)":"All (v{*}.x)","{*} sürüm gösteriliyor · CardiacAI":"Showing {*} version(s) · CardiacAI",
+"YENİ":"NEW","DEĞİŞİKLİK":"CHANGE","DÜZELTME":"FIX","Yeni adres":"New address","Kütüphane yönetimi":"Library management",
+"Sitede yapılan değişiklikler bundan sonra sürüm numarasıyla bu pencerede duyurulacaktır. Önceki sürümlere menüdeki “Sürüm notları” bölümünden ulaşılabilir.":"From now on, changes to the site will be announced in this window with a version number. Earlier versions are available under “Release notes” in the menu.",
+"vercel.app alan adına Türkiye’den erişim engellendiği için site sinav-asistani.netlify.app adresine taşınmıştır. Mevcut kodunuzla giriş yaptığınızda tüm verileriniz aynen yüklenir.":"Because access to the vercel.app domain is blocked in Turkey, the site has moved to sinav-asistani.netlify.app. Sign in with your existing code and all your data loads as before.",
+"Kütüphaneden kaldırılan paylaşımlar {#} saniye içinde geri alınabilir. Uygunsuz içerik paylaşan hesaplar yönetici tarafından engellenebilir.":"Shares removed from the library can be restored within {#} seconds. Accounts that share inappropriate content can be blocked by an admin.",
+// --- yeni kurul / sihirbaz
+"Yeni kurul":"New block","Kurul / sınav adı":"Block / exam name","ör. Dönem 2 – 3. Kurul":"e.g. Year 2 – Block 3","Sınav tarihi (zorunlu)":"Exam date (required)","Sınav tarihini seçmelisin.":"You must pick the exam date.",
+"Oluştur":"Create","Boş bir kurul açılır; dersleri sonra eklersin. PDF'ten ya da hazır kurullardan eklemek için":"An empty block is created; add courses later. To add from a PDF or ready-made blocks, use the",
+"Kurul ekle sayfası":"Add block page","sayfasını kullan.":"page.","{#}. Kurul":"Block {#}","İleri →":"Next →","Bitir ✓":"Finish ✓","Kurulunu hazırla":"Set up your block",
+"📅 Sınav ne zaman?":"📅 When is the exam?","⏱️ Günde kaç saat çalışabilirsin?":"⏱️ How many hours can you study per day?","Gerçekçi ol — plan buna göre çıkacak. Sonra değiştirebilirsin.":"Be realistic — the plan is based on this. You can change it later.",
+"Saat / gün":"Hours / day","📚 İlk dersini ekle":"📚 Add your first course","İlk dersini ekle":"Add your first course","Diğer dersleri sonra Konular sekmesinden eklersin.":"You'll add the other courses later in the Topics tab.",
+"Konularını ekle":"Add your topics","Her satıra bir konu. Sonuna tarih yazabilirsin (ör. \"Mide - 20.11\").":"One topic per line. You can add a date at the end (e.g. \"Stomach - 20.11\").","En az bir konu yazmalısın.":"You must enter at least one topic.",
+"✓ Kurulun hazır!":"✓ Your block is ready!","Bugün sekmesinde planın çıktı":"Your plan is ready in the Today tab","Konular — her satıra bir konu (sonuna tarih yazabilirsin)":"Topics — one per line (you can add a date at the end)",
+"Zorluk (isteğe bağlı)":"Difficulty (optional)","Önem (isteğe bağlı)":"Importance (optional)","İşlenme tarihi (satırda yoksa)":"Teaching date (if not on the line)","Bu konu derste ne zaman işleniyor?":"When is this topic taught?",
+"Ne kadar bitti?":"How much is done?","Başlangıç":"Start","Sınav":"Exam","Kurul":"Block","Ders ders":"Course by course","📝 {*} konuları":"📝 {*} topics",
+// --- yönlendirme / boş durum
+"Tümü":"All","boş":"empty","Bu cihazda":"On this device","Yeni bir cihazda":"On a new device","AB12":"AB12",
+"Çok sık istek gönderildi, biraz sonra tekrar dene.":"Too many requests, try again shortly.",
+"Bitti ✓":"Done ✓","Kodun var mı?":"Have a code?","Konu {#}/{#}":"Topic {#}/{#}","Konu adı - {#}.{#}":"Topic name - {#}.{#}","Mide - {#}.{#}":"Stomach - {#}.{#}",
+"Yeni kurul olarak ekle":"Add as a new block","Mevcut \"{*}\" kurulunu güncelle (ilerlemen korunur)":"Update the existing block \"{*}\" (your progress is kept)","\"{*}\" kurulunu güncelle":"Update the block \"{*}\"",
+"Nereye eklensin?":"Where should it go?","Kontrol et — yanlış bir şey varsa ekledikten sonra düzeltebilirsin.":"Check it — if something is wrong you can fix it after adding.",
+"PDF açılamadı — sayfaların ekran görüntüsünü atmayı dene.":"Could not open the PDF — try sending screenshots of the pages.","PDF hazırlanıyor… sayfa {#}/{#}":"Preparing PDF… page {#}/{#}",
+"{#} grup okunamadı, gerisi aşağıda.":"{#} group(s) could not be read, the rest is below.","Bu sayfalardan kurul/ders çıkaramadım. Ders dağılımı veya ders programı sayfalarını dene.":"I couldn't extract blocks/courses from these pages. Try the course distribution or timetable pages.",
+"Claude ile doldur ✦":"Fill with Claude ✦","📄 Kurul kitapçığını yükle, gerisini Claude doldursun":"📄 Upload the block booklet, Claude fills in the rest","⬆️ PDF ya da fotoğraf seç / buraya sürükle":"⬆️ Choose a PDF or photo / drag it here",
+"Kitapçığın PDF'ini ya da sayfa fotoğraflarını at. İçindeki bütün kurullar, dersler, saatler, soru sayıları ve (haftalık programdan) konular işlendikleri tarihlerle gelir.":"Send the booklet PDF or photos of its pages. All blocks, courses, hours, question counts and (from the weekly timetable) topics come in with their teaching dates.",
+"(İsteğe bağlı) Konu listesi ya da ek not yapıştır — ör. her satıra bir konu":"(Optional) Paste a topic list or an extra note — e.g. one topic per line",
+"Ders programı yok. Kurul kitapçığını yukarıdan yükle — \"mevcut kurulu güncelle\" seçeneğiyle ilerlemen silinmeden saat, ders, konu ve hoca buraya gelir.":"No timetable. Upload the block booklet above — with the \"update existing block\" option, times, courses, topics and lecturers appear here without losing your progress.",
+"📅 Ders programı":"📅 Timetable","({#} ders, {#} konu)":"({#} courses, {#} topics)","· {*} saatlik ders programı":"· {*}-hour timetable","· planın çıkması için:":"· to get your plan:",
+"kurul başlangıcını":"the block start date","girersen, tarihi olmayan konuların ne zaman işleneceğini tahmin edip plana ona göre koyarım.":"— if you enter it, I estimate when undated topics are taught and plan accordingly.",
+"· verilerin otomatik kaydediliyor":"· your data is saved automatically","👋 Hoş geldin!":"👋 Welcome!","3 adımda sınav planını çıkaralım. Önce hangi sınava hazırlanıyorsun?":"Let's build your exam plan in 3 steps. First, which exam are you preparing for?",
+"📚 Dersleri nasıl ekleyelim?":"📚 How shall we add the courses?","✍️ Elle gireceğim":"✍️ I'll enter them manually","👀 Önce örneğe bakayım":"👀 Show me an example first","Ders ders kendim ekleyeceğim":"I'll add courses one by one myself",
+"Biri kurulu paylaştıysa kodu yapıştır":"If someone shared the block, paste the code","🔗 Arkadaşımdan kod":"🔗 Code from a friend","Kod okunamadı — mesajın tamamını yapıştır.":"Could not read the code — paste the whole message.",
+"Sana {#} haneli bir kod verelim":"We'll give you a {#}-character code","Verilerimi yükle":"Load my data","Kodumla yükle":"Load with my code","Başka kodla gir":"Sign in with another code","WhatsApp'taki mesajın tamamını buraya yapıştır.":"Paste the whole WhatsApp message here.",
+"Claude'a izin verilmedi.":"Claude access was not allowed.","kurul sonu sınavı":"end-of-block exam",
+"Konu süresi = konunun ders saati × \"{#} saat ders = kaç saat çalışma\" × zorluk (kolay ×{#} · zor ×{#}). Bir konu sana daha uzun/kısa geliyorsa \"süre\" kutusuna kendin yaz. \"Önem\" = sınavda ne kadar soru çıkar.":"Topic time = the topic's lecture hours × \"{#} lecture hour = how many study hours\" × difficulty (easy ×{#} · hard ×{#}). If a topic takes you longer/shorter, type your own value into the \"time\" box. \"Importance\" = how many exam questions it is likely to have.",
+};
+// ===== DİL (TR / EN) — ekrandaki Türkçe metinler EN sözlüğüyle çevrilir; kullanıcının yazdıkları (kurul/ders adları) değişmez.
+const LANG_KEY="sa-lang";
+let LANG = (()=>{ try{ return localStorage.getItem(LANG_KEY)||"tr"; }catch(e){ return "tr"; } })();
+const LOC = () => LANG==="en" ? "en-GB" : "tr-TR";
+const I18N = (()=>{
+  const exact=new Map(), pats=[];
+  const esc=s=>s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+  for(const [k,v] of Object.entries(EN)){
+    if(!/\{[#*]\}/.test(k)){ exact.set(k,v); continue; }
+    const re=new RegExp("^"+esc(k).replace(/\\\{#\\\}/g,"(\\d+(?:[.,]\\d+)*)").replace(/\\\{\\\*\\\}/g,"(.+?)")+"$");
+    pats.push([re,v,(k.match(/\{[#*]\}/g)||[])]);
+  }
+  pats.sort((a,b)=>b[0].source.length-a[0].source.length);   // uzun (daha özel) kalıplar önce
+  const fill=(v,caps,kinds)=>{ let i=0; return v.replace(/\{[#*]\}/g,()=>{ const c=caps[i], k=kinds[i++]; if(c==null) return ""; return k==="{#}" ? c.replace(",",".") : (tr(c)??c.replace(/(\d+),(\d+) sa\b/g,"$1.$2 h").replace(/(\d+) sa\b/g,"$1 h")); }); };
+  function tr(s){
+    if(exact.has(s)) return exact.get(s);
+    for(const [re,v,kinds] of pats){ const m=s.match(re); if(m) return fill(v,m.slice(1),kinds); }
+    if(s.includes(" · ")){ const parts=s.split(" · "); const out=parts.map(p=>tr(p)); if(out.some(x=>x!=null)) return parts.map((p,i)=>out[i]??p).join(" · "); }
+    return null;
+  }
+  const orig=new WeakMap(); let busy=false;
+  const SKIP="script,style,svg,textarea,input,[data-noi18n],#shareCode,.bigcode,.kcode";
+  function doText(n){
+    if(!n.parentElement || n.parentElement.closest(SKIP)) return;
+    const raw = orig.has(n) ? orig.get(n) : n.nodeValue;
+    const core=raw.replace(/\s+/g," ").trim(); if(!core || !/[A-Za-zÇĞİÖŞÜçğıöşü]/.test(core)) return;
+    const t=tr(core); if(t==null) return;
+    if(!orig.has(n)) orig.set(n,raw);
+    const lead=raw.match(/^\s*/)[0], trail=raw.match(/\s*$/)[0];
+    const nv=lead+t+trail; if(n.nodeValue!==nv) n.nodeValue=nv;
+  }
+  function doAttrs(el){
+    for(const a of ["placeholder","title","aria-label"]){
+      if(!el.hasAttribute || !el.hasAttribute(a)) continue;
+      const ok="data-i18n-"+a; const raw=el.getAttribute(ok) ?? el.getAttribute(a);
+      const t=tr(raw.replace(/\s+/g," ").trim()); if(t==null) continue;
+      if(!el.hasAttribute(ok)) el.setAttribute(ok,raw); if(el.getAttribute(a)!==t) el.setAttribute(a,t);
+    }
+  }
+  function walk(root){
+    if(root.nodeType===3){ doText(root); return; }
+    if(root.nodeType!==1 || root.closest?.("script,style")) return;
+    doAttrs(root); root.querySelectorAll?.("[placeholder],[title],[aria-label]").forEach(doAttrs);
+    const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT); let n; while(n=w.nextNode()) doText(n);
+  }
+  function restore(){
+    busy=true;
+    const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT); let n;
+    while(n=w.nextNode()){ if(orig.has(n)){ n.nodeValue=orig.get(n); orig.delete(n); } }
+    document.querySelectorAll("[data-i18n-placeholder],[data-i18n-title],[data-i18n-aria-label]").forEach(el=>{
+      for(const a of ["placeholder","title","aria-label"]){ const ok="data-i18n-"+a; if(el.hasAttribute(ok)){ el.setAttribute(a,el.getAttribute(ok)); el.removeAttribute(ok); } }
+    });
+    busy=false;
+  }
+  const mo=new MutationObserver(list=>{
+    if(LANG!=="en" || busy) return; busy=true;
+    for(const m of list){
+      if(m.type==="childList") m.addedNodes.forEach(walk);
+      else if(m.type==="characterData"){ orig.delete(m.target); doText(m.target); }
+      else if(m.type==="attributes" && !m.attributeName.startsWith("data-i18n")){ m.target.removeAttribute("data-i18n-"+m.attributeName); doAttrs(m.target); }
+    }
+    mo.takeRecords(); busy=false;
+  });
+  function apply(){
+    document.documentElement.lang = LANG;
+    if(LANG==="en"){ busy=true; walk(document.body); busy=false; mo.observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:["placeholder","title","aria-label"]}); }
+    else { mo.disconnect(); restore(); }
+  }
+  return { tr, apply };
+})();
+const T = s => LANG==="en" ? (I18N.tr(s) ?? s) : s;   // JS içinde (pano / WhatsApp) gerekirse
+function setLang(l){
+  LANG = l==="en" ? "en" : "tr";
+  try{ localStorage.setItem(LANG_KEY, LANG); }catch(e){}
+  if(typeof root!=="undefined" && root && root.settings && root.settings.lang!==LANG){ root.settings.lang=LANG; try{ save(); }catch(e){} }
+  // tarih/gün adları dile göre yeniden üretilsin
+  try{ render(); }catch(e){} try{ renderDrawer(); }catch(e){}
+  try{ if(view==="settings") renderSettings(); else if(view==="faq") renderFaq(); else if(view==="updates") renderUpdates(); else if(view==="home") renderHome?.(); }catch(e){}
+  I18N.apply(); updateLangBtn();
+}
+function updateLangBtn(){ const b=document.getElementById("langBtn"); if(b) b.innerHTML=`<span class="${LANG==="tr"?"on":""}">TR</span><span class="${LANG==="en"?"on":""}">EN</span>`; }
 const DIFF = {1:"Kolay",2:"Orta",3:"Zor"};
 const STEPS = [[0,"Hiç"],[25,"Az"],[50,"Yarı"],[75,"Çoğu"],[100,"Bitti"]];
 const WEIGHT = {1:"Az",2:"Orta",3:"Çok"};
@@ -612,7 +913,7 @@ const newRib = k => NEW_IN[k]===LATEST ? `<span class="new-rib">YENİ</span>` : 
 function showUpdateLog(all){
   $("whatsNew")?.remove();
   const list = all ? UPDATE_LOG : UPDATE_LOG.slice(0,1);
-  const fmt = d => new Date(d+"T12:00").toLocaleDateString("tr-TR",{day:"numeric",month:"long",year:"numeric"});
+  const fmt = d => new Date(d+"T12:00").toLocaleDateString(LOC(),{day:"numeric",month:"long",year:"numeric"});
   const el=document.createElement("div"); el.id="whatsNew"; el.className="modal-bg"; el.style.zIndex=85;
   el.innerHTML=`<div class="modal upd-box">
     <div class="row" style="justify-content:space-between;align-items:flex-start;flex-wrap:nowrap">
@@ -636,7 +937,7 @@ function renderUpdates(){
   const minors=[...new Set(inMajor.map(v=>verParts(v.ver)[1]))].sort((a,b)=>b-a);
   if(updMinor!=null && !minors.includes(updMinor)) updMinor=null;
   const shown=inMajor.filter(v=>updMinor==null || verParts(v.ver)[1]===updMinor);
-  const fmt = d => new Date(d+"T12:00").toLocaleDateString("tr-TR",{day:"numeric",month:"long",year:"numeric"});
+  const fmt = d => new Date(d+"T12:00").toLocaleDateString(LOC(),{day:"numeric",month:"long",year:"numeric"});
   const tagCls = t => t==="YENİ"?"new":t==="DÜZELTME"?"fix":"chg";
   $("updBody").innerHTML=`
     <div class="card upd-filter">
@@ -872,7 +1173,7 @@ function renderDrawer(){
   $("navTrack").classList.toggle("open", navOpen); $("navTrack").classList.toggle("on", view==="kurul");
   $("navKurullar").style.display = navOpen ? "" : "none";
   const item = f=>{
-    let d = f.examDate ? `Sınav: ${new Date(f.examDate+"T00:00:00").toLocaleDateString("tr-TR",{day:"numeric",month:"short"})}` : (f.courses.length?`${f.courses.length} ders`:"boş");
+    let d = f.examDate ? `Sınav: ${new Date(f.examDate+"T00:00:00").toLocaleDateString(LOC(),{day:"numeric",month:"short"})}` : (f.courses.length?`${f.courses.length} ders`:"boş");
     if(f.grade!=null) d = `Notum: ${String(f.grade).replace(".",",")}`; else if(examPassed(f)) d += " · not girilmedi";
     return `<button class="${view==="kurul" && f.id===state.id?"on":""}" data-navk="${f.id}">${esc(f.name)}<small>${d}</small></button>`; };
   const act = sortedFolders().filter(f=>!f.archived), arch = sortedFolders().filter(f=>f.archived);
@@ -929,7 +1230,7 @@ function renderQuote(){
       <path d="M110 140 C 40 95, 18 60, 38 34 C 56 12, 92 16, 110 44 C 128 16, 164 12, 182 34 C 202 60, 180 95, 110 140 Z" stroke-width="3" opacity=".9"/>
       <path d="M8 86 H 70 L 82 64 L 96 112 L 112 40 L 126 98 L 136 86 H 212" stroke-width="3.5"/>
       <circle cx="212" cy="86" r="4" fill="#fff" stroke="none"/></svg>
-    <div class="hi">${hi} · ${now.toLocaleDateString("tr-TR",{weekday:"long",day:"numeric",month:"long"})}</div>
+    <div class="hi">${hi} · ${now.toLocaleDateString(LOC(),{weekday:"long",day:"numeric",month:"long"})}</div>
     <blockquote>“${esc(QUOTES[idx])}”</blockquote>
     <div class="by"><span>— <b>CardiacAI</b></span><span class="tick">yeni söz ${left} dk sonra</span></div>`;
   lastQuoteHour=h;
@@ -1007,6 +1308,9 @@ function renderSettings(){
   const st=settings();
   const row=(k,t,sub)=>`<div class="set-row"><div><b>${t}</b><small>${sub}</small></div><button class="sw ${st[k]?"on":""}" data-sw="${k}" aria-label="${t}"></button></div>`;
   $("settingsBody").innerHTML=`
+    <section class="card set-card"><h3>Dil</h3>
+      <div class="set-row"><div><b>Dil</b><small>Sitenin dili</small></div><div class="seg3" data-noi18n>${[["tr","Türkçe"],["en","English"]].map(([v,l])=>`<button class="${LANG===v?"on":""}" data-lang-set="${v}">${l}</button>`).join("")}</div></div>
+    </section>
     <section class="card set-card"><h3>Görünüm</h3>
       <div class="set-row"><div><b>Tema</b><small>Açık, koyu ya da cihazına göre</small></div><div class="seg3">${[["auto","Otomatik"],["light","Açık"],["dark","Koyu"]].map(([v,l])=>`<button class="${st.theme===v?"on":""}" data-theme-set="${v}">${l}</button>`).join("")}</div></div>
       ${row("quote","Motivasyon sözü","Ana sayfadaki saatlik söz")}
@@ -1023,6 +1327,7 @@ function renderSettings(){
 }
 function openSettings(){ showView("settings"); }
 document.getElementById("settingsBody").addEventListener("click", e=>{
+  const lg=e.target.closest("[data-lang-set]"); if(lg){ setLang(lg.dataset.langSet); return; }
   const sw=e.target.closest("[data-sw]"), th=e.target.closest("[data-theme-set]");
   if(sw){ const st=settings(); st[sw.dataset.sw]=!st[sw.dataset.sw]; root.settings=st; }
   else if(th){ const st=settings(); st.theme=th.dataset.themeSet; root.settings=st; }
@@ -1030,6 +1335,7 @@ document.getElementById("settingsBody").addEventListener("click", e=>{
   applySettings(); save(); renderSettings();
 });
 $("gearBtn").onclick = openSettings;
+$("langBtn").onclick = ()=> setLang(LANG==="tr" ? "en" : "tr");
 // sürükle-bırak (fare); telefonda ↑↓ butonları
 let dragId=null;
 $("drawer").addEventListener("dragstart", e=>{ const it=e.target.closest("[data-dragid]"); if(!it) return; dragId=it.dataset.dragid; it.classList.add("dragging"); e.dataTransfer.effectAllowed="move"; try{ e.dataTransfer.setData("text/plain", dragId); }catch(_){} });
@@ -1136,7 +1442,7 @@ function newKurulDialog(){
 }
 function renderFolders(){
   $("demoBtn").style.display = (state.isDefault || (state.name==="1. Kurul" && !state.courses.length)) ? "" : "none";
-  const d = state.examDate ? new Date(state.examDate+"T00:00:00").toLocaleDateString("tr-TR",{day:"numeric",month:"long"}) : "";
+  const d = state.examDate ? new Date(state.examDate+"T00:00:00").toLocaleDateString(LOC(),{day:"numeric",month:"long"}) : "";
   const title = folderForm ? `<form class="folder-form" id="folderForm"><input id="fName" placeholder="${folderForm==="new"?"Yeni kurul adı, ör. Dönem 2 – 3. Kurul":""}" value="${folderForm==="rename"?esc(state.name):""}" required><button type="submit">${folderForm==="rename"?"Kaydet":"Kurulu oluştur"}</button><button type="button" class="ghost" data-fcancel="1">Vazgeç</button></form>`
     : `<h2>${esc(state.name)}</h2>${d?`<span class="muted">Sınav: ${d}</span>`:""}${gradeChip(state)}`;
   const tools = folderForm ? "" : `<div class="folder-tools">${SA && state.courses.length && !state.fromLib ? (state.publishedId ? `<button class="ghost pub-on" data-funpub="1" title="Kütüphaneden kaldır">🌍 Kütüphanede · Kaldır</button>` : `<button class="ghost" data-fpub="1">🌍 Kütüphaneye paylaş</button>`) : ""}<button class="ghost" data-fshare="1">🔗 Paylaş</button><button class="ghost" data-fcode="1">Kod ile ekle</button><button class="ghost" data-frename="1">Adını değiştir</button><button class="ghost" data-farch="1">${state.archived?"Arşivden çıkar":"Arşivle"}</button>${
@@ -1180,7 +1486,7 @@ function availDay(t){
   const d = effDate(t); return d ? Math.max(0, dayDiff(d)) : 0;
 }
 const notTaught = t => !!effDate(t) && availDay(t) > 0;
-const fmtShort = iso => new Date(iso+"T00:00:00").toLocaleDateString("tr-TR",{day:"numeric",month:"short"});
+const fmtShort = iso => new Date(iso+"T00:00:00").toLocaleDateString(LOC(),{day:"numeric",month:"short"});
 // "Konu adı - 03.12" / "Konu 3/12" gibi satır sonu tarihlerini ayıkla
 function parseLine(line, fallbackDate){
   let name=line.replace(/^[\s\-•*\d.)]+(?=\D)/,"").trim(), date=fallbackDate||"";
@@ -1439,7 +1745,7 @@ function renderToday(c){
   let showISO = iso;
   if(!todays.length || doneToday){ const nxt=[...new Set(all.map(r=>r.date))].filter(d=>d>iso).sort()[0]; if(nxt) showISO=nxt; }
   const dd=dayDiff(showISO);
-  const dayLabel = showISO===iso ? "Okulda" : dd===1 ? "Yarın okulda" : new Date(showISO+"T00:00:00").toLocaleDateString("tr-TR",{weekday:"long",day:"numeric",month:"short"})+" okulda";
+  const dayLabel = showISO===iso ? "Okulda" : dd===1 ? "Yarın okulda" : new Date(showISO+"T00:00:00").toLocaleDateString(LOC(),{weekday:"long",day:"numeric",month:"short"})+" okulda";
   const preNote = showISO===iso ? "" : `<p class="muted" style="margin:-4px 0 10px">${doneToday?"Bugünün dersleri bitti ✓":"Bugün ders yok 🎉"}</p>`;
   const dayKeys = all.filter(r=>r.date===showISO).map(attKey);
   const dayAtt = dayKeys.length ? `<div class="dayatt-row"><span class="muted">Bütün gün:</span>${attBtns(dayKeys).replace('title="Katıldım"','title="Bütün gün katıldım"').replace('title="Gelmedim"','title="Bütün gün gelmedim"').replace('>✓<','>✓ katıldım<').replace('>✗<','>✗ gelmedim<')}</div>` : "";
@@ -1464,7 +1770,7 @@ function renderToday(c){
   const study = (doneRows||planRows) ? `<ul class="study">${doneRows}${planRows}</ul>
       <div class="total">${doneH?`✓ ${fmtH(doneH)} yapıldı · `:""}${total?`kalan ${fmtH(total)}`:"bugünlük bitti 🎉"} · ✓ çalıştım, ⇄ başka konu</div>`
     : `<p class="muted" style="margin:0">Bugün için planlanmış çalışma yok — soru çöz ya da tekrar yap.</p>`;
-  el.innerHTML = `<div class="hero-h"><h2>Bugün · ${todayStart().toLocaleDateString("tr-TR",{day:"numeric",month:"long",weekday:"long"})}</h2>
+  el.innerHTML = `<div class="hero-h"><h2>Bugün · ${todayStart().toLocaleDateString(LOC(),{day:"numeric",month:"long",weekday:"long"})}</h2>
       <span class="muted"><span class="count">Sınava <b>${c.days} gün</b> · </span>${esc(state.name)}</span></div>
     <div class="hero-b"><div class="hero-col"><h3>🏫 ${esc(dayLabel)}</h3>${preNote}${dayAtt}${classes}</div><div class="hero-col"><h3>📚 Okul sonrası çalış</h3>${study}</div></div>`;
 }
@@ -1545,7 +1851,7 @@ function renderWeek(){
   }
   const keysAt=(ri,ci)=>{ const ks=[]; for(let k=ri;k<ri+span[ri][ci];k++) ks.push(attKey(grid[k][ci])); return ks; };
   const head=showDays.map(d=>{ const dk=wk.filter(r=>r.date===toISO(d)).map(attKey);
-    return `<th class="${toISO(d)===todayISO?"today":""}">${d.toLocaleDateString("tr-TR",{weekday:"long"})}<small>${d.toLocaleDateString("tr-TR",{day:"numeric",month:"short"})}</small>${dk.length?`<div class="dayatt">${attBtns(dk).replace('title="Katıldım"','title="Bütün gün katıldım"').replace('title="Gelmedim"','title="Bütün gün gelmedim"')}</div>`:""}</th>`; }).join("");
+    return `<th class="${toISO(d)===todayISO?"today":""}">${d.toLocaleDateString(LOC(),{weekday:"long"})}<small>${d.toLocaleDateString(LOC(),{day:"numeric",month:"short"})}</small>${dk.length?`<div class="dayatt">${attBtns(dk).replace('title="Katıldım"','title="Bütün gün katıldım"').replace('title="Gelmedim"','title="Bütün gün gelmedim"')}</div>`:""}</th>`; }).join("");
   const body=slots.map((sl,ri)=>`<tr><td class="tm">${esc(sl)}</td>${showDays.map((d,ci)=>{
       if(skip[ri][ci]) return ""; const r=grid[ri][ci];
       if(!r) return `<td class="empty-c"></td>`;
@@ -1570,7 +1876,7 @@ function renderPlan(c){
   if(!state.topics.length){ el.innerHTML = `<div class="empty">Plan için konu ekle.</div>`; return; }
   const {days, leftover} = c.sim;
   const fmtD = i => { const d=todayStart(); d.setDate(d.getDate()+i);
-    return d.toLocaleDateString("tr-TR",{weekday:"long", day:"numeric", month:"short"}); };
+    return d.toLocaleDateString(LOC(),{weekday:"long", day:"numeric", month:"short"}); };
   const pendingLater = i => state.topics.some(t=>t.done<100 && availDay(t)>i);
   let html = "";
   if(!state.startDate && state.topics.some(t=>!t.date && t.done<100))
@@ -1876,7 +2182,7 @@ async function loadFromCode(text, statusEl, btn, confirmState){
 }
 $("deviceBtn").onclick = async ()=>{
   const P=$("sharePanel"); const code = await encodeAll(); const cs={sure:false};
-  const when = new Date().toLocaleString("tr-TR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+  const when = new Date().toLocaleString(LOC(),{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
   const msg = waMessage(code, when);
   showPanel();
   P.innerHTML = `<div class="row" style="justify-content:space-between"><h2 style="margin:0">👤 Kodum: <span style="font-size:28px;letter-spacing:.12em">${CUR}</span></h2><div class="row"><button class="ghost" id="logoutBtn">Başka kodla gir</button><button class="ghost" data-pclose="1">Kapat</button></div></div>
@@ -1932,7 +2238,7 @@ function openWelcome(force){
   $("wNew").onclick=async()=>{
     const code=newPersonalCode(); useProfile(code, null); root.onboarded=true; save();
     $("wStep1").style.display="none"; $("wStep2").style.display=""; $("wNewCode").textContent=code;
-    const blob = await encodeAll(); const when=new Date().toLocaleString("tr-TR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+    const blob = await encodeAll(); const when=new Date().toLocaleString(LOC(),{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
     $("wWa").href="https://wa.me/?text="+encodeURIComponent(waMessage(blob, when));
     $("wWa").onclick=()=>{ root.backupAt=root.updatedAt; persist(); updateDirty(); };
   };
@@ -2037,7 +2343,7 @@ async function openLibrary(){
     const q=norm($("libQ").value); const list=items.filter(it=>!q || norm(it.name+" "+it.school).includes(q));
     $("libList").innerHTML = list.length ? list.map(it=>`<div class="day" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
         <div style="flex:1;min-width:200px"><b>${esc(it.name)}</b>${it.school?` <span class="muted">· ${esc(it.school)}</span>`:""}
-          <div class="muted">${it.courses} ders · ${it.topics} konu${it.sessions?` · ${it.sessions} saatlik program`:""} · ${new Date(it.createdAt).toLocaleDateString("tr-TR",{day:"numeric",month:"short"})}${it.mine?" · <b>senin paylaşımın</b>":""}</div></div>
+          <div class="muted">${it.courses} ders · ${it.topics} konu${it.sessions?` · ${it.sessions} saatlik program`:""} · ${new Date(it.createdAt).toLocaleDateString(LOC(),{day:"numeric",month:"short"})}${it.mine?" · <b>senin paylaşımın</b>":""}</div></div>
         <button data-libadd="${it.id}">Ekle</button>${it.mine?`<button class="ghost" data-libdel="${it.id}">Paylaşımımı kaldır</button>`:admin?`<button class="ghost" data-libdel="${it.id}">Kaldır</button><button class="ghost ban-btn" data-libban="${it.id}">🚫 Kaldır + yasakla</button>`:""}</div>`).join("")
       : `<div class="empty">${items.length?"Aramaya uyan kurul yok.":"Henüz paylaşılmış kurul yok. İlk paylaşan sen ol: kurulunu ekle → 🌍 Kütüphaneye paylaş."}</div>`;
   };
@@ -2050,7 +2356,7 @@ async function openLibrary(){
       const B=$("bansBox"); if(!B) return; B.innerHTML=`<div class="empty">Yükleniyor…</div>`;
       try{ const r=await fetch("/api/library?bans=1&me="+encodeURIComponent(CUR||""),{cache:"no-store"}); const j=await r.json(); if(!r.ok) throw j.error;
         const bans=j.bans||[]; $("bansBtn").textContent=`🚫 Yasaklılar (${bans.length})`;
-        B.innerHTML=`<div class="bans"><b>🚫 Yasaklılar</b>${bans.length ? bans.map(x=>`<div class="ban-row"><div style="flex:1;min-width:0"><b>${esc(x.name||"?")}</b>${x.school?` <span class="muted">· ${esc(x.school)}</span>`:""}<div class="muted" style="font-size:12px">Bu paylaşım yüzünden · ${new Date(x.at).toLocaleString("tr-TR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}</div></div><button class="ghost" data-unban="${esc(x.by)}">Yasağı kaldır</button></div>`).join("") : `<div class="muted" style="margin-top:6px">Yasaklı kimse yok.</div>`}</div>`;
+        B.innerHTML=`<div class="bans"><b>🚫 Yasaklılar</b>${bans.length ? bans.map(x=>`<div class="ban-row"><div style="flex:1;min-width:0"><b>${esc(x.name||"?")}</b>${x.school?` <span class="muted">· ${esc(x.school)}</span>`:""}<div class="muted" style="font-size:12px">Bu paylaşım yüzünden · ${new Date(x.at).toLocaleString(LOC(),{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}</div></div><button class="ghost" data-unban="${esc(x.by)}">Yasağı kaldır</button></div>`).join("") : `<div class="muted" style="margin-top:6px">Yasaklı kimse yok.</div>`}</div>`;
       }catch(e){ B.innerHTML=`<div class="empty">Liste alınamadı.</div>`; }
     };
     $("bansBtn").onclick=()=>{ bansOpen=!bansOpen; $("bansBox").style.display=bansOpen?"":"none"; if(bansOpen) loadBans(); };
@@ -2385,7 +2691,9 @@ function applyImport(){
   $("importBtn").disabled=true; switchTo(firstId);
 }
 
-load(); render(); updateDirty(); updateCodeBtn();
+load();
+if(root && root.settings && root.settings.lang && root.settings.lang!==LANG){ LANG=root.settings.lang; try{ localStorage.setItem(LANG_KEY,LANG); }catch(e){} }
+render(); updateDirty(); updateCodeBtn(); updateLangBtn(); I18N.apply();
 $("deviceBtn").style.display="none";
 // Önce Claude hesabıyla kaydetmeyi dene; olmuyorsa 4 haneli kod sistemine geç
 Promise.race([syncReady, new Promise(r=>setTimeout(()=>r(false),4000))]).then(ok=>{

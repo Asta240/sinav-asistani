@@ -33,6 +33,11 @@ claude.ai artifact'lerini sadece Yasin'in kendi Claude hesabındaki bir oturum g
 - Kurul kodu: `encodeFolder/decodeFolder` (deflate-raw + base64url, `KRL1.`). Eşleştirme `matchFolder` kurul **numarasına** göre.
 - Ayarlar `root.settings`: verdict, count, prio, quote, attend, theme (varsayılan koyu).
 
+## Dil (TR / EN)
+- Sağ üstte ⚙️ yanında TR|EN butonu + Ayarlar → Dil. `root.settings.lang` (+ localStorage `sa-lang`).
+- Çeviri DOM üzerinden: `EN` sözlüğü (src'de, `const $` altında). Anahtar = ekrandaki Türkçe metin; `{#}` sayı, `{*}` herhangi metin. MutationObserver yeni metinleri çevirir; kullanıcı verisi (ders/konu adları) değişmez.
+- **Yeni Türkçe metin eklediğinde EN sözlüğüne İngilizcesini de ekle.** Tarihler `LOC()` ile.
+
 ## Sürüm notları (Update Log)
 - `UPDATE_LOG` (src içinde) — yeni sürüm EN ÜSTE eklenir; v1.0.0'dan başladı. **Bir sürümde en fazla 3 madde**, 4. madde yeni yama sürümü (v1.0.1…) açar. Dil resmi.
 - Her yeni özelliğe `NEW_IN[key]=sürüm` + `newRib(key)` ile "YENİ" şeridi; sadece en son sürümde görünür.
