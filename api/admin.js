@@ -6,7 +6,7 @@
 // POST /api/admin {code, action:"warn", target, msg} → uygunsuz takma ad uyarısı: kişinin adı serbest kalır, açılışta uyarı + yeni ad seçtirilir
 // GET  /api/admin?warnme=KOD             → {warn:{msg,at}|null} (kullanıcı kendi uyarısını alır)
 // POST /api/admin {action:"ackwarn", code} → uyarıyı okundu say
-const { redis, cleanCode, ipOf, overLimit, send, isAdmin, indexUser } = require("./_lib");
+const { redis, cleanCode, ipOf, overLimit, send, isAdmin, indexUser, deleteAccount, restoreAccount } = require("./_lib");
 
 module.exports = async (req, res) => {
   try {
@@ -29,6 +29,11 @@ module.exports = async (req, res) => {
       const users = Object.entries(idx).map(([code, v]) => ({ code, ...v })).sort((a, b) => (b.at || 0) - (a.at || 0));
       return send(res, 200, { users, total: users.length, more: Math.max(0, missing.length - 60), contact: (await redis("GET", "admin:contact")) || "" });
     }
+    if (req.method === "POST" && b.action === "delete") {
+      const target = cleanCode(b.target); if (isAdmin(target)) return send(res, 400, { error: "Yönetici hesabı buradan silinemez." });
+      return (await deleteAccount(target)) ? send(res, 200, { ok: true }) : send(res, 404, { error: "Bu kod bulunamadı." });
+    }
+    if (req.method === "POST" && b.action === "restore") return (await restoreAccount(cleanCode(b.target))) ? send(res, 200, { ok: true }) : send(res, 404, { error: "Geri alma süresi doldu." });
     if (req.method === "POST" && b.action === "warn") {
       const target = cleanCode(b.target);
       if (!(await redis("GET", `u:${target}`))) return send(res, 404, { error: "Bu kod bulunamadı." });

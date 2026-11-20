@@ -434,8 +434,9 @@
   .a2-box{max-width:420px}
   .link-btn{background:none;border:0;padding:0;margin:8px 0 0;color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
   .contact-box{border:1px solid var(--accent);background:var(--accent-soft);border-radius:12px;padding:12px 14px;font-weight:700;font-size:16px;word-break:break-word}
+  .danger-btn{background:var(--bad);color:#fff;border:0;border-radius:10px;padding:8px 14px;font-weight:700;cursor:pointer;white-space:nowrap} .del-btn{color:var(--bad)!important;border-color:var(--bad)!important}
   .adm-btns{display:flex;gap:6px;align-items:center;justify-content:flex-end;flex-wrap:wrap} .warn-btn{color:var(--warn)!important;border-color:var(--warn)!important} .adm-warned{font-size:11.5px}
-  .adm-head,.adm-row{display:grid;grid-template-columns:1fr 80px 130px 170px;gap:8px;align-items:center}
+  .adm-head,.adm-row{display:grid;grid-template-columns:1fr 80px 130px 220px;gap:8px;align-items:center}
   .adm-head{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:700;padding:4px 0 6px;border-bottom:1px solid var(--line)}
   .adm-row{padding:7px 0;border-bottom:1px solid var(--line)} .adm-row .ghost{padding:5px 10px;font-size:12.5px}
   .adm-code{font-size:15px;font-weight:800;letter-spacing:.12em} .adm-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .adm-at{font-size:12px}
@@ -896,6 +897,12 @@ const EN = {
 // --- yönlendirme / boş durum
 "Tümü":"All","boş":"empty","Bu cihazda":"On this device","Yeni bir cihazda":"On a new device","AB12":"AB12",
 "Çok sık istek gönderildi, biraz sonra tekrar dene.":"Too many requests, try again shortly.",
+"Hesap":"Account","Hesabımı sil":"Delete my account","Hesabın, kurulların, ilerlemen ve rozetlerin kalıcı olarak silinir; takma adın serbest kalır.":"Your account, blocks, progress and badges are deleted permanently; your nickname becomes available.",
+"Hesabın silinsin mi?":"Delete your account?","Evet, hesabımı sil":"Yes, delete my account","🗑️ Hesabın silindi":"🗑️ Your account was deleted","10 saniye içinde geri alabilirsin":"You can undo within 10 seconds","↶ Hesabın geri getirildi":"↶ Your account was restored",
+"Silinemedi":"Could not delete","Sil":"Delete","Hesabı sil":"Delete account","{*} hesabı silinsin mi?":"Delete the account {*}?","Evet, hesabı sil":"Yes, delete account","🗑️ Hesap silindi":"🗑️ Account deleted","↶ Hesap geri getirildi":"↶ Account restored",
+"Kişinin bütün kurulları, ilerlemesi ve rozetleri silinir; takma adı serbest kalır. 10 saniye içinde geri alabilirsin.":"All of the person's blocks, progress and badges are deleted; their nickname becomes available. You can undo within 10 seconds.",
+"Kodun {*} ile kayıtlı bütün kurulların, ilerlemen, istatistiklerin ve rozetlerin silinir. Bu işlemden sonra 10 saniye içinde geri alabilirsin, sonra geri getirilemez.":"All blocks, progress, statistics and badges saved under your code {*} are deleted. You can undo within 10 seconds afterwards; after that it can't be restored.",
+"Hesap silme":"Account deletion","Kullanıcılar Ayarlar → Hesap bölümünden kendi hesaplarını, yöneticiler yönetici sayfasından herhangi bir hesabı onay vererek silebilir; silme işlemi 10 saniye içinde geri alınabilir.":"Users can delete their own account in Settings → Account, and admins can delete any account from the admin page after confirming; deletion can be undone within 10 seconds.",
 "Slayt sayacı":"Slide counter","“Kalan iş” kartında, işaretlenen ilerlemeye göre bitirilen ve kalan slayt sayısı gösterilir.":"The “Work left” card shows how many slides are done and left, based on the progress you've marked.",
 "Bitirdiğin slayt: {#} · Kalan: {#}":"Slides done: {#} · Left: {#}",
 "Bu takma ad kullanılamaz.":"This nickname can't be used.","✅ Kişisel kodun oluşturuldu — kaydet!":"✅ Your personal code has been created — save it!",
@@ -1118,6 +1125,7 @@ document.addEventListener("click", e=>{ const u=e.target.closest("#verFoot"); if
 const UPDATE_LOG = [
   { ver:"v1.0.9", date:"2026-11-20", items:[
     ["YENİ","Slayt sayacı","“Kalan iş” kartında, işaretlenen ilerlemeye göre bitirilen ve kalan slayt sayısı gösterilir."],
+    ["YENİ","Hesap silme","Kullanıcılar Ayarlar → Hesap bölümünden kendi hesaplarını, yöneticiler yönetici sayfasından herhangi bir hesabı onay vererek silebilir; silme işlemi 10 saniye içinde geri alınabilir."],
   ]},
   { ver:"v1.0.8", date:"2026-11-20", items:[
     ["DEĞİŞİKLİK","Alınmış takma ad","Kayıt sırasında başka bir hesaba ait takma ad yazılırsa, o hesabın kodu istenir; böylece kullanıcı kendi hesabına girebilir."],
@@ -1834,6 +1842,9 @@ function renderSettings(){
     <section class="card set-card"><h3>Dil${newRib("lang")}</h3>
       <div class="set-row"><div><b>Dil</b><small>Sitenin dili</small></div><div class="seg3" data-noi18n>${[["tr","Türkçe"],["en","English"]].map(([v,l])=>`<button class="${LANG===v?"on":""}" data-lang-set="${v}">${l}</button>`).join("")}</div></div>
     </section>
+    ${SA && CUR ? `<section class="card set-card"><h3>Hesap</h3>
+      <div class="set-row"><div><b>Hesabımı sil</b><small>Hesabın, kurulların, ilerlemen ve rozetlerin kalıcı olarak silinir; takma adın serbest kalır.</small></div><button class="danger-btn" id="delAccBtn">Hesabımı sil</button></div>
+    </section>` : ""}
     <section class="card set-card"><h3>Uygulama${newRib("pwa")}</h3>
       <div class="set-row"><div><b>Ana ekrana ekle</b><small>${appInstallHint()}</small></div>${installEvt && !isStandalone() ? `<button id="installBtn">📲 Yükle</button>` : isStandalone() ? `<span class="muted">✓ Yüklü</span>` : ""}</div>
     </section>
@@ -1855,6 +1866,7 @@ function openSettings(){ showView("settings"); }
 document.getElementById("settingsBody").addEventListener("click", e=>{
   const lg=e.target.closest("[data-lang-set]"); if(lg){ setLang(lg.dataset.langSet); return; }
   if(e.target.closest("#installBtn")){ installApp(); return; }
+  if(e.target.closest("#delAccBtn")){ deleteMyAccount(); return; }
   const sw=e.target.closest("[data-sw]"), th=e.target.closest("[data-theme-set]");
   if(sw){ const st=settings(); st[sw.dataset.sw]=!st[sw.dataset.sw]; root.settings=st; }
   else if(th){ const st=settings(); st.theme=th.dataset.themeSet; root.settings=st; }
@@ -2899,7 +2911,7 @@ function drawAdmUsers(){
   L.innerHTML = list.length ? `<div class="adm-head"><span>Takma ad</span><span>Kod</span><span>Son kayıt</span><span></span></div>`+list.slice(0,300).map(u=>`<div class="adm-row">
       <b class="adm-name">${u.name?esc(u.name):`<span class="muted">(adsız)</span>`}</b><code class="adm-code">${esc(u.code)}</code>
       <span class="muted adm-at">${u.at?new Date(u.at).toLocaleDateString(LOC(),{day:"numeric",month:"short",year:"2-digit"}):"–"}${u.k?` · ${u.k} kurul`:""}</span>
-      <span class="adm-btns"><button class="ghost" data-admcopy="${esc(u.code)}">Kopyala</button>${u.name?`<button class="ghost warn-btn" data-admwarn="${esc(u.code)}" data-admname="${esc(u.name)}" title="Uygunsuz takma ad uyarısı gönder">⚠️ Uyar</button>`:""}${u.warned?`<span class="muted adm-warned">uyarıldı</span>`:""}</span></div>`).join("") : `<div class="empty">Bulunamadı.</div>`;
+      <span class="adm-btns"><button class="ghost" data-admcopy="${esc(u.code)}">Kopyala</button>${u.name?`<button class="ghost warn-btn" data-admwarn="${esc(u.code)}" data-admname="${esc(u.name)}" title="Uygunsuz takma ad uyarısı gönder">⚠️ Uyar</button>`:""}${u.warned?`<span class="muted adm-warned">uyarıldı</span>`:""}<button class="ghost del-btn" data-admdel="${esc(u.code)}" data-admname="${esc(u.name||"")}" title="Hesabı sil">Sil</button></span></div>`).join("") : `<div class="empty">Bulunamadı.</div>`;
 }
 function askWarn(name){
   return new Promise(res=>{
@@ -2921,6 +2933,14 @@ async function loadAdmBans(){
 }
 document.addEventListener("click", async e=>{
   const c=e.target.closest("[data-admcopy]"); if(c){ try{ await navigator.clipboard.writeText(c.dataset.admcopy); toast("✓ Kod kopyalandı", c.dataset.admcopy); }catch(err){ toast("Kod: "+c.dataset.admcopy); } return; }
+  const dl=e.target.closest("[data-admdel]");
+  if(dl){ const t=dl.dataset.admdel, nm=dl.dataset.admname;
+    if(!await askConfirm(`${nm?`“${nm}” (${t})`:t} hesabı silinsin mi?`, "Kişinin bütün kurulları, ilerlemesi ve rozetleri silinir; takma adı serbest kalır. 10 saniye içinde geri alabilirsin.", "Evet, hesabı sil")) return;
+    const r=await fetch("/api/admin",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({code:CUR,action:"delete",target:t})}); const j=await r.json().catch(()=>({}));
+    if(!r.ok){ toast("Silinemedi", j.error||""); return; }
+    const pos=admUsers.findIndex(u=>u.code===t), item=admUsers[pos]; admUsers.splice(pos,1); drawAdmUsers();
+    toastUndo("🗑️ Hesap silindi", nm||t, async()=>{ const rr=await fetch("/api/admin",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({code:CUR,action:"restore",target:t})}); if(!rr.ok) throw "Geri alma süresi doldu."; admUsers.splice(Math.max(0,pos),0,item); drawAdmUsers(); toast("↶ Hesap geri getirildi"); });
+    return; }
   const w=e.target.closest("[data-admwarn]");
   if(w){ const msg=await askWarn(w.dataset.admname); if(msg==null) return;
     const r=await fetch("/api/admin",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({code:CUR,action:"warn",target:w.dataset.admwarn,msg})});
@@ -2998,6 +3018,19 @@ function openWelcomeSA(){
   setTimeout(()=>$("wName").focus(),50);
 }
 // Hesap değiştir: başka bir kodla giriş (şu anki hesabın kodu gösterilir ki geri dönebilsin)
+// Hesabı sil (onaylı). 10 sn içinde geri alınabilir; sonra çıkış yapılır.
+async function deleteMyAccount(){
+  const code=CUR;
+  if(!await askConfirm("Hesabın silinsin mi?", `Kodun ${code}${myName()?` (${myName()})`:""} ile kayıtlı bütün kurulların, ilerlemen, istatistiklerin ve rozetlerin silinir. Bu işlemden sonra 10 saniye içinde geri alabilirsin, sonra geri getirilemez.`, "Evet, hesabımı sil")) return;
+  const r=await fetch("/api/data",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({code})});
+  if(!r.ok){ const j=await r.json().catch(()=>({})); toast("Silinemedi", j.error||""); return; }
+  let undone=false;
+  const finish=setTimeout(()=>{ if(undone) return; try{ localStorage.removeItem(profKey(code)); }catch(e){} lsSet(CUR_KEY,""); location.reload(); }, 10500);
+  toastUndo("🗑️ Hesabın silindi", "10 saniye içinde geri alabilirsin", async()=>{
+    const rr=await fetch("/api/data",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"restore",code})});
+    if(!rr.ok) throw "Geri alma süresi doldu."; undone=true; clearTimeout(finish); toast("↶ Hesabın geri getirildi");
+  });
+}
 function openSwitchAccount(){
   const el=document.createElement("div"); el.className="modal-bg"; el.style.zIndex=85;
   el.innerHTML=`<div class="modal confirm-box"><h2>🔄 Hesap değiştir</h2>

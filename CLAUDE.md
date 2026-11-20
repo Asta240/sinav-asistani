@@ -43,6 +43,7 @@ claude.ai artifact'lerini sadece Yasin'in kendi Claude hesabındaki bir oturum g
 - Takma ad: `root.profile.name` (kayıtta seçilir, ana sayfada ✏️). Kayıtta dil de seçilir.
 - Rozetler: `BADGES`, `root.badges={id:tarih}`; Bugünün özeti `renderTodaySum()`. Rozet tablosu `api/board.js` (hash `board`, takma ad + rozet sayısı), `syncBoard()`.
 - Giriş: kodu olmayan doğrudan takma ad + dil ile hesap açar (bir kez kod ekranı); alınmış ad yazarsa o hesabın kodu istenir; ana sayfada “Hesap değiştir”. Admin uyarısı: `warn:KOD`, ad serbest + `names:blocked`.
+- Hesap silme: `deleteAccount/restoreAccount` (_lib): `deleted:KOD` 10 dk; kullanıcı Ayarlar → Hesap (DELETE /api/data), admin `POST /api/admin {action:"delete"|"restore"}`. Onay + 10 sn geri al.
 - Tekrar günü: `state.reviewDay` 0–7, `revDays(days)`.
 - Takma ad zorunlu ve **benzersiz** (`api/name.js`: `names` hash küçük harfli ad → sahip; `claimName()`). Yoksa ya da başkasınınsa açılışta kapatılamaz pencere. Ana ekrana ekle rehberi `maybeA2HS()` bir kez (`root.settings.a2hs`). SSS'de 3. eleman true = ⭐.
 - Haftalık istatistik: `root.studyLog = {"YYYY-MM-DD": saat}`; `logStudy(t, Δ%)` ilerleme değişince yazar (✓ çalıştım, geri al, Hiç/Az/…). Ana sayfa `renderStats()`.

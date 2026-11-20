@@ -53,4 +53,25 @@ async function indexUser(code, json) {
   await redis("HSET", "users", code, JSON.stringify({ name, at: Date.now(), k, ...(prev.warned && prev.name === name ? { warned: prev.warned } : {}) }));
 }
 
-module.exports = { redis, newCode, CODE_RE, cleanCode, ipOf, overLimit, send, today, isAdmin, indexUser };
+// Hesap silme: veri 10 dk "deleted:KOD"da tutulur (geri alınabilsin), takma ad ve rozet satırı serbest kalır.
+const ownerOf = code => require("crypto").createHash("sha256").update("lib:" + code).digest("hex").slice(0, 16);
+async function deleteAccount(code) {
+  const raw = await redis("GET", `u:${code}`); if (!raw) return false;
+  const me = ownerOf(code), user = await redis("HGET", "users", code), nm = await redis("GET", `nameof:${me}`), board = await redis("HGET", "board", me);
+  await redis("SET", `deleted:${code}`, JSON.stringify({ raw, user, nm, board }), "EX", 600);
+  await redis("DEL", `u:${code}`); await redis("HDEL", "users", code); await redis("HDEL", "board", me); await redis("DEL", `warn:${code}`);
+  if (nm) { if ((await redis("HGET", "names", nm)) === me) await redis("HDEL", "names", nm); await redis("DEL", `nameof:${me}`); }
+  return true;
+}
+async function restoreAccount(code) {
+  const t = JSON.parse((await redis("GET", `deleted:${code}`)) || "null"); if (!t) return false;
+  const ok = await redis("SET", `u:${code}`, t.raw, "NX"); if (ok !== "OK") return false;
+  const me = ownerOf(code);
+  if (t.user) await redis("HSET", "users", code, t.user);
+  if (t.board) await redis("HSET", "board", me, t.board);
+  if (t.nm && !(await redis("HGET", "names", t.nm))) { await redis("HSET", "names", t.nm, me); await redis("SET", `nameof:${me}`, t.nm); }
+  await redis("DEL", `deleted:${code}`);
+  return true;
+}
+
+module.exports = { redis, newCode, CODE_RE, cleanCode, ipOf, overLimit, send, today, isAdmin, indexUser, deleteAccount, restoreAccount };
