@@ -17,9 +17,10 @@ async function redis(...cmd) {
 
 // Karışmayan karakterler: 0/O, 1/I/L yok
 const ALPHABET = "23456789ABCDEFGHJKMNPQRSTUVWXYZ";
-const CODE_RE = /^[23456789ABCDEFGHJKMNPQRSTUVWXYZ]{6}$/;
+// Yeni kodlar 4 karakter (~920 bin ihtimal); önceden alınmış 6 karakterliler de geçerli
+const CODE_RE = /^([23456789ABCDEFGHJKMNPQRSTUVWXYZ]{4}|[23456789ABCDEFGHJKMNPQRSTUVWXYZ]{6})$/;
 function newCode() {
-  const bytes = require("crypto").randomBytes(6);
+  const bytes = require("crypto").randomBytes(4);
   let s = ""; for (const b of bytes) s += ALPHABET[b % ALPHABET.length];
   return s;
 }
