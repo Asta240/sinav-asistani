@@ -528,6 +528,38 @@
     .add{grid-template-columns:1fr 1fr}
     .hide-sm{display:none}
   }
+
+  /* ===== Ferah düzen: daha geniş sayfa, daha çok boşluk ===== */
+  :root{ --r:18px }
+  body{line-height:1.55}
+  .wrap{max-width:1200px;padding:40px 32px 20px}
+  h1{font-size:30px} h2{margin-bottom:18px}
+  .card{padding:24px} .today-hero,.faq details,.card.import.compact{padding:0}
+  .hero-h{padding:20px 24px}
+  .grid{gap:20px}
+  .stats{margin:24px 0}
+  .stat .v{margin-top:8px} .stat .d{margin-top:4px}
+  td{padding:12px 10px}
+  .today-hero,.stats-card,.today-sum,.badges-card,.continue,.acct,.hero-quote,.import,.panel,.faq-link,.verdict,#homeStats,#homeToday,#homeBadges{margin-bottom:24px}
+  .cd-card{margin:24px 0}
+  .set-card{margin-bottom:20px}
+  .continue,.acct{padding:20px 24px}
+  .hero-quote{padding:44px 44px 36px}
+  .page-h{margin:8px 0 24px} .page-h h2{font-size:28px} .page-h p{margin-top:8px}
+  .kurul-title{margin-bottom:18px} .folders{margin-bottom:18px}
+  .course{padding:18px;margin-bottom:16px}
+  .faq details{margin-bottom:14px} .faq summary{padding:18px 22px}
+  .hero-b{gap:0} .hero-col{padding:22px 24px}
+  .nt-item{padding:16px 18px;margin:12px 0}
+  @media (max-width:1380px){ .wrap{padding-top:84px} }
+  @media (max-width:700px){
+    .wrap{padding:76px 16px 16px}
+    .card{padding:18px} .today-hero,.faq details{padding:0} .hero-h{padding:16px 18px} .grid{gap:14px} .stats{margin:18px 0}
+    .continue,.acct{padding:16px 18px}
+    .hero-quote{padding:28px 22px 24px}
+    .today-hero,.stats-card,.today-sum,.badges-card,.continue,.acct,.hero-quote,.import,.panel,.faq-link,.verdict,#homeStats,#homeToday,#homeBadges{margin-bottom:18px}
+    .hero-col{padding:16px 18px}
+  }
 </style>
 </head>
 <body>
@@ -941,6 +973,7 @@ const EN = {
 // --- yönlendirme / boş durum
 "Tümü":"All","boş":"empty","Bu cihazda":"On this device","Yeni bir cihazda":"On a new device","AB12":"AB12",
 "Çok sık istek gönderildi, biraz sonra tekrar dene.":"Too many requests, try again shortly.",
+"Ferah görünüm":"Airier layout","Sayfa genişliği, kart içi boşluklar ve bölümler arası mesafe artırıldı; site daha ferah ve okunaklı hâle getirildi.":"Page width, card padding and spacing between sections were increased to make the site airier and easier to read.",
 "⏳ Sınava kalan":"⏳ Time until the exam","gün":"days","saat":"hours","dakika":"minutes","saniye":"seconds","Dolu balonlar geçen günler":"Filled balloons are past days","{#}/{#} gün geride kaldı · her balon bir gün":"{#}/{#} days behind you · each balloon is one day","{*} · 09:00":"{*} · 09:00",
 "Odak sayacı (25 dk)":"Focus timer (25 min)","Önce açık sayacı bitir":"Finish the running timer first","Sol alttaki sayaca dokun":"Tap the timer at the bottom left","🎯 Odak":"🎯 Focus","🌿 Mola":"🌿 Break","⏸ Duraklat":"⏸ Pause","▶ Başlat":"▶ Start","■ Bitir":"■ Finish","Küçült":"Minimize",
 "25 dk odak → 5 dk mola. Odak bitince süre bu konuya eklenir.":"25 min focus → 5 min break. When focus ends, the time is added to this topic.","Pencereyi kapatsan da sayaç sol altta çalışmaya devam eder.":"Even if you close this window, the timer keeps running at the bottom left.",
@@ -1182,6 +1215,7 @@ document.addEventListener("click", e=>{ const u=e.target.closest("#verFoot"); if
 const UPDATE_LOG = [
   { ver:"v1.1.1", date:"2026-11-21", items:[
     ["DEĞİŞİKLİK","Menü grupları","Menüdeki bölümler “Çalışma”, “Bilgi” ve “Geçmiş” başlıkları altında gruplandı."],
+    ["DEĞİŞİKLİK","Ferah görünüm","Sayfa genişliği, kart içi boşluklar ve bölümler arası mesafe artırıldı; site daha ferah ve okunaklı hâle getirildi."],
     ["DEĞİŞİKLİK","Kurul ekleme önizlemesi","Kurul ekle sayfasında her yöntemin ne işe yaradığı kısa önizlemelerle gösterilir; hazır kurul sayısı ve en yeni paylaşılan kurul görünür."],
   ]},
   { ver:"v1.1.0", date:"2026-11-21", items:[
