@@ -796,6 +796,17 @@ const $ = id => document.getElementById(id);
 // ===== İngilizce sözlük (TR → EN). Anahtar: ekranda görünen metin (boşluklar sadeleştirilmiş).
 // {#} = sayı, {*} = herhangi bir metin. Yeni Türkçe metin eklersen buraya İngilizcesini de ekle.
 const EN = {
+  "Tekrar girmek için takma adın (ya da e-postan) ve şifren gerekir.":"You'll need your nickname (or email) and password to sign in again.",
+  "🔐 Hesabına girebilmek için e-posta ve şifre belirle.":"🔐 Set an email and password so you can sign in to your account.",
+  "Başka bir hesaba geçilsin mi?":"Switch to another account?","Bu hesaptan çıkılır; giriş ekranında diğer hesabın takma adı (ya da e-postası) ve şifresiyle girersin. Bu hesaba da aynı şekilde geri dönebilirsin.":"You'll be signed out; on the sign-in screen use the other account's nickname (or email) and password. You can come back to this account the same way.","Evet, geç":"Yes, switch",
+  "🔑 Şifremi unuttum":"🔑 I forgot my password","Şifremi unuttum":"I forgot my password","söyle, sana geçici bir şifre versin. Girdikten sonra ana sayfadan şifreni değiştirebilirsin.":"and they'll give you a temporary password. After signing in you can change it on the home page.",
+  "Kodla giriş kaldırıldı. Artık":"Sign-in with a code has been removed. You now sign in with your","takma adın + şifrenle":"nickname + password","(ya da e-postanla) giriş yapılıyor. Hesabını kaybetmemek için e-posta ve şifre belirle; verilerin aynen kalır.":"(or email). Set an email and password so you don't lose your account; your data stays the same.",
+  "Bundan sonra":"From now on you sign in with your","(ya da e-postanla) giriş yaparsın. Verilerin aynen kalır.":"(or email). Your data stays the same.",
+  "hesabına kayıtlı bütün kurulların, ilerlemen, istatistiklerin ve rozetlerin silinir. Bu işlemden sonra 10 saniye içinde geri alabilirsin, sonra geri getirilemez.":"— all blocks, progress, statistics and badges of this account are deleted. You can undo within 10 seconds afterwards; after that it can't be restored.",
+  "Hesabına kayıtlı bütün kurulların, ilerlemen, istatistiklerin ve rozetlerin silinir. Bu işlemden sonra 10 saniye içinde geri alabilirsin, sonra geri getirilemez.":"All blocks, progress, statistics and badges of your account are deleted. You can undo within 10 seconds afterwards; after that it can't be restored.",
+  "Kodla giriş kaldırıldı. Bu cihazda hesabın hâlâ açıksa açılışta senden e-posta ve şifre belirlemen istenir; sonra takma adın + şifrenle girersin, verilerin aynen kalır. Çıkış yaptıysan “Şifremi unuttum”a bas ve yöneticiye takma adını söyle; sana geçici bir şifre verir.":"Sign-in with a code has been removed. If your account is still open on this device, you'll be asked to set an email and password when the site opens; then you sign in with your nickname + password and your data stays the same. If you signed out, tap “I forgot my password” and tell the admin your nickname; they'll give you a temporary password.",
+  "Şifremi unuttum, ne yapmalıyım?":"I forgot my password, what should I do?","Giriş ekranında":"On the sign-in screen tap","'a bas; yöneticinin iletişim bilgisi çıkar. Yöneticiye takma adını söyle, sana geçici bir şifre versin. Girdikten sonra ana sayfadaki":"to see the admin's contact details. Tell the admin your nickname and they'll give you a temporary password. After signing in, use","ile kendi şifreni belirle.":"on the home page to set your own password.",
+  "Kodla giriş kaldırıldı":"Code sign-in removed","Giriş yalnızca takma ad (veya e-posta) ve şifreyle ya da Google ile yapılır. Şifresi olmayan hesaplardan açılışta e-posta ve şifre belirlemeleri istenir; şifresini unutan kullanıcılara yönetici geçici şifre verebilir.":"Sign-in is only possible with a nickname (or email) and password, or with Google. Accounts without a password are asked to set an email and password when the site opens; admins can give a temporary password to users who forgot theirs.",
   "Eski şifre":"Old password","Eski şifreni yaz.":"Enter your old password.","Eski şifre yanlış.":"Old password is wrong.","Çok fazla deneme. Yarın tekrar dene.":"Too many attempts. Try again tomorrow.",
   "E-posta doğrulama":"Email verification","Kayıt sırasında e-posta adresine gönderilen 6 haneli kodla adres doğrulanır.":"During sign-up, the email address is verified with a 6-digit code sent to it.",
   "Şifre değişikliği onayı":"Password change confirmation","Şifre değiştirilirken eski şifre istenir; şifre eklenirken veya değiştirilirken e-postaya onay kodu gönderilir.":"A confirmation code is sent by email when a password is added or changed.",
@@ -1261,6 +1272,8 @@ document.addEventListener("click", e=>{ const u=e.target.closest("#verFoot"); if
 // KURALLAR: yeni sürüm EN ÜSTE eklenir · bir sürümde en fazla 3 madde (4. madde yeni yama sürümü açar: v1.0.1, v1.0.2…)
 // Kullanıcı görmediği sürümü açılışta bir kez görür; "Anladım" deyince root.settings.seenVer kaydedilir (cihazlar arası).
 const UPDATE_LOG = [
+  { ver:"v1.2.2", date:"2026-11-21", items:[
+    ["DEĞİŞİKLİK","Kodla giriş kaldırıldı","Giriş yalnızca takma ad (veya e-posta) ve şifreyle ya da Google ile yapılır. Şifresi olmayan hesaplardan açılışta e-posta ve şifre belirlemeleri istenir; şifresini unutan kullanıcılara yönetici geçici şifre verebilir."]]},
   { ver:"v1.2.1", date:"2026-11-21", items:[
     ["YENİ","E-posta doğrulama","Kayıt sırasında e-posta adresine gönderilen 6 haneli kodla adres doğrulanır."],
     ["DEĞİŞİKLİK","Şifre değişikliği onayı","Şifre değiştirilirken eski şifre istenir; şifre eklenirken veya değiştirilirken e-postaya onay kodu gönderilir."],
@@ -1471,6 +1484,7 @@ document.addEventListener("click", async e=>{
   }
 });
 async function maybeWhatsNew(){
+  if(root && !root.settings) root.settings={};
   if(!root || !root.settings || $("welcome") || $("whatsNew") || $("forceName") || (SA && !CUR)) return;
   // takma ad zorunlu: eski hesaplarda yoksa önce isim sorulur (kapatılamaz)
   if(SA && CUR){ try{ const wr=await fetch("/api/admin?warnme="+encodeURIComponent(CUR),{cache:"no-store"}); const wj=await wr.json();
@@ -1482,6 +1496,9 @@ async function maybeWhatsNew(){
     if(c.ok){ root.profile.nameOk=myName(); save(); }
     else if(c.taken){ const old=myName(); const v=await askName(true, `“${old}” takma adı başka birine ait. Lütfen yeni bir takma ad seç.`); root.profile.name=v; root.profile.nameOk=v; save(); try{ renderHome(); }catch(e){} syncBoard(); }
   }
+  // kodla giriş kalktı: şifresi olmayan hesap önce e-posta + şifre belirler (kapatılamaz)
+  if(SA && CUR){ if(!AUTH_ME) await loadAuthMe();
+    if(AUTH_ME && !AUTH_ME.hasPw && !AUTH_ME.google){ await new Promise(r=>openSetPw(true, r)); } }
   // önce (bir kerelik) ana ekrana ekle rehberi, kapanınca sürüm notları
   if(a2hsDue()) return maybeA2HS(()=>{ if(root.settings.seenVer!==LATEST) showUpdateLog(false); });
   if(root.settings.seenVer!==LATEST) showUpdateLog(false);
@@ -1805,6 +1822,15 @@ function askName(force, msg){
   });
 }
 document.addEventListener("click", async e=>{ if(!e.target.closest("[data-editname]")) return; const v=await askName(); if(v){ (root.profile=root.profile||{}).name=v; root.profile.nameOk=v; save(); renderHome(); syncBoard(); toast("✓ Takma adın kaydedildi", v); } });
+// SA hesap kartı: kod gösterilmez, giriş takma ad/e-posta + şifre
+function accountBox(){
+  const nm = myName() ? `<b class="nm-lbl">${esc(myName())}</b> <button class="nm-edit" data-editname="1" title="Takma adı değiştir">✏️</button>` : `<button class="nm-edit add" data-editname="1">+ Takma ad ekle</button>`;
+  const g = AUTH_CFG&&AUTH_CFG.google&&AUTH_ME&&!AUTH_ME.google ? ` · <button class="link-btn" data-linkg="1">Google'ı bağla</button>` : AUTH_ME&&AUTH_ME.google ? ` · <span class="muted">Google bağlı ✓</span>` : "";
+  return `<div><div class="lbl">Hesabım${CUR?newRib("name"):""}</div><div class="acc-name">${CUR?nm:""}</div>
+    ${CUR && AUTH_ME ? (AUTH_ME.hasPw
+      ? `<div class="auth-line">🔐 <span>${esc(AUTH_ME.email||"")}</span> · <button class="link-btn" data-setpw="1">Şifre değiştir</button>${g}</div>`
+      : `<div class="auth-nudge"><span>🔐 Hesabına girebilmek için e-posta ve şifre belirle.</span><button data-setpw="1">E-posta + şifre ekle</button></div>`) : ""}</div>`;
+}
 function codeBox(){
   const c=CUR||"—";
   return `<div><div class="lbl">Hesabım${CUR?newRib("name"):""}${!CUR ? "" : " · "}${!CUR ? "" : myName() ? `<b class="nm-lbl">${esc(myName())}</b> <button class="nm-edit" data-editname="1" title="Takma adı değiştir">✏️</button>` : `<button class="nm-edit add" data-editname="1">+ Takma ad ekle</button>`} · kişisel kodun</div>
@@ -1929,8 +1955,8 @@ function renderHome(){
   renderQuote();
   let body="", btns="";
   if(SA){
-    body = codeBox();
-    btns = CUR ? `<a class="wa" href="https://wa.me/?text=${encodeURIComponent(saMsg())}" target="_blank" rel="noopener">WhatsApp'a gönder</a><button class="ghost" id="hCopy">Kopyala</button><button class="ghost" id="hSwitch">🔄 Hesap değiştir</button><button class="ghost" id="hOut">Çıkış</button><span class="muted" id="hSt"></span>` : "";
+    body = accountBox();
+    btns = CUR ? `<button class="ghost" id="hSwitch">🔄 Hesap değiştir</button><button class="ghost" id="hOut">Çıkış</button>` : "";
   } else if(claudeMode){
     body = `<div><div class="lbl">Hesabım</div><b>Claude hesabınla giriş yaptın</b> <span class="muted">· verilerin otomatik kaydediliyor</span></div>`;
   } else {
@@ -1954,7 +1980,7 @@ function renderHome(){
   } else hc.style.display="none";
   if($("hCopy")) $("hCopy").onclick = async ()=>{ try{ await navigator.clipboard.writeText(CUR); $("hSt").textContent="Kopyalandı ✓"; }catch(e){ $("hSt").textContent=CUR; } };
   if($("hSwitch")) $("hSwitch").onclick = openSwitchAccount;
-  if($("hOut")) $("hOut").onclick = async ()=>{ if(!await askConfirm("Çıkış yapılsın mı?", `Tekrar girmek için ${CUR} koduna ihtiyacın olacak.`)) return; lsSet(CUR_KEY,""); location.reload(); };
+  if($("hOut")) $("hOut").onclick = async ()=>{ if(!await askConfirm("Çıkış yapılsın mı?", "Tekrar girmek için takma adın (ya da e-postan) ve şifren gerekir.")) return; lsSet(CUR_KEY,""); lsSet("sa-wtab","login"); location.reload(); };
 }
 document.addEventListener("click", e=>{ if(e.target.closest("[data-goadd]")) showView("add"); const c=e.target.closest("[data-continue]"); if(c) switchTo(c.dataset.continue); if(e.target.closest("[data-gofaq]")) showView("faq"); });
 
@@ -1970,7 +1996,7 @@ function applySettings(){
 // 3. eleman true → ⭐ sık sorulan (en üstte gösterilir)
 const FAQ = [
   ["Şifremi unuttum, ne yapmalıyım?", "Giriş ekranında “Giriş yap” → “Şifremi unuttum”a bas; yöneticinin iletişim bilgisi çıkar. Yöneticiye takma adını söyle, şifreni sıfırlayıp yeni şifreni iletir. Girdikten sonra ana sayfadan şifreni değiştirebilirsin.", true],
-  ["Eskiden kodla giriyordum, şimdi ne olacak?", "Kodun hâlâ geçerli: giriş ekranında “Giriş yap” → “Eski kodumla gir”. Girdikten sonra ana sayfadaki “E-posta + şifre ekle” ile şifre belirlersen bir dahakine takma adın + şifrenle girersin; verilerin aynen kalır."],
+  ["Eskiden kodla giriyordum, şimdi ne olacak?", "Kodla giriş kaldırıldı. Bu cihazda hesabın hâlâ açıksa açılışta senden e-posta ve şifre belirlemen istenir; sonra takma adın + şifrenle girersin, verilerin aynen kalır. Çıkış yaptıysan “Şifremi unuttum”a bas ve yöneticiye takma adını söyle; sana geçici bir şifre verir."],
   ["Siteyi telefona uygulama gibi nasıl eklerim?", "iPhone: Safari'de alttaki Paylaş (□↑) → “Ana Ekrana Ekle” → Ekle. Android: Chrome'da sağ üstteki ⋮ → “Ana ekrana ekle” ya da “Uygulamayı yükle”. Ana ekrandaki kalp ikonuyla uygulama gibi açılır, internet yokken de çalışır. Ayarlar → Uygulama bölümünde de anlatılıyor.", true],
   ["Notları ve slaytları nasıl paylaşırım?", "Menüde “Notlar & slaytlar” → “+ Paylaş”. Dosyayı kendi Google Drive'ına (ya da OneDrive, Dropbox) yükle, paylaşımı “Bağlantıya sahip olan herkes” yap, linki yapıştır. Paylaşımın yanında takma adın görünür; istediğin zaman kaldırabilirsin.", true],
   ["Rozetleri nasıl kazanırım, tabloda ne görünür?", "Çalıştıkça, üst üste günler çalıştıkça ve ders ya da kurul bitirdikçe rozet kazanırsın. Rozet tablosunda herkesin sadece takma adı ve rozet sayısı görünür; kodun ve verilerin görünmez."],
@@ -1980,7 +2006,7 @@ const FAQ = [
   ["İnternet yokken kullanabilir miyim?", "Evet. Site bir kez açıldıysa internetsiz de açılır; yaptığın değişiklikler cihazında durur ve internete bağlanınca kendiliğinden kaydedilir."],
   ["Bu site ne işe yarıyor?", "Kurulundaki dersleri ve konuları takip edip sınava kadar gün gün ne çalışman gerektiğini çıkarır. Okulda hangi gün hangi ders var, ne kadarını bitirdin, yetişir mi — hepsi tek yerde."],
   ["Kurulumu nasıl eklerim?", "Menüden <b>Kurul ekle</b>'ye gir. Önce <b>Hazır kurullar</b>'a bak; biri paylaştıysa tek tıkla eklersin. Yoksa <b>PDF Ayırıcı</b>'da kurul kitapçığını yükle, çıkan kodu <b>Kurul kodu ekle</b>'ye yapıştır. İstersen menüdeki <b>+ Yeni kurul</b> ile kendin de oluşturabilirsin.", true],
-  ["Kodum ne işe yarıyor, kaybedersem ne olur?", "Kodun senin hesabın. Telefonda, bilgisayarda, tablette girişte bu kodu yazınca verilerin gelir. Kaybedersen başka cihazdan verilerine ulaşamazsın — ana sayfadaki <b>WhatsApp'a gönder</b> ile kendine at, sakla.", true],
+  ["Şifremi unuttum, ne yapmalıyım?", "Giriş ekranında <b>Şifremi unuttum</b>'a bas; yöneticinin iletişim bilgisi çıkar. Yöneticiye takma adını söyle, sana geçici bir şifre versin. Girdikten sonra ana sayfadaki <b>Şifre değiştir</b> ile kendi şifreni belirle.", true],
   ["Verilerim nerede, kaydetmem gerekiyor mu?", "Hayır, her değişiklik otomatik kaydedilir (sağ üstte “Kaydedildi” yazar). Başka cihazda aynı kodla girince her şey kaldığın yerden gelir."],
   ["Plan nasıl hesaplanıyor?", "Her konu derste işlendiği günden sonra plana girer. Konunun süresi = ders saati × “1 saat ders = kaç saat çalışma” × zorluk. O gün ya da dün işlenen konu öne alınır ki aynı gün tekrar edesin. Dersler bir güne yığılmaz, karışık dağıtılır."],
   ["Bir konu bana daha uzun/kısa geliyor.", "Konular sekmesinde o konunun altındaki <b>süre</b> kutusuna kendi süreni yaz; plan ona göre değişir. Zorluk ve önemi de üstlerine tıklayarak değiştirebilirsin."],
@@ -3172,10 +3198,9 @@ async function saLogin(code){
 async function showForgot(){
   let c=""; try{ const r=await fetch("/api/admin?contact=1",{cache:"no-store"}); c=(await r.json()).contact||""; }catch(e){}
   const el=document.createElement("div"); el.className="modal-bg"; el.style.zIndex=90;
-  el.innerHTML=`<div class="modal confirm-box"><h2>🔑 Şifremi / kodumu unuttum</h2>
-    <p class="muted" style="margin:0 0 10px">Yöneticiye ulaş; <b>takma adını</b> söyle, şifreni sıfırlasın (ya da kodunu iletsin).</p>
+  el.innerHTML=`<div class="modal confirm-box"><h2>🔑 Şifremi unuttum</h2>
+    <p class="muted" style="margin:0 0 10px">Yöneticiye ulaş; <b>takma adını</b> söyle, sana geçici bir şifre versin. Girdikten sonra ana sayfadan şifreni değiştirebilirsin.</p>
     ${c?`<div class="contact-box">${esc(c)}</div>`:`<p class="muted">Yönetici henüz iletişim bilgisi eklemedi. Siteyi sana gönderen kişiye sor.</p>`}
-    <p class="muted" style="font-size:12.5px;margin:10px 0 0">İpucu: kodunu WhatsApp'a gönderdiysen oradaki mesajda yazıyor.</p>
     <div class="row" style="justify-content:flex-end;margin-top:14px"><button data-x="1">Tamam</button></div></div>`;
   el.onclick=e=>{ if(e.target===el || e.target.closest("[data-x]")) el.remove(); };
   document.body.append(el);
@@ -3214,7 +3239,7 @@ function drawAdmUsers(){
   L.innerHTML = list.length ? `<div class="adm-head"><span>Takma ad</span><span>Kod</span><span>Son kayıt</span><span></span></div>`+list.slice(0,300).map(u=>`<div class="adm-row">
       <span class="adm-name"><b>${u.name?esc(u.name):`<span class="muted">(adsız)</span>`}</b>${u.email?`<small class="muted adm-email">${esc(u.email)}${u.pw?" · 🔐":""}${u.g?" · G":""}</small>`:""}</span><code class="adm-code">${esc(u.code)}</code>
       <span class="muted adm-at">${u.at?new Date(u.at).toLocaleDateString(LOC(),{day:"numeric",month:"short",year:"2-digit"}):"–"}${u.k?` · ${u.k} kurul`:""}</span>
-      <span class="adm-btns"><button class="ghost" data-admcopy="${esc(u.code)}">Kopyala</button>${u.name?`<button class="ghost warn-btn" data-admwarn="${esc(u.code)}" data-admname="${esc(u.name)}" title="Uygunsuz takma ad uyarısı gönder">⚠️ Uyar</button>`:""}${u.warned?`<span class="muted adm-warned">uyarıldı</span>`:""}${u.pw?`<button class="ghost" data-admpw="${esc(u.code)}" data-admname="${esc(u.name||u.email||"")}">Şifre sıfırla</button>`:""}<button class="ghost del-btn" data-admdel="${esc(u.code)}" data-admname="${esc(u.name||"")}" title="Hesabı sil">Sil</button></span></div>`).join("") : `<div class="empty">Bulunamadı.</div>`;
+      <span class="adm-btns"><button class="ghost" data-admcopy="${esc(u.code)}">Kopyala</button>${u.name?`<button class="ghost warn-btn" data-admwarn="${esc(u.code)}" data-admname="${esc(u.name)}" title="Uygunsuz takma ad uyarısı gönder">⚠️ Uyar</button>`:""}${u.warned?`<span class="muted adm-warned">uyarıldı</span>`:""}${(u.pw||u.name)?`<button class="ghost" data-admpw="${esc(u.code)}" data-admname="${esc(u.name||u.email||"")}">Şifre sıfırla</button>`:""}<button class="ghost del-btn" data-admdel="${esc(u.code)}" data-admname="${esc(u.name||"")}" title="Hesabı sil">Sil</button></span></div>`).join("") : `<div class="empty">Bulunamadı.</div>`;
 }
 function askWarn(name){
   return new Promise(res=>{
@@ -3298,11 +3323,7 @@ function openWelcomeSA(){
       <label class="f">Şifre<input id="wLPw" type="password" autocomplete="current-password" style="${box}"></label>
       <button id="wLoginGo" style="width:100%;margin-top:10px">Giriş yap</button>
       <p class="nm-err" id="wSt" style="margin:8px 0 0"></p>
-      <div class="row" style="justify-content:space-between"><button class="link-btn" id="wForgot" type="button">Şifremi unuttum</button><button class="link-btn" id="wOldCode" type="button">Eski kodumla gir</button></div>
-      <div id="wCodeBox" style="display:none;margin-top:8px">
-        <label class="f">4 haneli kod<input id="wCode" maxlength="6" autocapitalize="characters" autocomplete="off" placeholder="AB12" style="${box};font-size:24px;letter-spacing:.35em;text-align:center;text-transform:uppercase"></label>
-        <button id="wGo" style="width:100%;margin-top:8px">Kodla gir</button>
-      </div>
+      <div class="row"><button class="link-btn" id="wForgot" type="button">Şifremi unuttum</button></div>
     </div>
     <div data-gwrap><div class="w-or"><span>ya da</span></div><div id="wGoogle" class="w-google"></div></div>
     <div id="wGName" style="display:none">
@@ -3343,11 +3364,7 @@ function openWelcomeSA(){
   };
   $("wLoginGo").onclick=login; ["wId","wLPw"].forEach(id=>$(id).onkeydown=e=>{ if(e.key==="Enter") login(); });
   $("wForgot").onclick=showForgot;
-  $("wOldCode").onclick=()=>{ const b=$("wCodeBox"); b.style.display=b.style.display==="none"?"":"none"; if(!b.style.display) $("wCode").focus(); };
-  $("wCode").oninput = e=>{ e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,6); };
-  const go = async ()=>{ const v=$("wCode").value.toUpperCase(); if(v.length!==4 && v.length!==6){ $("wSt").textContent="Kod 4 karakter olmalı (harf ve rakam)."; return; }
-    $("wGo").disabled=true; $("wSt").textContent="Giriş yapılıyor…"; try{ await saLogin(v); }catch(e){ $("wSt").textContent=String(e); $("wGo").disabled=false; } };
-  $("wGo").onclick=go; $("wCode").onkeydown=e=>{ if(e.key==="Enter") go(); };
+  try{ if(localStorage.getItem("sa-wtab")==="login"){ localStorage.removeItem("sa-wtab"); tab("login"); } }catch(e){}
   // --- Google
   let gCred=null;
   renderGoogleBtn($("wGoogle"), async cred=>{
@@ -3366,7 +3383,7 @@ function openWelcomeSA(){
 }
 // Eski kodlu hesaba (ya da şifre değiştirmek için) e-posta + şifre ekle; Google bağla
 // E-posta onay kodu penceresi: onVerify(kod) başarılıysa kapanır
-function askVcode(email, onVerify, resendBody){
+function askVcode(email, onVerify, resendBody, onCancel){
   const el=document.createElement("div"); el.className="modal-bg"; el.style.zIndex=95;
   el.innerHTML=`<div class="modal confirm-box"><h2>📧 E-postanı onayla</h2>
     <p class="muted" style="margin:0 0 10px"><b data-noi18n>${esc(email)}</b> adresine 6 haneli bir kod gönderdik. Gelmediyse spam klasörüne bak.</p>
@@ -3379,33 +3396,34 @@ function askVcode(email, onVerify, resendBody){
     if(b) b.disabled=true; $("vcSt").textContent="Kontrol ediliyor…";
     try{ await onVerify(v); el.remove(); } catch(err){ if(b) b.disabled=false; $("vcSt").textContent=err.message; } };
   el.onclick=async e=>{ const b=e.target.closest("[data-vc]"); if(!b) return;
-    if(b.dataset.vc==="0") return el.remove();
+    if(b.dataset.vc==="0"){ el.remove(); if(onCancel) onCancel(); return; }
     if(b.dataset.vc==="re"){ b.disabled=true; try{ await authPost(resendBody); $("vcSt").textContent="Yeni kod gönderildi."; }catch(err){ $("vcSt").textContent=err.message; } setTimeout(()=>b.disabled=false,30000); return; }
     go(b); };
   $("vcIn").onkeydown=e=>{ if(e.key==="Enter") go(null); };
   setTimeout(()=>$("vcIn").focus(),30);
 }
-function openSetPw(){
-  const el=document.createElement("div"); el.className="modal-bg"; el.style.zIndex=85;
+function openSetPw(force, onDone){
+  if(force && $("spForce")) return;
+  const el=document.createElement("div"); el.className="modal-bg"; el.style.zIndex=85; if(force) el.id="spForce";
   const has=AUTH_ME && AUTH_ME.hasPw;
   el.innerHTML=`<div class="modal confirm-box"><h2>🔐 ${has?"E-posta / şifre değiştir":"E-posta + şifre ekle"}</h2>
-    <p class="muted" style="margin:0 0 10px">${has?"Yeni e-posta ya da şifreni yaz.":"Bundan sonra kod yerine <b>takma adın + şifrenle</b> (ya da e-postanla) giriş yaparsın. Verilerin aynen kalır."}</p>
+    <p class="muted" style="margin:0 0 10px">${has?"Yeni e-posta ya da şifreni yaz.":force?"Kodla giriş kaldırıldı. Artık <b>takma adın + şifrenle</b> (ya da e-postanla) giriş yapılıyor. Hesabını kaybetmemek için e-posta ve şifre belirle; verilerin aynen kalır.":"Bundan sonra <b>takma adın + şifrenle</b> (ya da e-postanla) giriş yaparsın. Verilerin aynen kalır."}</p>
     <label class="f">E-posta<input id="spEmail" type="email" autocomplete="email" value="${esc((AUTH_ME&&AUTH_ME.email)||"")}"></label>
     ${has?`<label class="f">Eski şifre<input id="spOld" type="password" autocomplete="current-password"></label>`:""}
     <label class="f">${has?"Yeni şifre":"Şifre"}<input id="spPw" type="password" autocomplete="new-password" placeholder="en az 6 karakter"></label>
     <label class="f">${has?"Yeni şifre (tekrar)":"Şifre (tekrar)"}<input id="spPw2" type="password" autocomplete="new-password"></label>
     <p class="nm-err" id="spSt" style="margin:8px 0 0"></p>
-    <div class="row" style="justify-content:flex-end;margin-top:12px"><button class="ghost" data-sp="0">Vazgeç</button><button data-sp="1">Kaydet</button></div></div>`;
+    <div class="row" style="justify-content:flex-end;margin-top:12px">${force?"":`<button class="ghost" data-sp="0">Vazgeç</button>`}<button data-sp="1">Kaydet</button></div></div>`;
   document.body.append(el);
-  el.onclick=async e=>{ if(e.target===el) return el.remove(); const b=e.target.closest("[data-sp]"); if(!b) return; if(b.dataset.sp==="0") return el.remove();
+  el.onclick=async e=>{ if(e.target===el){ if(!force) el.remove(); return; } const b=e.target.closest("[data-sp]"); if(!b) return; if(b.dataset.sp==="0") return el.remove();
     const em=$("spEmail").value.trim(), pw=$("spPw").value;
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){ $("spSt").textContent="Geçerli bir e-posta yaz."; return; }
     if(pw.length<6){ $("spSt").textContent="Şifre en az 6 karakter olmalı."; return; }
     if(pw!==$("spPw2").value){ $("spSt").textContent="Şifreler aynı değil."; return; }
     const old=$("spOld")?$("spOld").value:""; if(has && !old){ $("spSt").textContent="Eski şifreni yaz."; $("spOld").focus(); return; }
-    const done=()=>{ toast("✓ E-posta ve şifre kaydedildi", `Artık “${myName()}” + şifrenle girebilirsin`); loadAuthMe(); };
+    const done=()=>{ toast("✓ E-posta ve şifre kaydedildi", `Artık “${myName()}” + şifrenle girebilirsin`); loadAuthMe(); if(onDone) onDone(); };
     b.disabled=true; try{ const j=await authPost({action:"setpw", code:CUR, email:em, password:pw, oldPassword:old}); el.remove();
-      if(j.verify) return askVcode(j.email||em, async v=>{ await authPost({action:"verifyset", code:CUR, vcode:v}); done(); }, {action:"resend", code:CUR});
+      if(j.verify) return askVcode(j.email||em, async v=>{ await authPost({action:"verifyset", code:CUR, vcode:v}); done(); }, {action:"resend", code:CUR}, force?()=>openSetPw(true,onDone):null);
       done(); }
     catch(err){ b.disabled=false; $("spSt").textContent=err.message; } };
   setTimeout(()=>$("spEmail").focus(),30);
@@ -3422,7 +3440,7 @@ async function openLinkGoogle(){
 // Hesabı sil (onaylı). 10 sn içinde geri alınabilir; sonra çıkış yapılır.
 async function deleteMyAccount(){
   const code=CUR;
-  if(!await askConfirm("Hesabın silinsin mi?", `Kodun ${code}${myName()?` (${myName()})`:""} ile kayıtlı bütün kurulların, ilerlemen, istatistiklerin ve rozetlerin silinir. Bu işlemden sonra 10 saniye içinde geri alabilirsin, sonra geri getirilemez.`, "Evet, hesabımı sil")) return;
+  if(!await askConfirm("Hesabın silinsin mi?", `${myName()?`“${myName()}” hesabına`:"Hesabına"} kayıtlı bütün kurulların, ilerlemen, istatistiklerin ve rozetlerin silinir. Bu işlemden sonra 10 saniye içinde geri alabilirsin, sonra geri getirilemez.`, "Evet, hesabımı sil")) return;
   const r=await fetch("/api/data",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({code})});
   if(!r.ok){ const j=await r.json().catch(()=>({})); toast("Silinemedi", j.error||""); return; }
   let undone=false;
@@ -3432,24 +3450,9 @@ async function deleteMyAccount(){
     if(!rr.ok) throw "Geri alma süresi doldu."; undone=true; clearTimeout(finish); toast("↶ Hesabın geri getirildi");
   });
 }
-function openSwitchAccount(){
-  const el=document.createElement("div"); el.className="modal-bg"; el.style.zIndex=85;
-  el.innerHTML=`<div class="modal confirm-box"><h2>🔄 Hesap değiştir</h2>
-    <p class="muted" style="margin:0 0 10px">Başka bir hesabın kodunu yaz. Şu anki hesabın ${myName()?`(<b>${esc(myName())}</b>) `:""}kodu: <b class="code-inline">${esc(CUR||"")}</b> — geri dönmek için bunu not al.</p>
-    <input id="swCode" maxlength="6" autocapitalize="characters" autocomplete="off" placeholder="AB12" style="font:inherit;width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:24px;letter-spacing:.35em;text-align:center;text-transform:uppercase">
-    <p class="nm-err" id="swSt" style="margin:8px 0 0"></p>
-    <button class="link-btn" id="swForgot" type="button">Kodumu unuttum</button>
-    <div class="row" style="justify-content:flex-end;margin-top:14px"><button class="ghost" data-sw="0">Vazgeç</button><button data-sw="1">Giriş</button></div></div>`;
-  document.body.append(el);
-  const go=async()=>{ const v=$("swCode").value.toUpperCase();
-    if(v.length!==4 && v.length!==6){ $("swSt").textContent="Kod 4 karakter olmalı (harf ve rakam)."; return; }
-    if(v===CUR){ el.remove(); return; }
-    $("swSt").textContent="Giriş yapılıyor…"; try{ await saLogin(v); }catch(e){ $("swSt").textContent=String(e); } };
-  $("swCode").oninput=e=>{ e.target.value=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,6); };
-  $("swCode").onkeydown=e=>{ if(e.key==="Enter") go(); if(e.key==="Escape") el.remove(); };
-  $("swForgot").onclick=showForgot;
-  el.onclick=e=>{ if(e.target===el) return el.remove(); const b=e.target.closest("[data-sw]"); if(!b) return; if(b.dataset.sw==="0") el.remove(); else go(); };
-  setTimeout(()=>$("swCode").focus(),30);
+async function openSwitchAccount(){
+  if(!await askConfirm("Başka bir hesaba geçilsin mi?", "Bu hesaptan çıkılır; giriş ekranında diğer hesabın takma adı (ya da e-postası) ve şifresiyle girersin. Bu hesaba da aynı şekilde geri dönebilirsin.", "Evet, geç", "var(--accent)")) return;
+  lsSet(CUR_KEY,""); lsSet("sa-wtab","login"); location.reload();
 }
 function openAccountPanel(){
   const P=$("sharePanel"); showPanel();

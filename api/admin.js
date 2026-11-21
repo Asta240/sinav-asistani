@@ -42,7 +42,10 @@ module.exports = async (req, res) => {
     if (req.method === "POST" && b.action === "resetpw") {
       const target = cleanCode(b.target), pw = String(b.password || "");
       if (pw.length < 6) return send(res, 400, { error: "Şifre en az 6 karakter olmalı." });
-      const u = JSON.parse((await redis("GET", `auth:user:${target}`)) || "null"); if (!u) return send(res, 404, { error: "Bu hesapta e-posta/şifre yok." });
+      if (!(await redis("GET", `u:${target}`))) return send(res, 404, { error: "Bu kod bulunamadı." });
+      const u = JSON.parse((await redis("GET", `auth:user:${target}`)) || "null") || { at: Date.now() };
+      const nm = await redis("GET", `nameof:${require("crypto").createHash("sha256").update("lib:" + target).digest("hex").slice(0, 16)}`);
+      if (nm) await redis("SET", `auth:byname:${nm}`, target);   // şifresi olmayan eski hesap da takma adla girebilsin
       const crypto = require("crypto"); const salt = crypto.randomBytes(16).toString("hex");
       u.pw = { salt, hash: crypto.scryptSync(pw, salt, 64).toString("hex") }; await redis("SET", `auth:user:${target}`, JSON.stringify(u));
       return send(res, 200, { ok: true });
