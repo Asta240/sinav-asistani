@@ -372,6 +372,13 @@
   .dayatt-row .att button{width:auto;padding:0 10px;height:26px;font-size:12px}
   body.no-attend .dayatt, body.no-attend .dayatt-row{display:none !important}
   .stats-card{margin-bottom:16px}
+  .hrs-ctl{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 10px;font-size:13px;color:var(--muted)}
+  .hrs-ctl>span{flex:1;min-width:150px}
+  .hrs-step{display:flex;align-items:center;gap:2px;border:1px solid var(--line);border-radius:10px;padding:2px;background:var(--bg)}
+  .hrs-step button{background:transparent;color:var(--ink);border:0;width:30px;height:28px;padding:0;font-size:17px;font-weight:700;border-radius:8px}
+  .hrs-step button:hover{background:var(--accent-soft)} .hrs-step b{min-width:52px;text-align:center;color:var(--ink);font-size:13.5px}
+  .hrs-ctl .link-btn{margin:0;font-size:12px}
+  .day .hrs-ctl{margin:4px 0 8px}
   .cd-card{margin:14px 0}
   .cd-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap} .cd-sub{font-size:12.5px}
   .cd-nums{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0}
@@ -465,6 +472,17 @@
   .upd-cur{font-size:11px;font-weight:700;color:var(--good);background:var(--good-soft);border-radius:999px;padding:2px 8px;margin-left:6px;vertical-align:2px}
   #updView .upd-ver{margin-bottom:12px;border-radius:16px}
   .w-taken{background:var(--warn-soft);color:var(--ink);border-radius:10px;padding:10px 12px;font-size:13.5px;margin:12px 0 0}
+  .w-box{max-width:440px}
+  .w-box .f{margin-top:10px}
+  .w-tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:4px;margin-top:14px}
+  .w-tabs button{background:transparent;color:var(--muted);border:0;border-radius:9px;padding:9px;font-weight:700}
+  .w-tabs button.on{background:var(--accent);color:#fff}
+  .w-or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12.5px;margin:16px 0 10px} .w-or::before,.w-or::after{content:"";flex:1;height:1px;background:var(--line)}
+  .w-google{display:flex;justify-content:center;min-height:44px}
+  .auth-line{font-size:13px;color:var(--muted);margin-top:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap} .auth-line .link-btn{margin:0}
+  .auth-nudge{margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--accent-soft);border-radius:10px;padding:10px 12px;font-size:13.5px} .auth-nudge span{flex:1;min-width:200px}
+  .auth-nudge button{padding:7px 12px;font-size:13px}
+  .adm-email{display:block;font-size:11.5px;overflow:hidden;text-overflow:ellipsis}
   .nm-err{color:var(--bad);font-size:13px;font-weight:600}
   .a2-box{max-width:420px}
   .link-btn{background:none;border:0;padding:0;margin:8px 0 0;color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
@@ -671,7 +689,7 @@
     <label class="f">Sınav haftası başlangıcı
       <input type="date" id="examDate">
     </label>
-    <label class="f">Günde kaç saat çalışabilirsin?
+    <label class="f">Günde kaç saat çalışabilirsin? <small class="muted" style="text-transform:none;letter-spacing:0;font-weight:500">(genel — günlere ayrı ayrı da ayarlanır)</small>
       <input type="number" id="dailyHours" min="1" max="16" step="0.5" value="5">
     </label>
     <label class="f">1 saat ders = kaç saat çalışma?
@@ -973,6 +991,28 @@ const EN = {
 // --- yönlendirme / boş durum
 "Tümü":"All","boş":"empty","Bu cihazda":"On this device","Yeni bir cihazda":"On a new device","AB12":"AB12",
 "Çok sık istek gönderildi, biraz sonra tekrar dene.":"Too many requests, try again shortly.",
+"Bugün kaç saat çalışacaksın?":"How many hours will you study today?","Bu gün kaç saat?":"Hours this day?","Azalt":"Decrease","Artır":"Increase","varsayılan":"default","Genel ayara dön ({*} sa)":"Back to the general setting ({*} h)",
+"(genel — günlere ayrı ayrı da ayarlanır)":"(general — can also be set per day)",
+"E-posta ve şifreyle giriş":"Email and password sign-in","Kayıt e-posta ve şifreyle yapılır; giriş için takma ad (ya da e-posta) ve şifre yeterlidir. Kodla giriş yapan eski hesaplar ana sayfadan e-posta ve şifre ekleyebilir.":"Sign-up uses email and password; signing in only needs your nickname (or email) and password. Older code-based accounts can add an email and password from the home page.",
+"Google ile giriş":"Sign in with Google","Google hesabıyla tek dokunuşla kayıt olunabilir ve giriş yapılabilir; mevcut hesaba Google bağlanabilir.":"You can sign up and sign in with your Google account in one tap; Google can also be linked to an existing account.",
+"Güne özel çalışma saati":"Per-day study hours","Her gün için ayrı çalışma saati belirlenebilir (ör. bugün 5, yarın 8 saat). Plan, her günün kendi saatine göre hesaplanır.":"You can set separate study hours for each day (e.g. 5 hours today, 8 tomorrow). The plan is calculated using each day's own hours.",
+"Kayıt ol":"Sign up","Giriş yap":"Sign in","Takma ad":"Nickname","E-posta":"Email","Şifre":"Password","en az 6 karakter":"at least 6 characters","ornek@mail.com":"example@mail.com",
+"Sitede takma adınla görünürsün; e-postan kimseye gösterilmez.":"Others see your nickname; your email is never shown.","Kayıt ol →":"Sign up →","Takma ad ya da e-posta":"Nickname or email","Şifremi unuttum":"Forgot password","Eski kodumla gir":"Sign in with my old code",
+"4 haneli kod":"4-character code","Kodla gir":"Sign in with code","ya da":"or","Google hesabın doğrulandı. Son adım: bir":"Your Google account is verified. Last step: choose a","seç.":".",
+"Bir takma ad yaz.":"Enter a nickname.","Geçerli bir e-posta yaz.":"Enter a valid email.","Şifre en az 6 karakter olmalı.":"Password must be at least 6 characters.","Hesap açılıyor…":"Creating account…",
+"“{*}” takma adı alınmış. Senin hesabınsa":"The nickname “{*}” is taken. If it's yours,","giriş yap":"sign in","Bu e-postayla zaten bir hesap var.":"An account with this email already exists.",
+"Takma adını (ya da e-postanı) ve şifreni yaz.":"Enter your nickname (or email) and password.","Takma ad / e-posta ya da şifre yanlış.":"Wrong nickname / email or password.","Google ile giriş yapılıyor…":"Signing in with Google…",
+"Bu takma ad alınmış, başka bir tane seç.":"This nickname is taken, choose another.","Google girişi doğrulanamadı.":"Google sign-in could not be verified.","Google girişi henüz açık değil.":"Google sign-in isn't enabled yet.",
+"Çok fazla deneme yapıldı, biraz sonra tekrar dene.":"Too many attempts, try again shortly.","Bu e-posta başka bir hesapta kayıtlı.":"This email is registered to another account.","Bu Google hesabı başka bir hesaba bağlı.":"This Google account is linked to another account.",
+"🔐 E-posta + şifre ekle":"🔐 Add email + password","🔐 E-posta / şifre değiştir":"🔐 Change email / password","Yeni e-posta ya da şifreni yaz.":"Enter your new email or password.","Yeni şifre":"New password",
+"Bundan sonra kod yerine":"From now on, instead of a code, sign in with","takma adın + şifrenle":"your nickname + password","(ya da e-postanla) giriş yaparsın. Verilerin aynen kalır.":"(or your email). Your data stays the same.",
+"✓ E-posta ve şifre kaydedildi":"✓ Email and password saved","Artık “{*}” + şifrenle girebilirsin":"You can now sign in with “{*}” + your password","Google hesabını bağla":"Link your Google account",
+"Bağladıktan sonra tek tıkla “Google ile devam et” diyerek girebilirsin.":"After linking, you can sign in with one tap on “Continue with Google”.","✓ Google hesabın bağlandı":"✓ Your Google account is linked",
+"Şifre değiştir":"Change password","Google'ı bağla":"Link Google","Google bağlı ✓":"Google linked ✓","🔐 Kod yerine":"🔐 To sign in with your","takma ad + şifreyle":"nickname + password","girmek için e-posta ve şifre ekle.":"instead of a code, add an email and password.","E-posta + şifre ekle":"Add email + password",
+"🔑 Şifremi / kodumu unuttum":"🔑 I forgot my password / code","söyle, şifreni sıfırlasın (ya da kodunu iletsin).":"and they'll reset your password (or send your code).",
+"Şifre sıfırla":"Reset password","“{*}” şifresi sıfırlansın mı?":"Reset the password of “{*}”?","Yeni şifre: {*} — kişiye bunu ilet, girdikten sonra kendisi değiştirebilir.":"New password: {*} — send it to the person; they can change it after signing in.","Evet, sıfırla":"Yes, reset","✓ Şifre sıfırlandı":"✓ Password reset","Yeni şifre: {*} (kopyalandı)":"New password: {*} (copied)",
+"Şifremi unuttum, ne yapmalıyım?":"I forgot my password, what should I do?","Giriş ekranında “Giriş yap” → “Şifremi unuttum”a bas; yöneticinin iletişim bilgisi çıkar. Yöneticiye takma adını söyle, şifreni sıfırlayıp yeni şifreni iletir. Girdikten sonra ana sayfadan şifreni değiştirebilirsin.":"On the sign-in screen tap “Sign in” → “Forgot password” to see the admin's contact details. Tell the admin your nickname; they'll reset your password and send you the new one. You can change it from the home page after signing in.",
+"Eskiden kodla giriyordum, şimdi ne olacak?":"I used to sign in with a code, what now?","Kodun hâlâ geçerli: giriş ekranında “Giriş yap” → “Eski kodumla gir”. Girdikten sonra ana sayfadaki “E-posta + şifre ekle” ile şifre belirlersen bir dahakine takma adın + şifrenle girersin; verilerin aynen kalır.":"Your code still works: on the sign-in screen tap “Sign in” → “Sign in with my old code”. After signing in, set a password with “Add email + password” on the home page and next time sign in with your nickname + password; your data stays the same.",
 "Ferah görünüm":"Airier layout","Sayfa genişliği, kart içi boşluklar ve bölümler arası mesafe artırıldı; site daha ferah ve okunaklı hâle getirildi.":"Page width, card padding and spacing between sections were increased to make the site airier and easier to read.",
 "⏳ Sınava kalan":"⏳ Time until the exam","gün":"days","saat":"hours","dakika":"minutes","saniye":"seconds","Dolu balonlar geçen günler":"Filled balloons are past days","{#}/{#} gün geride kaldı · her balon bir gün":"{#}/{#} days behind you · each balloon is one day","{*} · 09:00":"{*} · 09:00",
 "Odak sayacı (25 dk)":"Focus timer (25 min)","Önce açık sayacı bitir":"Finish the running timer first","Sol alttaki sayaca dokun":"Tap the timer at the bottom left","🎯 Odak":"🎯 Focus","🌿 Mola":"🌿 Break","⏸ Duraklat":"⏸ Pause","▶ Başlat":"▶ Start","■ Bitir":"■ Finish","Küçült":"Minimize",
@@ -1213,6 +1253,11 @@ document.addEventListener("click", e=>{ const u=e.target.closest("#verFoot"); if
 // KURALLAR: yeni sürüm EN ÜSTE eklenir · bir sürümde en fazla 3 madde (4. madde yeni yama sürümü açar: v1.0.1, v1.0.2…)
 // Kullanıcı görmediği sürümü açılışta bir kez görür; "Anladım" deyince root.settings.seenVer kaydedilir (cihazlar arası).
 const UPDATE_LOG = [
+  { ver:"v1.2.0", date:"2026-11-21", items:[
+    ["YENİ","E-posta ve şifreyle giriş","Kayıt e-posta ve şifreyle yapılır; giriş için takma ad (ya da e-posta) ve şifre yeterlidir. Kodla giriş yapan eski hesaplar ana sayfadan e-posta ve şifre ekleyebilir."],
+    ["YENİ","Google ile giriş","Google hesabıyla tek dokunuşla kayıt olunabilir ve giriş yapılabilir; mevcut hesaba Google bağlanabilir."],
+    ["YENİ","Güne özel çalışma saati","Her gün için ayrı çalışma saati belirlenebilir (ör. bugün 5, yarın 8 saat). Plan, her günün kendi saatine göre hesaplanır."],
+  ]},
   { ver:"v1.1.1", date:"2026-11-21", items:[
     ["DEĞİŞİKLİK","Menü grupları","Menüdeki bölümler “Çalışma”, “Bilgi” ve “Geçmiş” başlıkları altında gruplandı."],
     ["DEĞİŞİKLİK","Ferah görünüm","Sayfa genişliği, kart içi boşluklar ve bölümler arası mesafe artırıldı; site daha ferah ve okunaklı hâle getirildi."],
@@ -1273,7 +1318,7 @@ const UPDATE_LOG = [
 ];
 const LATEST = UPDATE_LOG[0].ver;
 // "YENİ" şeridi: özelliğin eklendiği sürüm çıktıktan sonraki 7 gün boyunca gösterilir
-const NEW_IN = { updlog:"v1.0.0", lang:"v1.0.1", stats:"v1.0.1", ics:"v1.0.1", pwa:"v1.0.2", today:"v1.0.2", badges:"v1.0.2", name:"v1.0.3", notes:"v1.0.3", board:"v1.0.4", countdown:"v1.1.0", focus:"v1.1.0", analysis:"v1.1.0" };
+const NEW_IN = { updlog:"v1.0.0", lang:"v1.0.1", stats:"v1.0.1", ics:"v1.0.1", pwa:"v1.0.2", today:"v1.0.2", badges:"v1.0.2", name:"v1.0.3", notes:"v1.0.3", board:"v1.0.4", countdown:"v1.1.0", focus:"v1.1.0", analysis:"v1.1.0", dayhours:"v1.2.0", auth:"v1.2.0" };
 // Şerit: sürüm çıktıktan sonra 7 gün görünür; kullanıcı o yeni şeye bir kez basınca kaybolur (root.settings.seenNew)
 const newRib = k => { const v=UPDATE_LOG.find(x=>x.ver===NEW_IN[k]); const seen=root && root.settings && root.settings.seenNew && root.settings.seenNew[k];
   return v && !seen && (Date.now()-new Date(v.date+"T00:00").getTime()) < 7*864e5 ? `<span class="new-rib" data-rib="${k}">YENİ</span>` : ""; };
@@ -1753,9 +1798,12 @@ function codeBox(){
   return `<div><div class="lbl">Hesabım${CUR?newRib("name"):""}${!CUR ? "" : " · "}${!CUR ? "" : myName() ? `<b class="nm-lbl">${esc(myName())}</b> <button class="nm-edit" data-editname="1" title="Takma adı değiştir">✏️</button>` : `<button class="nm-edit add" data-editname="1">+ Takma ad ekle</button>`} · kişisel kodun</div>
     <div class="row" style="gap:6px;align-items:center"><span class="code">${codeShown?esc(c):"•".repeat(c.length)}</span>
     <button class="eye" data-eye="1" title="${codeShown?"Gizle":"Göster"}">${codeShown?EYE_OFF:EYE}</button></div>
-    ${codeShown?`<div class="code-warn">⚠️ Kodunu unutma — kodun olmadan verilerine başka cihazdan ulaşamazsın. WhatsApp'a gönderip sakla.</div>`:""}</div>`;
+    ${codeShown?`<div class="code-warn">⚠️ Kodunu unutma — kodun olmadan verilerine başka cihazdan ulaşamazsın. WhatsApp'a gönderip sakla.</div>`:""}
+    ${SA && CUR && AUTH_ME ? (AUTH_ME.hasPw
+      ? `<div class="auth-line">🔐 <span>${esc(AUTH_ME.email||"")}</span> · <button class="link-btn" data-setpw="1">Şifre değiştir</button>${AUTH_CFG&&AUTH_CFG.google&&!AUTH_ME.google?` · <button class="link-btn" data-linkg="1">Google'ı bağla</button>`:AUTH_ME.google?` · <span class="muted">Google bağlı ✓</span>`:""}</div>`
+      : `<div class="auth-nudge"><span>🔐 Kod yerine <b>takma ad + şifreyle</b> girmek için e-posta ve şifre ekle.</span><button data-setpw="1">E-posta + şifre ekle</button>${AUTH_CFG&&AUTH_CFG.google&&!AUTH_ME.google?`<button class="ghost" data-linkg="1">Google'ı bağla</button>`:""}</div>`) : ""}</div>`;
 }
-document.addEventListener("click", e=>{ if(e.target.closest("[data-eye]")){ codeShown=!codeShown; renderHome(); } });
+document.addEventListener("click", e=>{ if(e.target.closest("[data-eye]")){ codeShown=!codeShown; renderHome(); } if(e.target.closest("[data-setpw]")) openSetPw(); if(e.target.closest("[data-linkg]")) openLinkGoogle(); });
 
 function streakDays(){ const L=root.studyLog||{}; let n=0; const c=todayStart(); if(!L[toISO(c)]) c.setDate(c.getDate()-1); while(L[toISO(c)]>0){ n++; c.setDate(c.getDate()-1); } return n; }
 // ---- 📌 Bugünün özeti (ana sayfa): son açılan kurulun bugünkü dersleri + bugünkü çalışma planı
@@ -1909,7 +1957,8 @@ function applySettings(){
 // ---- S.S.S. ----
 // 3. eleman true → ⭐ sık sorulan (en üstte gösterilir)
 const FAQ = [
-  ["Kodumu kaybettim, ne yapmalıyım?", "Giriş ekranındaki “Kodumu unuttum”a bas; yöneticinin iletişim bilgisi çıkar. Yöneticiye takma adını söyle, kodunu bulup sana iletir. Kodunu WhatsApp'a gönderdiysen oradaki mesajda da yazıyor.", true],
+  ["Şifremi unuttum, ne yapmalıyım?", "Giriş ekranında “Giriş yap” → “Şifremi unuttum”a bas; yöneticinin iletişim bilgisi çıkar. Yöneticiye takma adını söyle, şifreni sıfırlayıp yeni şifreni iletir. Girdikten sonra ana sayfadan şifreni değiştirebilirsin.", true],
+  ["Eskiden kodla giriyordum, şimdi ne olacak?", "Kodun hâlâ geçerli: giriş ekranında “Giriş yap” → “Eski kodumla gir”. Girdikten sonra ana sayfadaki “E-posta + şifre ekle” ile şifre belirlersen bir dahakine takma adın + şifrenle girersin; verilerin aynen kalır."],
   ["Siteyi telefona uygulama gibi nasıl eklerim?", "iPhone: Safari'de alttaki Paylaş (□↑) → “Ana Ekrana Ekle” → Ekle. Android: Chrome'da sağ üstteki ⋮ → “Ana ekrana ekle” ya da “Uygulamayı yükle”. Ana ekrandaki kalp ikonuyla uygulama gibi açılır, internet yokken de çalışır. Ayarlar → Uygulama bölümünde de anlatılıyor.", true],
   ["Notları ve slaytları nasıl paylaşırım?", "Menüde “Notlar & slaytlar” → “+ Paylaş”. Dosyayı kendi Google Drive'ına (ya da OneDrive, Dropbox) yükle, paylaşımı “Bağlantıya sahip olan herkes” yap, linki yapıştır. Paylaşımın yanında takma adın görünür; istediğin zaman kaldırabilirsin.", true],
   ["Rozetleri nasıl kazanırım, tabloda ne görünür?", "Çalıştıkça, üst üste günler çalıştıkça ve ders ya da kurul bitirdikçe rozet kazanırsın. Rozet tablosunda herkesin sadece takma adı ve rozet sayısı görünür; kodun ve verilerin görünmez."],
@@ -2173,8 +2222,11 @@ function todayLog(){
   if(!state.today || state.today.date!==iso) state.today={date:iso, done:[], pins:[], skips:[]};
   return state.today;
 }
+// Güne özel çalışma saati: state.dayHours = {"YYYY-MM-DD": saat}; yoksa genel günlük saat
+const isoIn = i => { const d=todayStart(); d.setDate(d.getDate()+i); return toISO(d); };
+const hoursOn = i => { const v=(state.dayHours||{})[isoIn(i)]; return v!=null ? v : state.dailyHours; };
 function simulate(studyDays){
-  const cap=state.dailyHours, CHUNK=2; const TL=todayLog();
+  const CHUNK=2; const TL=todayLog();
   const doneTodayH = TL.done.reduce((a,x)=>a+x.h,0);
   const pool = [];
   const sp = lectureSpan();
@@ -2191,7 +2243,7 @@ function simulate(studyDays){
   });
   const days=[];
   for(let i=0;i<studyDays;i++){
-    let room = i===0 ? Math.max(0, cap-doneTodayH) : cap; const items=new Map();
+    const cap=hoursOn(i); let room = i===0 ? Math.max(0, cap-doneTodayH) : cap; const items=new Map();
     if(i===0){
       // değiştir ile seçilen konular önce yerleşir
       for(const pn of TL.pins){
@@ -2246,7 +2298,7 @@ function compute(){
   const need = state.topics.reduce((a,t)=>a+remHours(t),0);
   const progress = total? Math.round((1 - need/total)*100) : 0;
   const studyDays = days==null? 0 : Math.max(0, days - revDays(days));
-  const capacity = studyDays * state.dailyHours;
+  let capacity=0; for(let i=0;i<studyDays;i++) capacity+=hoursOn(i);
   const sim = days!=null && days>0 ? simulate(studyDays) : null;
   const untaught = state.topics.filter(t=>t.done<100 && notTaught(t));
   return {days, total, need, progress, studyDays, capacity, sim, untaught};
@@ -2480,7 +2532,7 @@ function renderToday(c){
     : `<p class="muted" style="margin:0">Bugün için planlanmış çalışma yok — soru çöz ya da tekrar yap.</p>`;
   el.innerHTML = `<div class="hero-h"><h2>Bugün · ${todayStart().toLocaleDateString(LOC(),{day:"numeric",month:"long",weekday:"long"})}</h2>
       <span class="muted"><span class="count">Sınava <b>${c.days} gün</b> · </span>${esc(state.name)}</span></div>
-    <div class="hero-b"><div class="hero-col"><h3>🏫 ${esc(dayLabel)}</h3>${preNote}${dayAtt}${classes}</div><div class="hero-col"><h3>📚 Okul sonrası çalış</h3>${study}</div></div>`;
+    <div class="hero-b"><div class="hero-col"><h3>🏫 ${esc(dayLabel)}</h3>${preNote}${dayAtt}${classes}</div><div class="hero-col"><h3>📚 Okul sonrası çalış</h3>${hoursCtl(0)}${study}</div></div>`;
 }
 
 // ---- ⏱ Odak sayacı: 25 dk odak / 5 dk mola. Odak bitince süre konunun ilerlemesine ve bugünkü çalışmaya eklenir.
@@ -2541,6 +2593,23 @@ function openFocus(){
     }
   };
 }
+
+// ---- ⏱ Bugün (ya da herhangi bir gün) kaç saat çalışacaksın? ----
+function hoursCtl(i){
+  const v=hoursOn(i), custom=(state.dayHours||{})[isoIn(i)]!=null;
+  return `<div class="hrs-ctl"><span>${i===0?"Bugün kaç saat çalışacaksın?":"Bu gün kaç saat?"}${newRib("dayhours")}</span>
+    <div class="hrs-step"><button data-hrs="${i}" data-d="-0.5" title="Azalt">−</button><b>${String(v).replace(".",",")} sa</b><button data-hrs="${i}" data-d="0.5" title="Artır">+</button></div>
+    ${custom?`<button class="link-btn" data-hrsreset="${i}" title="Genel ayara dön (${String(state.dailyHours).replace(".",",")} sa)">varsayılan</button>`:""}</div>`;
+}
+document.addEventListener("click", e=>{
+  const b=e.target.closest("[data-hrs]"), r=e.target.closest("[data-hrsreset]");
+  if(!b && !r) return; if(!state) return; markNewSeen("dayhours");
+  state.dayHours=state.dayHours||{};
+  if(r){ delete state.dayHours[isoIn(+r.dataset.hrsreset)]; }
+  else { const i=+b.dataset.hrs, v=Math.max(0, Math.min(16, hoursOn(i)+parseFloat(b.dataset.d))); if(v===state.dailyHours) delete state.dayHours[isoIn(i)]; else state.dayHours[isoIn(i)]=v; }
+  const t=toISO(todayStart()); Object.keys(state.dayHours).forEach(k=>{ if(k<t) delete state.dayHours[k]; });
+  save(); render();
+});
 
 // ---- Devamsızlık takibi ----
 // Her ders saati için: "p" = katıldım, "a" = gelmedim, yok = işaretlenmedi
@@ -2719,7 +2788,7 @@ function renderPlan(c){
       : d.newly.length ? `<div class="muted" style="margin-bottom:4px">📖 Bugün derste: ${d.newly.map(esc).join(", ")}</div>` : "";
     const list = d.items.length ? d.items.map(it=>`<li style="--h:${hueOf(it.cid)}"><span class="dot"></span><b>${esc(it.name)}</b> — ${fmtH(it.h)}${it.last?" ✓ biter":""}</li>`).join("")
       : `<li>${pendingLater(i) ? "İşlenmiş konuların hepsi planlandı — tekrar yap / soru çöz, yeni konular derste işlenince plana girecek" : "Boş — soru çöz / zayıf konuları tekrar et"}</li>`;
-    html += `<div class="day ${i===0?"today":""}"><div class="day-h">${i===0?"Bugün":fmtD(i)}<span>${i===0?fmtD(0):""}</span></div>${newly}<ul>${list}</ul></div>`;
+    html += `<div class="day ${i===0?"today":""}"><div class="day-h">${i===0?"Bugün":fmtD(i)}<span>${i===0?fmtD(0):""}</span></div>${hoursCtl(i)}${newly}<ul>${list}</ul></div>`;
   }
   if(days.length>show) html += `<button class="ghost" id="planMore" style="width:100%;margin-bottom:10px">Kalan ${days.length-show} günü göster</button>`;
   else if(planAll && days.length>8) html += `<button class="ghost" id="planMore" style="width:100%;margin-bottom:10px">Daha az göster</button>`;
@@ -3091,8 +3160,8 @@ async function saLogin(code){
 async function showForgot(){
   let c=""; try{ const r=await fetch("/api/admin?contact=1",{cache:"no-store"}); c=(await r.json()).contact||""; }catch(e){}
   const el=document.createElement("div"); el.className="modal-bg"; el.style.zIndex=90;
-  el.innerHTML=`<div class="modal confirm-box"><h2>🔑 Kodumu unuttum</h2>
-    <p class="muted" style="margin:0 0 10px">Yöneticiye ulaş; <b>takma adını</b> söyle, kodunu bulup sana iletsin.</p>
+  el.innerHTML=`<div class="modal confirm-box"><h2>🔑 Şifremi / kodumu unuttum</h2>
+    <p class="muted" style="margin:0 0 10px">Yöneticiye ulaş; <b>takma adını</b> söyle, şifreni sıfırlasın (ya da kodunu iletsin).</p>
     ${c?`<div class="contact-box">${esc(c)}</div>`:`<p class="muted">Yönetici henüz iletişim bilgisi eklemedi. Siteyi sana gönderen kişiye sor.</p>`}
     <p class="muted" style="font-size:12.5px;margin:10px 0 0">İpucu: kodunu WhatsApp'a gönderdiysen oradaki mesajda yazıyor.</p>
     <div class="row" style="justify-content:flex-end;margin-top:14px"><button data-x="1">Tamam</button></div></div>`;
@@ -3131,9 +3200,9 @@ function drawAdmUsers(){
   const L=$("admList"); if(!L || !admUsers) return; const q=norm(admQ);
   const list=admUsers.filter(u=>!q || norm(u.name+" "+u.code).includes(q));
   L.innerHTML = list.length ? `<div class="adm-head"><span>Takma ad</span><span>Kod</span><span>Son kayıt</span><span></span></div>`+list.slice(0,300).map(u=>`<div class="adm-row">
-      <b class="adm-name">${u.name?esc(u.name):`<span class="muted">(adsız)</span>`}</b><code class="adm-code">${esc(u.code)}</code>
+      <span class="adm-name"><b>${u.name?esc(u.name):`<span class="muted">(adsız)</span>`}</b>${u.email?`<small class="muted adm-email">${esc(u.email)}${u.pw?" · 🔐":""}${u.g?" · G":""}</small>`:""}</span><code class="adm-code">${esc(u.code)}</code>
       <span class="muted adm-at">${u.at?new Date(u.at).toLocaleDateString(LOC(),{day:"numeric",month:"short",year:"2-digit"}):"–"}${u.k?` · ${u.k} kurul`:""}</span>
-      <span class="adm-btns"><button class="ghost" data-admcopy="${esc(u.code)}">Kopyala</button>${u.name?`<button class="ghost warn-btn" data-admwarn="${esc(u.code)}" data-admname="${esc(u.name)}" title="Uygunsuz takma ad uyarısı gönder">⚠️ Uyar</button>`:""}${u.warned?`<span class="muted adm-warned">uyarıldı</span>`:""}<button class="ghost del-btn" data-admdel="${esc(u.code)}" data-admname="${esc(u.name||"")}" title="Hesabı sil">Sil</button></span></div>`).join("") : `<div class="empty">Bulunamadı.</div>`;
+      <span class="adm-btns"><button class="ghost" data-admcopy="${esc(u.code)}">Kopyala</button>${u.name?`<button class="ghost warn-btn" data-admwarn="${esc(u.code)}" data-admname="${esc(u.name)}" title="Uygunsuz takma ad uyarısı gönder">⚠️ Uyar</button>`:""}${u.warned?`<span class="muted adm-warned">uyarıldı</span>`:""}${u.pw?`<button class="ghost" data-admpw="${esc(u.code)}" data-admname="${esc(u.name||u.email||"")}">Şifre sıfırla</button>`:""}<button class="ghost del-btn" data-admdel="${esc(u.code)}" data-admname="${esc(u.name||"")}" title="Hesabı sil">Sil</button></span></div>`).join("") : `<div class="empty">Bulunamadı.</div>`;
 }
 function askWarn(name){
   return new Promise(res=>{
@@ -3155,6 +3224,11 @@ async function loadAdmBans(){
 }
 document.addEventListener("click", async e=>{
   const c=e.target.closest("[data-admcopy]"); if(c){ try{ await navigator.clipboard.writeText(c.dataset.admcopy); toast("✓ Kod kopyalandı", c.dataset.admcopy); }catch(err){ toast("Kod: "+c.dataset.admcopy); } return; }
+  const pwb=e.target.closest("[data-admpw]");
+  if(pwb){ const np=Math.random().toString(36).slice(2,6)+Math.floor(1000+Math.random()*9000);
+    if(!await askConfirm(`“${pwb.dataset.admname}” şifresi sıfırlansın mı?`, `Yeni şifre: ${np} — kişiye bunu ilet, girdikten sonra kendisi değiştirebilir.`, "Evet, sıfırla", "var(--accent)")) return;
+    const r=await fetch("/api/admin",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({code:CUR,action:"resetpw",target:pwb.dataset.admpw,password:np})});
+    if(r.ok){ try{ await navigator.clipboard.writeText(np); }catch(err){} toast("✓ Şifre sıfırlandı", `Yeni şifre: ${np} (kopyalandı)`); } else toast("Olmadı"); return; }
   const dl=e.target.closest("[data-admdel]");
   if(dl){ const t=dl.dataset.admdel, nm=dl.dataset.admname;
     if(!await askConfirm(`${nm?`“${nm}” (${t})`:t} hesabı silinsin mi?`, "Kişinin bütün kurulları, ilerlemesi ve rozetleri silinir; takma adı serbest kalır. 10 saniye içinde geri alabilirsin.", "Evet, hesabı sil")) return;
@@ -3169,75 +3243,136 @@ document.addEventListener("click", async e=>{
     if(r.ok){ toast("⚠️ Uyarı gönderildi", "Kişi siteyi açınca uyarıyı görüp yeni takma ad seçecek"); const x=admUsers.find(u=>u.code===w.dataset.admwarn); if(x){ x.warned=1; x.name=""; } drawAdmUsers(); } else toast("Olmadı"); return; }
   const u=e.target.closest("[data-admunban]"); if(u){ u.disabled=true; const r=await fetch("/api/library",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"unban",code:CUR,by:u.dataset.admunban})}); if(r.ok){ toast("✓ Yasak kaldırıldı"); loadAdmBans(); } else u.disabled=false; }
 });
+// ===== Giriş ekranı: e-posta + şifre ile kayıt, takma ad (ya da e-posta) + şifre ile giriş, Google alternatif =====
+let AUTH_CFG=null, AUTH_ME=null;
+async function authConfig(){ if(AUTH_CFG) return AUTH_CFG; try{ const r=await fetch("/api/auth?config=1",{cache:"no-store"}); AUTH_CFG=await r.json(); }catch(e){ AUTH_CFG={google:""}; } return AUTH_CFG; }
+async function loadAuthMe(){ if(!SA || !CUR) return; try{ const r=await fetch("/api/auth?me="+encodeURIComponent(CUR),{cache:"no-store"}); if(r.ok){ AUTH_ME=await r.json(); if(view==="home") renderHome(); } }catch(e){} }
+let gsiLoading=null;
+function loadGsi(){ if(window.google && google.accounts) return Promise.resolve(); if(gsiLoading) return gsiLoading;
+  gsiLoading=new Promise((res,rej)=>{ const sc=document.createElement("script"); sc.src="https://accounts.google.com/gsi/client"; sc.async=true; sc.onload=res; sc.onerror=rej; document.head.append(sc); }); return gsiLoading; }
+async function renderGoogleBtn(host, onCred){
+  const cfg=await authConfig(); if(!cfg.google || !host){ if(host) host.closest("[data-gwrap]")?.style.setProperty("display","none"); return; }
+  try{ await loadGsi(); google.accounts.id.initialize({client_id:cfg.google, callback:r=>onCred(r.credential), ux_mode:"popup"});
+    host.innerHTML=""; google.accounts.id.renderButton(host,{theme:document.documentElement.dataset.theme==="light"?"outline":"filled_black", size:"large", shape:"pill", text:"continue_with", width:Math.min(360, host.clientWidth||320), locale:LANG}); }
+  catch(e){ host.closest("[data-gwrap]")?.style.setProperty("display","none"); }
+}
+async function authPost(body){ const r=await fetch("/api/auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}); const j=await r.json().catch(()=>({})); if(!r.ok) throw Object.assign(new Error(j.error||"Olmadı"), j); return j; }
+// yeni hesabın ilk verisini kaydet ve sayfayı aç
+async function startNewAccount(code, nm){
+  (root.profile=root.profile||{}).name=nm; root.profile.nameOk=nm; (root.settings=root.settings||{}).lang=LANG;
+  CUR=code; lsSet(CUR_KEY, CUR); root.code=CUR; root.onboarded=true; root.settings.seenVer=LATEST; root.updatedAt=Date.now(); persist();
+  try{ const pr=await fetch("/api/data",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({code:CUR, json:JSON.stringify(root), base:0})});
+    if(pr.ok){ const pj=await pr.json(); root._ver=pj.updatedAt; root._dirty=false; persist(); } }catch(e){}
+  location.reload();
+}
 function openWelcomeSA(){
   if($("welcome")) return;
   const el=document.createElement("div"); el.id="welcome"; el.className="modal-bg";
   const box="font:inherit;width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)";
-  el.innerHTML=`<div class="modal"><h2>👋 Sınav Haftası Asistanı</h2>
-      <div class="w-lang-row" style="margin-top:12px"><span>Dil / Language</span><div class="seg3 w-lang" data-noi18n><button type="button" data-wlang="tr">Türkçe</button><button type="button" data-wlang="en">English</button></div></div>
-    <div id="wStep1" style="display:none">
-      <p class="w-taken" id="wTaken" style="display:none"></p>
-      <label class="f" style="margin-top:10px">Kodunla giriş yap<input id="wCode" maxlength="6" autocapitalize="characters" autocomplete="off" placeholder="AB12" style="${box};font-size:30px;letter-spacing:.4em;text-align:center;text-transform:uppercase"></label>
-      <div class="row" style="margin-top:8px"><button id="wGo" style="flex:1">Giriş</button></div>
-      <p class="muted" id="wSt" style="margin:8px 0 0"></p>
-      <button class="link-btn" id="wForgot" type="button">Kodumu unuttum</button>
-      <button class="choice" id="wNew" style="margin-top:14px">✨ Yeni hesap aç<small>Sadece takma adını yaz, gerisini biz hallederiz</small></button>
+  el.innerHTML=`<div class="modal w-box"><h2>👋 Sınav Haftası Asistanı</h2>
+    <div class="w-lang-row" style="margin-top:12px"><span>Dil / Language</span><div class="seg3 w-lang" data-noi18n><button type="button" data-wlang="tr">Türkçe</button><button type="button" data-wlang="en">English</button></div></div>
+    <div class="w-tabs"><button type="button" data-wt="reg" class="on">Kayıt ol</button><button type="button" data-wt="login">Giriş yap</button></div>
+    <div id="wReg">
+      <label class="f">Takma ad<input id="wName" maxlength="24" autocomplete="nickname" placeholder="ör. Yasin" style="${box}"></label>
+      <label class="f">E-posta<input id="wEmail" type="email" autocomplete="email" placeholder="ornek@mail.com" style="${box}"></label>
+      <label class="f">Şifre<input id="wPw" type="password" autocomplete="new-password" placeholder="en az 6 karakter" style="${box}"></label>
+      <p class="muted" style="margin:6px 0 0;font-size:12.5px">Sitede takma adınla görünürsün; e-postan kimseye gösterilmez.</p>
+      <button id="wRegGo" style="width:100%;margin-top:10px">Kayıt ol →</button>
+      <p class="nm-err" id="wSt2" style="margin:8px 0 0"></p>
     </div>
-    <div id="wStepName">
-      <label class="f" style="margin-top:10px">Takma adın<input id="wName" maxlength="24" autocomplete="nickname" placeholder="ör. Yasin" style="${box};font-size:20px"></label>
-      <p class="muted" style="margin:6px 0 0;font-size:13px">Sitede bu isimle görünürsün (ör. paylaştıklarında). Sonra değiştirebilirsin.</p>
-      <div class="row" style="margin-top:10px"><button id="wNameGo" style="flex:1">Başla →</button></div>
-      <p class="muted" id="wSt2" style="margin:8px 0 0"></p>
-      <button class="link-btn" id="wNameBack" type="button">Başka cihazda hesabım var — kodumla gir</button>
+    <div id="wLogin" style="display:none">
+      <label class="f">Takma ad ya da e-posta<input id="wId" autocomplete="username" placeholder="ör. Yasin" style="${box}"></label>
+      <label class="f">Şifre<input id="wLPw" type="password" autocomplete="current-password" style="${box}"></label>
+      <button id="wLoginGo" style="width:100%;margin-top:10px">Giriş yap</button>
+      <p class="nm-err" id="wSt" style="margin:8px 0 0"></p>
+      <div class="row" style="justify-content:space-between"><button class="link-btn" id="wForgot" type="button">Şifremi unuttum</button><button class="link-btn" id="wOldCode" type="button">Eski kodumla gir</button></div>
+      <div id="wCodeBox" style="display:none;margin-top:8px">
+        <label class="f">4 haneli kod<input id="wCode" maxlength="6" autocapitalize="characters" autocomplete="off" placeholder="AB12" style="${box};font-size:24px;letter-spacing:.35em;text-align:center;text-transform:uppercase"></label>
+        <button id="wGo" style="width:100%;margin-top:8px">Kodla gir</button>
+      </div>
     </div>
-    <div id="wStep2" style="display:none;text-align:center">
-      <p style="margin:14px 0 0;font-weight:700">✅ Kişisel kodun oluşturuldu — kaydet!</p>
-      <p class="muted" style="margin:4px 0 0">Kişisel kodun:</p>
-      <div style="font-size:44px;font-weight:800;letter-spacing:.18em;margin:4px 0 10px" id="wNewCode"></div>
-      <p class="muted" style="text-align:left">Telefonda, bilgisayarda, tablette bu kodla giriş yaparsın; verilerin hep kaldığı yerden devam eder. <b>Kaybetme</b> — kendine WhatsApp'tan at.</p>
-      <div class="row" style="justify-content:center;margin-top:10px"><a class="wa" id="wWa" target="_blank" rel="noopener">🟢 Kodumu WhatsApp'a gönder</a><button class="ghost" id="wDone">Başla →</button></div>
+    <div data-gwrap><div class="w-or"><span>ya da</span></div><div id="wGoogle" class="w-google"></div></div>
+    <div id="wGName" style="display:none">
+      <p class="w-taken" style="margin-top:12px">Google hesabın doğrulandı. Son adım: bir <b>takma ad</b> seç.</p>
+      <label class="f">Takma ad<input id="wGNameIn" maxlength="24" placeholder="ör. Yasin" style="${box}"></label>
+      <button id="wGNameGo" style="width:100%;margin-top:10px">Başla →</button>
+      <p class="nm-err" id="wSt3" style="margin:8px 0 0"></p>
     </div></div>`;
   document.body.append(el);
-  $("wCode").oninput = e=>{ e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,6); };
-  const go = async ()=>{
-    const v = $("wCode").value.toUpperCase();
-    if(v.length!==4 && v.length!==6){ $("wSt").textContent="Kod 4 karakter olmalı (harf ve rakam)."; return; }
-    $("wGo").disabled=true; $("wSt").textContent="Giriş yapılıyor…";
-    try{ await saLogin(v); }catch(e){ $("wSt").textContent=String(e); $("wGo").disabled=false; }
-  };
-  $("wForgot").onclick=showForgot;
-  $("wGo").onclick=go; $("wCode").onkeydown=e=>{ if(e.key==="Enter") go(); };
-  $("wNew").onclick = ()=>{ $("wStep1").style.display="none"; $("wTaken").style.display="none"; $("wStepName").style.display=""; setTimeout(()=>{ $("wName").focus(); $("wName").select(); },30); };
+  const tab=t=>{ el.querySelectorAll("[data-wt]").forEach(b=>b.classList.toggle("on",b.dataset.wt===t)); $("wReg").style.display=t==="reg"?"":"none"; $("wLogin").style.display=t==="login"?"":"none"; setTimeout(()=>(t==="reg"?$("wName"):$("wId")).focus(),30); };
+  el.querySelectorAll("[data-wt]").forEach(b=>b.onclick=()=>tab(b.dataset.wt));
   const wl=()=>el.querySelectorAll("[data-wlang]").forEach(b=>b.classList.toggle("on", b.dataset.wlang===LANG));
   el.querySelectorAll("[data-wlang]").forEach(b=>b.onclick=()=>{ setLang(b.dataset.wlang); wl(); }); wl();
-  $("wNameBack").onclick = ()=>{ $("wStepName").style.display="none"; $("wStep1").style.display=""; setTimeout(()=>$("wCode").focus(),30); };
-  $("wName").onkeydown = e=>{ if(e.key==="Enter") $("wNameGo").click(); };
-  $("wNameGo").onclick = async ()=>{
-    const nm=cleanName($("wName").value); if(!nm){ $("wSt2").textContent="Bir takma ad yaz."; $("wName").focus(); return; }
-    $("wNameGo").disabled=true; $("wSt2").textContent="Kontrol ediliyor…";
-    try{ const ar=await fetch("/api/name?name="+encodeURIComponent(nm),{cache:"no-store"}); const aj=await ar.json(); if(ar.ok && aj.blocked){ $("wNameGo").disabled=false; $("wSt2").textContent="Bu takma ad kullanılamaz."; $("wName").focus(); $("wName").select(); return; }
-      if(ar.ok && aj.available===false){ $("wNameGo").disabled=false; $("wSt2").textContent="";
-      // bu ad bir hesaba ait → o hesabın kodunu iste
-      $("wStepName").style.display="none"; $("wStep1").style.display="";
-      $("wTaken").innerHTML=`<b>“${esc(nm)}”</b> takma adı bir hesaba ait. Bu hesap seninse <b>kodunu gir</b>. Değilse aşağıdan geri dönüp başka bir takma ad seç.`; $("wTaken").style.display="";
-      setTimeout(()=>$("wCode").focus(),30); return; } }catch(e){}
-    $("wSt2").textContent="Kod oluşturuluyor…";
-    (root.profile=root.profile||{}).name=nm;
-    (root.settings=root.settings||{}).lang=LANG;
-    try{
-      const r = await fetch("/api/new",{method:"POST"}); const j = await r.json();
-      if(!r.ok || !j.code) throw j.error || "Kod alınamadı";
-      CUR=j.code; lsSet(CUR_KEY, CUR); root.code=CUR; root.onboarded=true; (root.settings=root.settings||{}).seenVer=LATEST; root.updatedAt=Date.now(); persist();
-      try{ const pr=await fetch("/api/data",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({code:CUR, json:JSON.stringify(root), base:0})});
-        if(pr.ok){ const pj=await pr.json(); root._ver=pj.updatedAt; root._dirty=false; persist(); } }catch(e){}
-      claimName(nm);
-      // bir kerelik: "kişisel kodun oluşturuldu, kaydet" ekranı
-      $("wStepName").style.display="none"; $("wStep2").style.display=""; $("wNewCode").textContent=CUR;
-      $("wWa").href = "https://wa.me/?text="+encodeURIComponent(saMsg());
-      $("wDone").onclick = ()=>location.reload();
-    }catch(e){ $("wSt2").textContent=String(e); $("wNameGo").disabled=false; }
+  // --- kayıt
+  const reg=async()=>{
+    const nm=cleanName($("wName").value), em=$("wEmail").value.trim(), pw=$("wPw").value;
+    if(!nm){ $("wSt2").textContent="Bir takma ad yaz."; $("wName").focus(); return; }
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){ $("wSt2").textContent="Geçerli bir e-posta yaz."; $("wEmail").focus(); return; }
+    if(pw.length<6){ $("wSt2").textContent="Şifre en az 6 karakter olmalı."; $("wPw").focus(); return; }
+    $("wRegGo").disabled=true; $("wSt2").textContent="Hesap açılıyor…";
+    try{ const j=await authPost({action:"register", name:nm, email:em, password:pw}); await startNewAccount(j.code, nm); }
+    catch(e){ $("wRegGo").disabled=false;
+      if(e.taken){ $("wSt2").innerHTML=`“${esc(nm)}” takma adı alınmış. Senin hesabınsa <button class="link-btn" id="wToLogin" type="button">giriş yap</button>.`; $("wToLogin").onclick=()=>{ $("wId").value=nm; tab("login"); }; }
+      else if(e.emailTaken){ $("wSt2").innerHTML=`Bu e-postayla zaten bir hesap var. <button class="link-btn" id="wToLogin" type="button">Giriş yap</button>`; $("wToLogin").onclick=()=>{ $("wId").value=em; tab("login"); }; }
+      else $("wSt2").textContent=e.message; }
   };
+  $("wRegGo").onclick=reg; ["wName","wEmail","wPw"].forEach(id=>$(id).onkeydown=e=>{ if(e.key==="Enter") reg(); });
+  // --- giriş
+  const login=async()=>{
+    const id=$("wId").value.trim(), pw=$("wLPw").value; if(!id||!pw){ $("wSt").textContent="Takma adını (ya da e-postanı) ve şifreni yaz."; return; }
+    $("wLoginGo").disabled=true; $("wSt").textContent="Giriş yapılıyor…";
+    try{ const j=await authPost({action:"login", id, password:pw}); await saLogin(j.code); }
+    catch(e){ $("wLoginGo").disabled=false; $("wSt").textContent=String(e.message||e); }
+  };
+  $("wLoginGo").onclick=login; ["wId","wLPw"].forEach(id=>$(id).onkeydown=e=>{ if(e.key==="Enter") login(); });
+  $("wForgot").onclick=showForgot;
+  $("wOldCode").onclick=()=>{ const b=$("wCodeBox"); b.style.display=b.style.display==="none"?"":"none"; if(!b.style.display) $("wCode").focus(); };
+  $("wCode").oninput = e=>{ e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,6); };
+  const go = async ()=>{ const v=$("wCode").value.toUpperCase(); if(v.length!==4 && v.length!==6){ $("wSt").textContent="Kod 4 karakter olmalı (harf ve rakam)."; return; }
+    $("wGo").disabled=true; $("wSt").textContent="Giriş yapılıyor…"; try{ await saLogin(v); }catch(e){ $("wSt").textContent=String(e); $("wGo").disabled=false; } };
+  $("wGo").onclick=go; $("wCode").onkeydown=e=>{ if(e.key==="Enter") go(); };
+  // --- Google
+  let gCred=null;
+  renderGoogleBtn($("wGoogle"), async cred=>{
+    gCred=cred; const st=$("wLogin").style.display==="none" ? $("wSt2") : $("wSt"); st.textContent="Google ile giriş yapılıyor…";
+    try{ const j=await authPost({action:"google", credential:cred});
+      if(j.code) return saLogin(j.code);
+      if(j.needName){ $("wReg").style.display="none"; $("wLogin").style.display="none"; el.querySelector(".w-tabs").style.display="none"; el.querySelector("[data-gwrap]").style.display="none"; $("wGName").style.display=""; st.textContent=""; setTimeout(()=>$("wGNameIn").focus(),30); }
+    }catch(e){ st.textContent=e.message; }
+  });
+  const gName=async()=>{ const nm=cleanName($("wGNameIn").value); if(!nm){ $("wSt3").textContent="Bir takma ad yaz."; return; }
+    $("wGNameGo").disabled=true; $("wSt3").textContent="Hesap açılıyor…";
+    try{ const j=await authPost({action:"google", credential:gCred, name:nm}); await startNewAccount(j.code, nm); }
+    catch(e){ $("wGNameGo").disabled=false; $("wSt3").textContent = e.taken ? "Bu takma ad alınmış, başka bir tane seç." : e.message; } };
+  $("wGNameGo").onclick=gName; $("wGNameIn").onkeydown=e=>{ if(e.key==="Enter") gName(); };
   setTimeout(()=>$("wName").focus(),50);
+}
+// Eski kodlu hesaba (ya da şifre değiştirmek için) e-posta + şifre ekle; Google bağla
+function openSetPw(){
+  const el=document.createElement("div"); el.className="modal-bg"; el.style.zIndex=85;
+  const has=AUTH_ME && AUTH_ME.hasPw;
+  el.innerHTML=`<div class="modal confirm-box"><h2>🔐 ${has?"E-posta / şifre değiştir":"E-posta + şifre ekle"}</h2>
+    <p class="muted" style="margin:0 0 10px">${has?"Yeni e-posta ya da şifreni yaz.":"Bundan sonra kod yerine <b>takma adın + şifrenle</b> (ya da e-postanla) giriş yaparsın. Verilerin aynen kalır."}</p>
+    <label class="f">E-posta<input id="spEmail" type="email" autocomplete="email" value="${esc((AUTH_ME&&AUTH_ME.email)||"")}"></label>
+    <label class="f">${has?"Yeni şifre":"Şifre"}<input id="spPw" type="password" autocomplete="new-password" placeholder="en az 6 karakter"></label>
+    <p class="nm-err" id="spSt" style="margin:8px 0 0"></p>
+    <div class="row" style="justify-content:flex-end;margin-top:12px"><button class="ghost" data-sp="0">Vazgeç</button><button data-sp="1">Kaydet</button></div></div>`;
+  document.body.append(el);
+  el.onclick=async e=>{ if(e.target===el) return el.remove(); const b=e.target.closest("[data-sp]"); if(!b) return; if(b.dataset.sp==="0") return el.remove();
+    const em=$("spEmail").value.trim(), pw=$("spPw").value;
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){ $("spSt").textContent="Geçerli bir e-posta yaz."; return; }
+    if(pw.length<6){ $("spSt").textContent="Şifre en az 6 karakter olmalı."; return; }
+    b.disabled=true; try{ await authPost({action:"setpw", code:CUR, email:em, password:pw}); el.remove(); toast("✓ E-posta ve şifre kaydedildi", `Artık “${myName()}” + şifrenle girebilirsin`); loadAuthMe(); }
+    catch(err){ b.disabled=false; $("spSt").textContent=err.message; } };
+  setTimeout(()=>$("spEmail").focus(),30);
+}
+async function openLinkGoogle(){
+  const el=document.createElement("div"); el.className="modal-bg"; el.style.zIndex=85;
+  el.innerHTML=`<div class="modal confirm-box"><h2>Google hesabını bağla</h2><p class="muted" style="margin:0 0 12px">Bağladıktan sonra tek tıkla “Google ile devam et” diyerek girebilirsin.</p>
+    <div id="lgBtn" class="w-google"></div><p class="nm-err" id="lgSt" style="margin:8px 0 0"></p>
+    <div class="row" style="justify-content:flex-end;margin-top:12px"><button class="ghost" data-lg="0">Kapat</button></div></div>`;
+  document.body.append(el); el.onclick=e=>{ if(e.target===el || e.target.closest("[data-lg]")) el.remove(); };
+  renderGoogleBtn($("lgBtn"), async cred=>{ try{ await authPost({action:"linkgoogle", code:CUR, credential:cred}); el.remove(); toast("✓ Google hesabın bağlandı"); loadAuthMe(); }catch(e){ $("lgSt").textContent=e.message; } });
 }
 // Hesap değiştir: başka bir kodla giriş (şu anki hesabın kodu gösterilir ki geri dönebilsin)
 // Hesabı sil (onaylı). 10 sn içinde geri alınabilir; sonra çıkış yapılır.
@@ -3671,7 +3806,7 @@ function applyImport(){
 
 load(); flushSeenRibs();
 if(root && root.settings && root.settings.lang && root.settings.lang!==LANG){ LANG=root.settings.lang; try{ localStorage.setItem(LANG_KEY,LANG); }catch(e){} }
-render(); updateDirty(); updateCodeBtn(); updateLangBtn(); I18N.apply(); checkAdmin();
+render(); updateDirty(); updateCodeBtn(); updateLangBtn(); I18N.apply(); checkAdmin(); if(SA) authConfig().then(()=>loadAuthMe());
 $("deviceBtn").style.display="none";
 // Önce Claude hesabıyla kaydetmeyi dene; olmuyorsa 4 haneli kod sistemine geç
 Promise.race([syncReady, new Promise(r=>setTimeout(()=>r(false),4000))]).then(ok=>{

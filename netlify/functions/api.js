@@ -8,11 +8,12 @@ const handlers = {
   board: require("../../api/board.js"),
   admin: require("../../api/admin.js"),
   name: require("../../api/name.js"),
+  auth: require("../../api/auth.js"),
 };
 
 exports.handler = async (event) => {
   const path = event.path || "";
-  const m = path.match(/\/(new|data|library|notes|board|admin|name)\/?$/) || (event.rawUrl || "").match(/\/api\/(new|data|library|notes|board|admin|name)(?:[/?]|$)/);
+  const m = path.match(/\/(new|data|library|notes|board|admin|name|auth)\/?$/) || (event.rawUrl || "").match(/\/api\/(new|data|library|notes|board|admin|name|auth)(?:[/?]|$)/);
   const fn = m && handlers[m[1]];
   if (!fn) return { statusCode: 404, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ error: "Bulunamadı" }) };
 

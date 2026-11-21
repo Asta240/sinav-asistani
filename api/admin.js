@@ -26,6 +26,11 @@ module.exports = async (req, res) => {
       let cursor = "0", missing = [], loops = 0;
       do { const r = await redis("SCAN", cursor, "MATCH", "u:*", "COUNT", 500); cursor = String(r[0]); (r[1] || []).forEach(k => { const c = k.slice(2); if (!idx[c]) missing.push(c); }); } while (cursor !== "0" && ++loops < 40);
       for (const c of missing.slice(0, 60)) { const raw = await redis("GET", `u:${c}`); let j = null; try { j = JSON.parse(raw || "null"); } catch (e) {} await indexUser(c, j && j.json); const v = JSON.parse(await redis("HGET", "users", c)); if (j && j.updatedAt) v.at = j.updatedAt; idx[c] = v; }
+      const codes = Object.keys(idx);
+      for (let i = 0; i < codes.length; i += 200) {   // e-posta / şifre / Google bilgisi
+        const part = codes.slice(i, i + 200), vals = await redis("MGET", ...part.map(c => `auth:user:${c}`)) || [];
+        part.forEach((c, k) => { const u = vals[k] ? JSON.parse(vals[k]) : null; if (u) { idx[c].email = u.email || ""; idx[c].pw = !!u.pw; idx[c].g = !!u.google; } });
+      }
       const users = Object.entries(idx).map(([code, v]) => ({ code, ...v })).sort((a, b) => (b.at || 0) - (a.at || 0));
       return send(res, 200, { users, total: users.length, more: Math.max(0, missing.length - 60), contact: (await redis("GET", "admin:contact")) || "" });
     }
@@ -34,6 +39,14 @@ module.exports = async (req, res) => {
       return (await deleteAccount(target)) ? send(res, 200, { ok: true }) : send(res, 404, { error: "Bu kod bulunamadı." });
     }
     if (req.method === "POST" && b.action === "restore") return (await restoreAccount(cleanCode(b.target))) ? send(res, 200, { ok: true }) : send(res, 404, { error: "Geri alma süresi doldu." });
+    if (req.method === "POST" && b.action === "resetpw") {
+      const target = cleanCode(b.target), pw = String(b.password || "");
+      if (pw.length < 6) return send(res, 400, { error: "Şifre en az 6 karakter olmalı." });
+      const u = JSON.parse((await redis("GET", `auth:user:${target}`)) || "null"); if (!u) return send(res, 404, { error: "Bu hesapta e-posta/şifre yok." });
+      const crypto = require("crypto"); const salt = crypto.randomBytes(16).toString("hex");
+      u.pw = { salt, hash: crypto.scryptSync(pw, salt, 64).toString("hex") }; await redis("SET", `auth:user:${target}`, JSON.stringify(u));
+      return send(res, 200, { ok: true });
+    }
     if (req.method === "POST" && b.action === "warn") {
       const target = cleanCode(b.target);
       if (!(await redis("GET", `u:${target}`))) return send(res, 404, { error: "Bu kod bulunamadı." });

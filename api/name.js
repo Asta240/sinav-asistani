@@ -29,6 +29,8 @@ module.exports = async (req, res) => {
       if (old && old !== n && (await redis("HGET", "names", old)) === me) await redis("HDEL", "names", old);
       await redis("HSET", "names", n, me);
       await redis("SET", `nameof:${me}`, n);
+      // şifreli hesaplarda "takma ad + şifre" girişi yeni adla çalışsın
+      if (await redis("GET", `auth:user:${code}`)) { await redis("SET", `auth:byname:${n}`, code); if (old && old !== n && (await redis("GET", `auth:byname:${old}`)) === code) await redis("DEL", `auth:byname:${old}`); }
       return send(res, 200, { ok: true });
     }
     send(res, 405, { error: "Desteklenmeyen istek" });

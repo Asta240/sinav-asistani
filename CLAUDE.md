@@ -25,7 +25,8 @@ claude.ai artifact'lerini sadece Yasin'in kendi Claude hesabındaki bir oturum g
 - `api/new.js` yeni kod · `api/data.js` GET/PUT veri (sunucu sürümü `updatedAt`; PUT `base` farklıysa 409) · `api/library.js` herkese açık "Hazır kurullar" kütüphanesi (silme: paylaşan ya da env `ADMIN_CODE`; silinen 10 dk `lib:trash:ID`de durur → `POST {action:"restore"}` ile geri alınır; admin `ban:true` ile paylaşanı (kod + IP hash) `lib:banned` set'ine ekler, kaydı `lib:bans` hash; `?bans=1` liste, `POST {action:"unban",by}` kaldırır).
 - `api/notes.js` "Notlar & slaytlar": sadece link paylaşımı (`notes:list`), paylaşanın takma adı görünür; silme/geri al/yasak kütüphaneyle aynı mantık ve **aynı yasak listesi** (`lib:banned`).
 - `api/admin.js` yönetici sayfası: kullanıcı listesi (kod + takma ad; `users` hash, `indexUser()` her PUT'ta günceller, eski hesaplar SCAN ile doldurulur), iletişim bilgisi (`admin:contact`, giriş ekranındaki “Kodumu unuttum” gösterir).
-- Ortam değişkenleri (Netlify ve Vercel'de aynı): `KV_REST_API_URL`, `KV_REST_API_TOKEN` (Upstash), isteğe bağlı `ADMIN_CODE` (**virgülle birden fazla yönetici kodu**: `AB12,CD34`).
+- `api/auth.js` giriş: kayıt (takma ad + e-posta + şifre, scrypt), giriş (takma ad ya da e-posta + şifre), eski koda şifre ekleme (`setpw`), Google (`GOOGLE_CLIENT_ID`, tokeninfo ile doğrulama, `google`/`linkgoogle`). Anahtarlar: `auth:user:KOD`, `auth:email:E`, `auth:byname:AD`, `auth:google:SUB`. Başarılı girişte istemciye hesabın kodu döner (kod = oturum). Admin `resetpw`.
+- Ortam değişkenleri (Netlify ve Vercel'de aynı): `KV_REST_API_URL`, `KV_REST_API_TOKEN` (Upstash), isteğe bağlı `ADMIN_CODE` (**virgülle birden fazla yönetici kodu**: `AB12,CD34`), isteğe bağlı `GOOGLE_CLIENT_ID` (yoksa Google butonu gizlenir).
 
 ## Uygulama mantığı (src içinde)
 - Veri: `root = {folders:[kurul...], activeId, settings, kurulSort, kurulOrder}`; her kurul `{name, startDate, examDate, dailyHours, perLec, courses, topics, sessions, attend, absLimit, absMode, grade, archived, fromLib, manual, isDefault}`.
@@ -42,9 +43,10 @@ claude.ai artifact'lerini sadece Yasin'in kendi Claude hesabındaki bir oturum g
 ## Ek özellikler
 - Takma ad: `root.profile.name` (kayıtta seçilir, ana sayfada ✏️). Kayıtta dil de seçilir.
 - Rozetler: `BADGES`, `root.badges={id:tarih}`; Bugünün özeti `renderTodaySum()`. Rozet tablosu `api/board.js` (hash `board`, takma ad + rozet sayısı), `syncBoard()`.
-- Giriş: kodu olmayan doğrudan takma ad + dil ile hesap açar (bir kez kod ekranı); alınmış ad yazarsa o hesabın kodu istenir; ana sayfada “Hesap değiştir”. Admin uyarısı: `warn:KOD`, ad serbest + `names:blocked`.
+- Giriş ekranı: Kayıt ol (takma ad + e-posta + şifre) / Giriş yap (takma ad|e-posta + şifre, “Eski kodumla gir”) / Google; ana sayfada “Hesap değiştir”. Admin uyarısı: `warn:KOD`, ad serbest + `names:blocked`.
 - Hesap silme: `deleteAccount/restoreAccount` (_lib): `deleted:KOD` 10 dk; kullanıcı Ayarlar → Hesap (DELETE /api/data), admin `POST /api/admin {action:"delete"|"restore"}`. Onay + 10 sn geri al.
 - v1.1: Canlı geri sayım + balon takvim `renderCountdown()` (sınav 09:00 kabul, `.count` ile gizlenir) · Odak sayacı `FOCUS` (localStorage `sa-focus`, 25/5 dk, bitince `creditFocus()` ilerlemeye ekler, sol altta hap) · Sınav analizi `openAnalysis()` (`state.result={cid:{n,d}}`) · Menü grupları `.nav-group` · Kurul ekle önizlemesi `loadAddPreview()`.
+- Güne özel saat: `state.dayHours={"YYYY-MM-DD":saat}`, `hoursOn(i)`, `hoursCtl(i)` (Bugün kartı + Program'daki günler).
 - Tekrar günü: `state.reviewDay` 0–7, `revDays(days)`.
 - Takma ad zorunlu ve **benzersiz** (`api/name.js`: `names` hash küçük harfli ad → sahip; `claimName()`). Yoksa ya da başkasınınsa açılışta kapatılamaz pencere. Ana ekrana ekle rehberi `maybeA2HS()` bir kez (`root.settings.a2hs`). SSS'de 3. eleman true = ⭐.
 - Haftalık istatistik: `root.studyLog = {"YYYY-MM-DD": saat}`; `logStudy(t, Δ%)` ilerleme değişince yazar (✓ çalıştım, geri al, Hiç/Az/…). Ana sayfa `renderStats()`.

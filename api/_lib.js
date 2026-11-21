@@ -58,7 +58,10 @@ const ownerOf = code => require("crypto").createHash("sha256").update("lib:" + c
 async function deleteAccount(code) {
   const raw = await redis("GET", `u:${code}`); if (!raw) return false;
   const me = ownerOf(code), user = await redis("HGET", "users", code), nm = await redis("GET", `nameof:${me}`), board = await redis("HGET", "board", me);
-  await redis("SET", `deleted:${code}`, JSON.stringify({ raw, user, nm, board }), "EX", 600);
+  const auth = JSON.parse((await redis("GET", `auth:user:${code}`)) || "null");
+  await redis("SET", `deleted:${code}`, JSON.stringify({ raw, user, nm, board, auth }), "EX", 600);
+  if (auth) { await redis("DEL", `auth:user:${code}`); if (auth.email && (await redis("GET", `auth:email:${auth.email}`)) === code) await redis("DEL", `auth:email:${auth.email}`); if (auth.google) await redis("DEL", `auth:google:${auth.google}`); }
+  if (nm && (await redis("GET", `auth:byname:${nm}`)) === code) await redis("DEL", `auth:byname:${nm}`);
   await redis("DEL", `u:${code}`); await redis("HDEL", "users", code); await redis("HDEL", "board", me); await redis("DEL", `warn:${code}`);
   if (nm) { if ((await redis("HGET", "names", nm)) === me) await redis("HDEL", "names", nm); await redis("DEL", `nameof:${me}`); }
   return true;
@@ -70,6 +73,7 @@ async function restoreAccount(code) {
   if (t.user) await redis("HSET", "users", code, t.user);
   if (t.board) await redis("HSET", "board", me, t.board);
   if (t.nm && !(await redis("HGET", "names", t.nm))) { await redis("HSET", "names", t.nm, me); await redis("SET", `nameof:${me}`, t.nm); }
+  if (t.auth) { await redis("SET", `auth:user:${code}`, JSON.stringify(t.auth)); if (t.auth.email && !(await redis("GET", `auth:email:${t.auth.email}`))) await redis("SET", `auth:email:${t.auth.email}`, code); if (t.auth.google) await redis("SET", `auth:google:${t.auth.google}`, code); if (t.nm) await redis("SET", `auth:byname:${t.nm}`, code); }
   await redis("DEL", `deleted:${code}`);
   return true;
 }
