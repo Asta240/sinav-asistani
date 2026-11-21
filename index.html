@@ -372,6 +372,41 @@
   .dayatt-row .att button{width:auto;padding:0 10px;height:26px;font-size:12px}
   body.no-attend .dayatt, body.no-attend .dayatt-row{display:none !important}
   .stats-card{margin-bottom:16px}
+  .cd-card{margin:14px 0}
+  .cd-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap} .cd-sub{font-size:12.5px}
+  .cd-nums{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0}
+  .cd-nums div{background:var(--accent-soft);border-radius:14px;padding:10px 4px;text-align:center}
+  .cd-nums b{display:block;font-size:30px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.1;color:var(--accent)} .cd-nums small{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+  .cd-balls{display:flex;flex-wrap:wrap;gap:6px}
+  .cd-b{width:18px;height:22px;border-radius:50% 50% 50% 50% / 45% 45% 55% 55%;border:2px solid var(--line);position:relative;display:flex;align-items:center;justify-content:center;font-size:12px}
+  .cd-b::after{content:"";position:absolute;bottom:-6px;left:50%;width:1px;height:5px;background:var(--line)}
+  .cd-b.past{background:var(--accent);border-color:var(--accent)} .cd-b.today{border-color:var(--good);box-shadow:0 0 0 3px var(--good-soft)}
+  .cd-b.exam{border-color:var(--bad);width:24px;height:26px}
+  .cd-foot{font-size:12px;margin:12px 0 0}
+  @media (max-width:600px){ .cd-nums b{font-size:24px} .cd-b{width:14px;height:18px} }
+  .focus-btn{color:var(--accent)!important;font-size:11px!important}
+  .focus-box{max-width:380px;text-align:center} .focus-box h2{font-size:18px}
+  .fc-ring{--p:0;width:190px;height:190px;border-radius:50%;margin:18px auto;display:flex;align-items:center;justify-content:center;background:conic-gradient(var(--accent) calc(var(--p)*1%), var(--line) 0);position:relative}
+  .fc-ring::before{content:"";position:absolute;inset:10px;border-radius:50%;background:var(--card)}
+  .fc-ring span{position:relative;font-size:44px;font-weight:800;font-variant-numeric:tabular-nums}
+  .focus-box.brk .fc-ring{background:conic-gradient(var(--good) calc(var(--p)*1%), var(--line) 0)}
+  .focus-pill{position:fixed;left:16px;bottom:16px;z-index:70;background:var(--accent);color:#fff;border:0;border-radius:99px;padding:10px 16px;font-weight:800;font-size:15px;box-shadow:0 6px 20px rgba(0,0,0,.25);font-variant-numeric:tabular-nums;cursor:pointer}
+  .focus-pill.brk{background:var(--good)} .focus-pill.paused{opacity:.7}
+  .grade-chip.ana{margin-left:6px}
+  .an-box{max-width:520px;max-height:88vh;overflow-y:auto}
+  .an-head,.an-row{display:grid;grid-template-columns:1fr 70px 70px;gap:8px;align-items:center}
+  .an-head{font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.05em;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  .an-row{padding:6px 0;border-bottom:1px solid var(--line)} .an-row input{width:100%;padding:6px;text-align:center}
+  .an-name{display:flex;gap:6px;align-items:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .an-chart{margin-top:14px} .an-total{font-size:15px;margin-bottom:8px}
+  .an-bar{display:grid;grid-template-columns:110px 1fr 44px;gap:8px;align-items:center;margin:6px 0;font-size:13px}
+  .an-n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .an-t{height:12px;background:var(--line);border-radius:6px;overflow:hidden}
+  .an-t i{display:block;height:100%;background:hsl(var(--h) 65% 55%);border-radius:6px} .an-bar.weak .an-n{color:var(--bad);font-weight:700}
+  .nav-group{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:14px 16px 4px}
+  .add-prev{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+  @media (max-width:700px){ .add-prev{grid-template-columns:1fr} }
+  .ap{border:1px dashed var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:4px;font-size:13px}
+  .ap span{color:var(--muted)} .ap code{font-size:12px}
   .faq-legend{font-size:12.5px;margin:0 0 8px} .faq .star{margin-right:6px}
   .nt-form{display:flex;flex-direction:column;gap:10px;margin-top:12px}
   .nt-how{font-size:13px;margin:0;background:var(--accent-soft);border-radius:10px;padding:8px 12px;color:var(--ink)}
@@ -576,6 +611,11 @@
     <div class="row" style="justify-content:space-between;gap:12px">
       <div><h2>📄 Kurulunu ekle</h2>
         <p class="muted" style="margin:4px 0 0">Önce <b>📚 Hazır kurullar</b>'a bak — biri ayıklayıp paylaştıysa tek tıkla eklersin. Yoksa: <b>PDF Ayırıcı</b>'da kitapçığı yükle → kodu "Kurul kodu ekle" ile yapıştır → <b>🌍 Kütüphaneye paylaş</b> ile herkese aç. Kurulun zaten varsa ilerlemen korunarak güncellenir.</p></div>
+      <div class="add-prev" id="addPrev">
+        <div class="ap"><b>📚 Hazır kurullar</b><span id="apLib">Yükleniyor…</span></div>
+        <div class="ap"><b>📥 Kurul kodu</b><span><code>KRL1.eJy…</code> → yapıştır, kurulun ders, konu ve programıyla gelir</span></div>
+        <div class="ap"><b>📄 PDF Ayırıcı</b><span>Kitapçık PDF'i → Claude okur → sana kurul kodu verir</span></div>
+      </div>
       <div class="row"><button id="saLibBtn">📚 Hazır kurullar</button><button class="btn-code" id="saCodeBtn">📥 Kurul kodu ekle</button><a class="btn-pdf" id="addAyirici" target="_blank" rel="noopener" style="display:none">📄 PDF Ayırıcı ↗</a></div>
     </div>
   </section>
@@ -619,6 +659,7 @@
     <div class="card stat"><div class="k">Kalan iş</div><div class="v" id="sNeed">0 sa</div><div class="d" id="sNeedD">Elindeki süre: –</div><div class="d" id="sSlides" style="display:none"></div></div>
   </section>
 
+  <section class="card cd-card count" id="cdCard" style="display:none"></section>
   <div id="verdict"></div>
   <section class="card today-hero" id="todayHero" style="display:none"></section>
   </div>
@@ -680,15 +721,18 @@
 <aside id="drawer" class="drawer" aria-hidden="true">
   <div class="drawer-h"><span class="drawer-title">Sınav Haftası Asistanı</span><button class="icon" id="drawerClose" title="Kapat">✕</button></div>
   <button class="nav-item" data-nav="settings">Ayarlar</button>
+  <div class="nav-group">Çalışma</div>
   <button class="nav-item" data-nav="home">Ana sayfa</button>
   <button class="nav-item" data-nav="add">Kurul ekle</button>
   <div class="nav-row"><button class="nav-item" id="navTrack" data-navtoggle="1"><span>Sınav takibi</span><span class="chev">▸</span></button><button class="nav-edit" id="navEdit" data-navedit="track" title="Sırala / düzenle"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>
   <div id="navKurullar" class="nav-sub" style="display:none"></div>
   <button class="nav-item" id="navNotes" data-nav="notes" style="display:none">Notlar & slaytlar</button>
+  <div class="nav-group">Bilgi</div>
   <button class="nav-item nav-faq" data-nav="faq">Sık sorulan sorular</button>
   
   <button class="nav-item" id="navUpd" data-nav="updates">Sürüm notları</button>
   <button class="nav-item" id="navAdmin" data-nav="admin" style="display:none">Yönetici</button>
+  <div class="nav-group" id="navArchLbl" style="display:none">Geçmiş</div>
   <div class="nav-row" id="navArchRow" style="display:none"><button class="nav-item" id="navArch" data-navarch="1"><span>Arşiv <span class="muted" id="archCount"></span></span><span class="chev">▸</span></button><button class="nav-edit" id="navArchEdit" data-navedit="arch" title="Sırala / düzenle"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>
   <div id="navArchList" class="nav-sub" style="display:none"></div>
   <div class="drawer-sig">Sınav Haftası Asistanı<br><b>CardiacAI</b> · 2026 · <span id="verSig">v1.0.0</span></div>
@@ -897,6 +941,19 @@ const EN = {
 // --- yönlendirme / boş durum
 "Tümü":"All","boş":"empty","Bu cihazda":"On this device","Yeni bir cihazda":"On a new device","AB12":"AB12",
 "Çok sık istek gönderildi, biraz sonra tekrar dene.":"Too many requests, try again shortly.",
+"⏳ Sınava kalan":"⏳ Time until the exam","gün":"days","saat":"hours","dakika":"minutes","saniye":"seconds","Dolu balonlar geçen günler":"Filled balloons are past days","{#}/{#} gün geride kaldı · her balon bir gün":"{#}/{#} days behind you · each balloon is one day","{*} · 09:00":"{*} · 09:00",
+"Odak sayacı (25 dk)":"Focus timer (25 min)","Önce açık sayacı bitir":"Finish the running timer first","Sol alttaki sayaca dokun":"Tap the timer at the bottom left","🎯 Odak":"🎯 Focus","🌿 Mola":"🌿 Break","⏸ Duraklat":"⏸ Pause","▶ Başlat":"▶ Start","■ Bitir":"■ Finish","Küçült":"Minimize",
+"25 dk odak → 5 dk mola. Odak bitince süre bu konuya eklenir.":"25 min focus → 5 min break. When focus ends, the time is added to this topic.","Pencereyi kapatsan da sayaç sol altta çalışmaya devam eder.":"Even if you close this window, the timer keeps running at the bottom left.",
+"✓ {#} dk çalışma eklendi":"✓ {#} min of study added","Şimdi 5 dk mola 🌿":"Now a 5-minute break 🌿","Mola bitti":"Break's over","Hazırsan yeni odak oturumunu başlat":"Start a new focus session when you're ready","Sayaç bitirilsin mi?":"Finish the timer?","{#} dakika çalıştın; bu süre konuya eklenecek.":"You studied for {#} minutes; this time will be added to the topic.","Evet, bitir":"Yes, finish",
+"📊 Sınav analizi":"📊 Exam analysis","{*} — her dersten kaç soru vardı, kaçını doğru yaptın?":"{*} — how many questions were there per course, and how many did you get right?","Soru":"Questions","Doğru":"Correct","Genel:":"Overall:","doğru ·":"correct ·","Her ders için doğru sayını yaz; grafik burada çıkar.":"Enter your correct answers for each course; the chart appears here.",
+"🔻 En zayıf:":"🔻 Weakest:","— bir sonraki kurulda buna daha çok zaman ayır.":"— spend more time on it in the next block.","Notuma yaz":"Use as my grade","✓ Notun kaydedildi":"✓ Grade saved",
+"Çalışma":"Study","Bilgi":"Info","Geçmiş":"History","📚 Hazır kurullar":"📚 Ready-made blocks","📥 Kurul kodu":"📥 Block code","→ yapıştır, kurulun ders, konu ve programıyla gelir":"→ paste it and your block arrives with its courses, topics and timetable","Kitapçık PDF'i → Claude okur → sana kurul kodu verir":"Booklet PDF → Claude reads it → gives you a block code",
+"kurul hazır · en yeni:":"blocks ready · newest:","Henüz paylaşılan yok — ilk sen paylaş":"Nothing shared yet — be the first","Şu an ulaşılamadı":"Unavailable right now",
+"Menü grupları":"Menu groups","Menüdeki bölümler “Çalışma”, “Bilgi” ve “Geçmiş” başlıkları altında gruplandı.":"Menu sections are grouped under “Study”, “Info” and “History”.",
+"Kurul ekleme önizlemesi":"Add-block previews","Kurul ekle sayfasında her yöntemin ne işe yaradığı kısa önizlemelerle gösterilir; hazır kurul sayısı ve en yeni paylaşılan kurul görünür.":"The Add block page shows short previews of what each method does, including the number of ready-made blocks and the newest shared one.",
+"Canlı geri sayım":"Live countdown","Bugün sekmesinde sınava kalan süre gün, saat, dakika ve saniye olarak gösterilir. Balon takvimde geçen günler dolu, sınav günü 🎯 ile işaretlenir.":"The Today tab shows the time until the exam in days, hours, minutes and seconds. In the balloon calendar past days are filled and the exam day is marked with 🎯.",
+"Odak sayacı":"Focus timer","Bugünkü çalışma listesindeki ▶ düğmesiyle 25 dakikalık odak ve 5 dakikalık mola sayacı başlatılır; tamamlanan odak süresi konunun ilerlemesine eklenir.":"The ▶ button in today's study list starts a 25-minute focus and 5-minute break timer; completed focus time is added to the topic's progress.",
+"Sınav analizi":"Exam analysis","Sınavı geçmiş kurullarda her ders için soru ve doğru sayısı girilerek ders bazında başarı grafiği görüntülenir; en zayıf ders belirtilir.":"For blocks whose exam has passed, entering the number of questions and correct answers per course shows a per-course success chart and highlights the weakest course.",
 "Hesap":"Account","Hesabımı sil":"Delete my account","Hesabın, kurulların, ilerlemen ve rozetlerin kalıcı olarak silinir; takma adın serbest kalır.":"Your account, blocks, progress and badges are deleted permanently; your nickname becomes available.",
 "Hesabın silinsin mi?":"Delete your account?","Evet, hesabımı sil":"Yes, delete my account","🗑️ Hesabın silindi":"🗑️ Your account was deleted","10 saniye içinde geri alabilirsin":"You can undo within 10 seconds","↶ Hesabın geri getirildi":"↶ Your account was restored",
 "Silinemedi":"Could not delete","Sil":"Delete","Hesabı sil":"Delete account","{*} hesabı silinsin mi?":"Delete the account {*}?","Evet, hesabı sil":"Yes, delete account","🗑️ Hesap silindi":"🗑️ Account deleted","↶ Hesap geri getirildi":"↶ Account restored",
@@ -1123,6 +1180,15 @@ document.addEventListener("click", e=>{ const u=e.target.closest("#verFoot"); if
 // KURALLAR: yeni sürüm EN ÜSTE eklenir · bir sürümde en fazla 3 madde (4. madde yeni yama sürümü açar: v1.0.1, v1.0.2…)
 // Kullanıcı görmediği sürümü açılışta bir kez görür; "Anladım" deyince root.settings.seenVer kaydedilir (cihazlar arası).
 const UPDATE_LOG = [
+  { ver:"v1.1.1", date:"2026-11-21", items:[
+    ["DEĞİŞİKLİK","Menü grupları","Menüdeki bölümler “Çalışma”, “Bilgi” ve “Geçmiş” başlıkları altında gruplandı."],
+    ["DEĞİŞİKLİK","Kurul ekleme önizlemesi","Kurul ekle sayfasında her yöntemin ne işe yaradığı kısa önizlemelerle gösterilir; hazır kurul sayısı ve en yeni paylaşılan kurul görünür."],
+  ]},
+  { ver:"v1.1.0", date:"2026-11-21", items:[
+    ["YENİ","Canlı geri sayım","Bugün sekmesinde sınava kalan süre gün, saat, dakika ve saniye olarak gösterilir. Balon takvimde geçen günler dolu, sınav günü 🎯 ile işaretlenir."],
+    ["YENİ","Odak sayacı","Bugünkü çalışma listesindeki ▶ düğmesiyle 25 dakikalık odak ve 5 dakikalık mola sayacı başlatılır; tamamlanan odak süresi konunun ilerlemesine eklenir."],
+    ["YENİ","Sınav analizi","Sınavı geçmiş kurullarda her ders için soru ve doğru sayısı girilerek ders bazında başarı grafiği görüntülenir; en zayıf ders belirtilir."],
+  ]},
   { ver:"v1.0.9", date:"2026-11-20", items:[
     ["YENİ","Slayt sayacı","“Kalan iş” kartında, işaretlenen ilerlemeye göre bitirilen ve kalan slayt sayısı gösterilir."],
     ["YENİ","Hesap silme","Kullanıcılar Ayarlar → Hesap bölümünden kendi hesaplarını, yöneticiler yönetici sayfasından herhangi bir hesabı onay vererek silebilir; silme işlemi 10 saniye içinde geri alınabilir."],
@@ -1173,7 +1239,7 @@ const UPDATE_LOG = [
 ];
 const LATEST = UPDATE_LOG[0].ver;
 // "YENİ" şeridi: özelliğin eklendiği sürüm çıktıktan sonraki 7 gün boyunca gösterilir
-const NEW_IN = { updlog:"v1.0.0", lang:"v1.0.1", stats:"v1.0.1", ics:"v1.0.1", pwa:"v1.0.2", today:"v1.0.2", badges:"v1.0.2", name:"v1.0.3", notes:"v1.0.3", board:"v1.0.4" };
+const NEW_IN = { updlog:"v1.0.0", lang:"v1.0.1", stats:"v1.0.1", ics:"v1.0.1", pwa:"v1.0.2", today:"v1.0.2", badges:"v1.0.2", name:"v1.0.3", notes:"v1.0.3", board:"v1.0.4", countdown:"v1.1.0", focus:"v1.1.0", analysis:"v1.1.0" };
 // Şerit: sürüm çıktıktan sonra 7 gün görünür; kullanıcı o yeni şeye bir kez basınca kaybolur (root.settings.seenNew)
 const newRib = k => { const v=UPDATE_LOG.find(x=>x.ver===NEW_IN[k]); const seen=root && root.settings && root.settings.seenNew && root.settings.seenNew[k];
   return v && !seen && (Date.now()-new Date(v.date+"T00:00").getTime()) < 7*864e5 ? `<span class="new-rib" data-rib="${k}">YENİ</span>` : ""; };
@@ -1539,7 +1605,7 @@ function sortedFolders(){
   return arr;
 }
 function setManualOrder(ids){ const rest=sortedFolders().map(f=>f.id).filter(id=>!ids.includes(id)); root.kurulOrder=[...ids, ...rest]; root.kurulSort="manual"; save(); renderDrawer(); }
-function showView(v){ view=v; $("sharePanel").style.display="none"; $("homeView").style.display = v==="home"?"":"none"; $("addView").style.display = v==="add"?"":"none"; $("settingsView").style.display = v==="settings"?"":"none"; if(v==="settings") renderSettings(); $("faqView").style.display = v==="faq"?"":"none"; if(v==="faq") renderFaq(); $("updView").style.display = v==="updates"?"":"none"; if(v==="updates"){ markNewSeen("updlog"); renderUpdates(); } $("adminView").style.display = v==="admin"?"":"none"; if(v==="admin") renderAdmin(); $("notesView").style.display = v==="notes"?"":"none"; if(v==="notes"){ markNewSeen("notes"); renderNotes(); } $("kurulView").style.display = v==="kurul"?"":"none"; renderDrawer(); if(v==="home") renderQuote(); window.scrollTo({top:0}); }
+function showView(v){ view=v; $("sharePanel").style.display="none"; $("homeView").style.display = v==="home"?"":"none"; $("addView").style.display = v==="add"?"":"none"; if(v==="add") loadAddPreview(); $("settingsView").style.display = v==="settings"?"":"none"; if(v==="settings") renderSettings(); $("faqView").style.display = v==="faq"?"":"none"; if(v==="faq") renderFaq(); $("updView").style.display = v==="updates"?"":"none"; if(v==="updates"){ markNewSeen("updlog"); renderUpdates(); } $("adminView").style.display = v==="admin"?"":"none"; if(v==="admin") renderAdmin(); $("notesView").style.display = v==="notes"?"":"none"; if(v==="notes"){ markNewSeen("notes"); renderNotes(); } $("kurulView").style.display = v==="kurul"?"":"none"; renderDrawer(); if(v==="home") renderQuote(); window.scrollTo({top:0}); }
 // Menü açıkken arkadaki sayfa kaymasın (mobilde parmak menüyü kaydırsın)
 let drawerScrollY=0;
 function lockScroll(on){
@@ -1549,6 +1615,7 @@ function lockScroll(on){
 }
 function openDrawer(o){ if(!o) navEdit=null; document.body.classList.toggle("drawer-open", o); $("drawer").setAttribute("aria-hidden", o?"false":"true"); lockScroll(!!o); if(o) renderDrawer(); }
 function renderDrawer(){
+  setTimeout(()=>{ if($("navArchLbl")) $("navArchLbl").style.display=$("navArchRow").style.display; },0);
   if($("navNotes")){ $("navNotes").style.display = SA ? "" : "none"; $("navNotes").innerHTML = `Notlar & slaytlar${newRib("notes")}`; }
   if($("navUpd")) $("navUpd").innerHTML = `Sürüm notları${newRib("updlog")}`;
   if($("verSig")) $("verSig").textContent = LATEST; if($("verFoot")) $("verFoot").textContent = LATEST;
@@ -1908,6 +1975,35 @@ function gradeChip(f){
   if(examPassed(f) || f.archived) return `<button class="grade-chip" data-fgrade="1">+ Aldığım notu yaz</button>`;
   return "";
 }
+function analysisChip(f){
+  if(!(examPassed(f) || f.archived) || !f.courses.length) return "";
+  return `<button class="grade-chip ana" data-fanalysis="1">📊 Sınav analizi${newRib("analysis")}</button>`;
+}
+// ---- 📊 Sınav analizi: her ders için soru / doğru → yüzde, en zayıf ders üstte
+function openAnalysis(){
+  const f=state; f.result=f.result||{};
+  const el=document.createElement("div"); el.className="modal-bg"; el.style.zIndex=80;
+  const rows=()=>f.courses.map(c=>{ const r=f.result[c.id]||{}; const n=r.n??(+c.questions||""); return {c, n:+n||0, d:r.d}; });
+  const draw=()=>{
+    const R=rows(), filled=R.filter(x=>x.n>0 && x.d!=null && x.d!==""), N=filled.reduce((a,x)=>a+x.n,0), D=filled.reduce((a,x)=>a+Math.min(+x.d,x.n),0);
+    const pct=x=>x.n? Math.round(Math.min(+x.d,x.n)/x.n*100) : 0;
+    const chart=[...filled].sort((a,b)=>pct(a)-pct(b));
+    el.querySelector("#anChart").innerHTML = filled.length ? `<div class="an-total">Genel: <b>${D}/${N}</b> doğru · <b>%${N?Math.round(D/N*100):0}</b></div>`+chart.map((x,i)=>`<div class="an-bar ${i===0&&chart.length>1?"weak":""}"><span class="an-n">${esc(shortCourse(x.c.name))}</span><span class="an-t"><i style="width:${pct(x)}%;--h:${hueByName(x.c.name)}"></i></span><b>%${pct(x)}</b></div>`).join("")
+      + (chart.length>1?`<p class="muted" style="font-size:12.5px;margin:8px 0 0">🔻 En zayıf: <b>${esc(shortCourse(chart[0].c.name))}</b> — bir sonraki kurulda buna daha çok zaman ayır.</p>`:"")
+      : `<p class="muted" style="margin:0">Her ders için doğru sayını yaz; grafik burada çıkar.</p>`;
+    el.querySelector("#anUse").style.display = filled.length ? "" : "none"; el.querySelector("#anUse").dataset.v = N?Math.round(D/N*1000)/10:"";
+  };
+  el.innerHTML=`<div class="modal an-box"><h2>📊 Sınav analizi</h2><p class="muted" style="margin:0 0 10px">${esc(f.name)} — her dersten kaç soru vardı, kaçını doğru yaptın?</p>
+    <div class="an-head"><span>Ders</span><span>Soru</span><span>Doğru</span></div>
+    ${rows().map(x=>`<div class="an-row"><span class="an-name"><span class="dot" style="--h:${hueByName(x.c.name)}"></span>${esc(x.c.name)}</span><input type="number" min="0" inputmode="numeric" data-an="n" data-cid="${x.c.id}" value="${x.n||""}" placeholder="–"><input type="number" min="0" inputmode="numeric" data-an="d" data-cid="${x.c.id}" value="${x.d??""}" placeholder="–"></div>`).join("")}
+    <div id="anChart" class="an-chart"></div>
+    <div class="row" style="justify-content:space-between;margin-top:14px"><button class="ghost" id="anUse">Notuma yaz</button><button data-an-close="1">Kapat</button></div></div>`;
+  document.body.append(el); draw();
+  el.addEventListener("input", e=>{ const i=e.target.closest("[data-an]"); if(!i) return; const r=f.result[i.dataset.cid]=f.result[i.dataset.cid]||{}; const v=i.value===""?null:Math.max(0,parseInt(i.value)||0);
+    if(i.dataset.an==="n"){ if(v==null) delete r.n; else r.n=v; } else { if(v==null) delete r.d; else r.d=v; } save(); draw(); });
+  el.onclick=e=>{ if(e.target===el || e.target.closest("[data-an-close]")){ el.remove(); render(); return; }
+    if(e.target.closest("#anUse")){ const v=+e.target.closest("#anUse").dataset.v; if(!isNaN(v)){ f.grade=v; save(); toast("✓ Notun kaydedildi", "%"+String(v).replace(".",",")); el.remove(); render(); } } };
+}
 function openGrade(){
   const el=document.createElement("div"); el.className="modal-bg"; el.style.zIndex=80;
   el.innerHTML=`<div class="modal confirm-box"><h2>${esc(state.name)}</h2><p class="muted" style="margin:0 0 10px">Bu kurul sınavından kaç aldın?</p>
@@ -1983,7 +2079,7 @@ function renderFolders(){
   $("demoBtn").style.display = (state.isDefault || (state.name==="1. Kurul" && !state.courses.length)) ? "" : "none";
   const d = state.examDate ? new Date(state.examDate+"T00:00:00").toLocaleDateString(LOC(),{day:"numeric",month:"long"}) : "";
   const title = folderForm ? `<form class="folder-form" id="folderForm"><input id="fName" placeholder="${folderForm==="new"?"Yeni kurul adı, ör. Dönem 2 – 3. Kurul":""}" value="${folderForm==="rename"?esc(state.name):""}" required><button type="submit">${folderForm==="rename"?"Kaydet":"Kurulu oluştur"}</button><button type="button" class="ghost" data-fcancel="1">Vazgeç</button></form>`
-    : `<h2>${esc(state.name)}</h2>${d?`<span class="muted">Sınav: ${d}</span>`:""}${gradeChip(state)}`;
+    : `<h2>${esc(state.name)}</h2>${d?`<span class="muted">Sınav: ${d}</span>`:""}${gradeChip(state)}${analysisChip(state)}`;
   const tools = folderForm ? "" : `<div class="folder-tools">${SA && state.courses.length && !state.fromLib ? (state.publishedId ? `<button class="ghost pub-on" data-funpub="1" title="Kütüphaneden kaldır">🌍 Kütüphanede · Kaldır</button>` : `<button class="ghost" data-fpub="1">🌍 Kütüphaneye paylaş</button>`) : ""}<button class="ghost" data-fshare="1">🔗 Paylaş</button><button class="ghost" data-fcode="1">Kod ile ekle</button><button class="ghost" data-frename="1">Adını değiştir</button><button class="ghost" data-farch="1">${state.archived?"Arşivden çıkar":"Arşivle"}</button>${
     `<button class="ghost" data-fdel="1">Kurulu sil</button>`}</div>`;
   const banner = state.archived && !folderForm ? `<div class="arch-banner">Bu kurul arşivde — menüde "Sınav takibi" yerine "Arşiv" altında duruyor. <button class="ghost" data-farch="1">Arşivden çıkar</button></div>` : "";
@@ -2124,6 +2220,33 @@ function compute(){
 
 function fmtH(h){ return (Math.round(h*10)/10).toString().replace(".",",") + " sa"; }
 
+// ---- ⏳ Canlı geri sayım + balon takvim (geçen günler dolu). Sınav saati bilinmediği için 09:00 kabul edilir.
+function examAt(f){ return f.examDate ? new Date(f.examDate+"T09:00:00") : null; }
+function cdParts(ms){ ms=Math.max(0,ms); const d=Math.floor(ms/864e5), h=Math.floor(ms%864e5/36e5), m=Math.floor(ms%36e5/6e4), s=Math.floor(ms%6e4/1e3); return {d,h,m,s}; }
+function renderCountdown(){
+  const el=$("cdCard"); if(!el) return; const ex=examAt(state);
+  if(!ex || ex-Date.now()<=-864e5){ el.style.display="none"; return; }
+  el.style.display="";
+  // başlangıç: kurul başlangıcı → ilk ders → kurulun eklendiği gün; en fazla son 70 gün gösterilir
+  const iso=x=>toISO(x);
+  let st = state.startDate ? new Date(state.startDate+"T00:00:00") : ((state.sessions||[]).map(r=>r.date).sort()[0] ? new Date((state.sessions||[]).map(r=>r.date).sort()[0]+"T00:00:00") : new Date(state.createdAt||Date.now()));
+  st.setHours(0,0,0,0); const end=new Date(state.examDate+"T00:00:00");
+  if((end-st)/864e5>69){ st=new Date(end); st.setDate(st.getDate()-69); }
+  const t0=todayStart(), days=[]; for(let d=new Date(st); d<=end; d.setDate(d.getDate()+1)) days.push(new Date(d));
+  const past=days.filter(d=>d<t0).length, total=days.length;
+  el.innerHTML=`<div class="cd-h"><div class="lbl">⏳ Sınava kalan${newRib("countdown")}</div><span class="muted cd-sub">${ex.toLocaleDateString(LOC(),{day:"numeric",month:"long",weekday:"long"})} · 09:00</span></div>
+    <div class="cd-nums" id="cdNums"></div>
+    <div class="cd-balls" title="Dolu balonlar geçen günler">${days.map(d=>{ const k=d<t0?"past":iso(d)===iso(t0)?"today":iso(d)===state.examDate?"exam":"";
+      return `<span class="cd-b ${k}" title="${d.toLocaleDateString(LOC(),{day:"numeric",month:"short",weekday:"short"})}">${k==="exam"?"🎯":""}</span>`; }).join("")}</div>
+    <p class="muted cd-foot">${past}/${total} gün geride kaldı · her balon bir gün</p>`;
+  tickCountdown();
+}
+function tickCountdown(){
+  const n=$("cdNums"), ex=state && examAt(state); if(!n || !ex) return;
+  const p=cdParts(ex-Date.now()), pad=x=>String(x).padStart(2,"0");
+  n.innerHTML=`<div><b>${p.d}</b><small>gün</small></div><div><b>${pad(p.h)}</b><small>saat</small></div><div><b>${pad(p.m)}</b><small>dakika</small></div><div><b>${pad(p.s)}</b><small>saniye</small></div>`;
+}
+setInterval(()=>{ if(view==="kurul" && tab==="today") tickCountdown(); }, 1000);
 function render(){
   if(!state) return;
   setTimeout(checkBadges, 0);
@@ -2132,6 +2255,7 @@ function render(){
   $("dailyHours").value = state.dailyHours;
   $("reviewDay").value = String(state.reviewDay);
   const c = compute();
+  renderCountdown();
 
   // Özet
   if(c.days==null){ $("sDays").textContent="–"; $("sDaysD").textContent="Sınav tarihini gir"; }
@@ -2266,6 +2390,8 @@ $("todayHero").addEventListener("click", e=>{
   } else if(d.undo!==undefined){
     const x=TL.done[+d.undo]; if(!x) return; const t=state.topics.find(y=>y.id===x.id);
     if(t){ const b0=t.done; t.done=Math.max(0,t.done-x.add); logStudy(t, t.done-b0); } TL.done.splice(+d.undo,1); save(); render();
+  } else if(d.focus!==undefined){
+    const it=items[+d.focus]; if(it) startFocus(it.topic);
   } else if(d.swap!==undefined){
     swapOpen = swapOpen===+d.swap ? null : +d.swap; renderToday(lastC);
   }
@@ -2313,7 +2439,7 @@ function renderToday(c){
       return `<li class="ok" style="--h:${hueOf(t.courseId)}"><button class="chk" data-undo="${k}" title="Geri al">✓</button><span class="nm"><span>${esc(t.name)}</span><small>${esc(courseOf(t)?.name||"")} · yapıldı</small></span><span class="hr">${fmtH(x.h)}</span></li>`; }).join("");
   const planRows = d.items.map((it,k)=>{ const t=it.topic; const cn=courseOf(t)?.name||"";
       const box = swapOpen===k ? `<div class="swapbox"><select data-swapsel="${k}"><option value="">Yerine hangi konu?</option>${swapOptions(t.id)}</select></div>` : "";
-      return `<li style="--h:${hueOf(it.cid)}"><button class="chk" data-ok="${k}" title="Çalıştım">✓</button><span class="nm"><span>${esc(it.name.includes("hafta konuları")?it.name.replace(/^[^:]*?\s\(/,"("):t.name)}</span>${lectToday(t)?`<span class="fresh">yeni işlendi</span>`:""}<small>${esc(cn)}${it.last?" · bugün biter":""}</small></span><span class="hr">${fmtH(it.h)}</span><button class="swap" data-swap="${k}" title="Başka konuyla değiştir">⇄</button></li>${box}`; }).join("");
+      return `<li style="--h:${hueOf(it.cid)}"><button class="chk focus-btn" data-focus="${k}" title="Odak sayacı (25 dk)">▶</button><button class="chk" data-ok="${k}" title="Çalıştım">✓</button><span class="nm"><span>${esc(it.name.includes("hafta konuları")?it.name.replace(/^[^:]*?\s\(/,"("):t.name)}</span>${lectToday(t)?`<span class="fresh">yeni işlendi</span>`:""}<small>${esc(cn)}${it.last?" · bugün biter":""}</small></span><span class="hr">${fmtH(it.h)}</span><button class="swap" data-swap="${k}" title="Başka konuyla değiştir">⇄</button></li>${box}`; }).join("");
   const doneH = TL.done.reduce((a,x)=>a+x.h,0);
   const study = (doneRows||planRows) ? `<ul class="study">${doneRows}${planRows}</ul>
       <div class="total">${doneH?`✓ ${fmtH(doneH)} yapıldı · `:""}${total?`kalan ${fmtH(total)}`:"bugünlük bitti 🎉"} · ✓ çalıştım, ⇄ başka konu</div>`
@@ -2321,6 +2447,65 @@ function renderToday(c){
   el.innerHTML = `<div class="hero-h"><h2>Bugün · ${todayStart().toLocaleDateString(LOC(),{day:"numeric",month:"long",weekday:"long"})}</h2>
       <span class="muted"><span class="count">Sınava <b>${c.days} gün</b> · </span>${esc(state.name)}</span></div>
     <div class="hero-b"><div class="hero-col"><h3>🏫 ${esc(dayLabel)}</h3>${preNote}${dayAtt}${classes}</div><div class="hero-col"><h3>📚 Okul sonrası çalış</h3>${study}</div></div>`;
+}
+
+// ---- ⏱ Odak sayacı: 25 dk odak / 5 dk mola. Odak bitince süre konunun ilerlemesine ve bugünkü çalışmaya eklenir.
+const FOCUS_KEY="sa-focus";
+let FOCUS = (()=>{ try{ return JSON.parse(localStorage.getItem(FOCUS_KEY)||"null"); }catch(e){ return null; } })();
+const saveFocus=()=>{ try{ FOCUS ? localStorage.setItem(FOCUS_KEY, JSON.stringify(FOCUS)) : localStorage.removeItem(FOCUS_KEY); }catch(e){} };
+const focusLeft = () => !FOCUS ? 0 : FOCUS.running ? Math.max(0, FOCUS.endAt-Date.now()) : FOCUS.left;
+function focusTopic(){ if(!FOCUS) return null; const f=root.folders.find(x=>x.id===FOCUS.fid); return f && {f, t:f.topics.find(t=>t.id===FOCUS.tid)}; }
+function startFocus(t){
+  if(FOCUS && FOCUS.tid!==t.id && FOCUS.mode==="focus" && FOCUS.spent>0){ toast("Önce açık sayacı bitir", "Sol alttaki sayaca dokun"); openFocus(); return; }
+  FOCUS={fid:state.id, tid:t.id, name:t.name, mode:"focus", len:25*6e4, left:25*6e4, running:true, endAt:Date.now()+25*6e4, spent:0, startedAt:Date.now()};
+  saveFocus(); openFocus(); markNewSeen("focus");
+}
+function creditFocus(ms){
+  const ft=focusTopic(); if(!ft || !ft.t || ms<60e3) return 0;
+  const h=Math.round(ms/36e5*100)/100, t=ft.t, f=ft.f, keep=state;
+  state=f; const TL=todayLog(); const before=t.done; t.done=Math.min(100, Math.round(t.done + h/topicHours(t)*100));
+  TL.done.push({id:t.id, h, add:t.done-before}); logStudy(t, t.done-before); state=keep; save(); render();
+  return Math.round(ms/6e4);
+}
+function focusBeep(){ try{ const A=new (window.AudioContext||window.webkitAudioContext)(); [0,0.35,0.7].forEach(d=>{ const o=A.createOscillator(), g=A.createGain(); o.frequency.value=880; o.connect(g); g.connect(A.destination); g.gain.setValueAtTime(0.25,A.currentTime+d); g.gain.exponentialRampToValueAtTime(0.001,A.currentTime+d+0.3); o.start(A.currentTime+d); o.stop(A.currentTime+d+0.3); }); }catch(e){} try{ navigator.vibrate && navigator.vibrate([200,100,200]); }catch(e){} }
+function focusTick(){
+  if(!FOCUS) { $("focusPill")?.remove(); return; }
+  const left=focusLeft();
+  if(FOCUS.running && left<=0){
+    focusBeep();
+    if(FOCUS.mode==="focus"){ const m=creditFocus(FOCUS.len); FOCUS={...FOCUS, mode:"break", len:5*6e4, left:5*6e4, running:true, endAt:Date.now()+5*6e4, spent:0}; saveFocus(); toast(`✓ ${m} dk çalışma eklendi`, "Şimdi 5 dk mola 🌿"); }
+    else { FOCUS={...FOCUS, mode:"focus", len:25*6e4, left:25*6e4, running:false, endAt:0, spent:0}; saveFocus(); toast("Mola bitti", "Hazırsan yeni odak oturumunu başlat"); }
+  }
+  const mm=String(Math.floor(focusLeft()/6e4)).padStart(2,"0"), ss=String(Math.floor(focusLeft()%6e4/1e3)).padStart(2,"0");
+  const box=$("focusBox");
+  if(box){ $("fcTime").textContent=`${mm}:${ss}`; $("fcMode").textContent = FOCUS.mode==="focus"?"🎯 Odak":"🌿 Mola"; $("fcPlay").textContent = FOCUS.running?"⏸ Duraklat":"▶ Başlat";
+    $("fcRing").style.setProperty("--p", (1-focusLeft()/FOCUS.len)*100); $("focusBox").classList.toggle("brk", FOCUS.mode!=="focus"); }
+  let pill=$("focusPill");
+  if(!box){ if(!pill){ pill=document.createElement("button"); pill.id="focusPill"; pill.onclick=openFocus; document.body.append(pill); }
+    pill.className="focus-pill"+(FOCUS.mode!=="focus"?" brk":"")+(FOCUS.running?"":" paused"); pill.textContent=`${FOCUS.mode==="focus"?"🎯":"🌿"} ${mm}:${ss}`; }
+  else pill?.remove();
+}
+setInterval(focusTick, 500);
+function openFocus(){
+  if(!FOCUS || $("focusBox")) return;
+  const el=document.createElement("div"); el.className="modal-bg"; el.id="focusBg"; el.style.zIndex=84;
+  el.innerHTML=`<div class="modal focus-box" id="focusBox">
+    <div class="row" style="justify-content:space-between;align-items:center;flex-wrap:nowrap"><span class="upd-kicker" id="fcMode">🎯 Odak</span><button class="icon" data-fc="min" title="Küçült">✕</button></div>
+    <h2 style="margin:6px 0 2px">${esc(FOCUS.name||"")}</h2><p class="muted" style="margin:0">25 dk odak → 5 dk mola. Odak bitince süre bu konuya eklenir.</p>
+    <div class="fc-ring" id="fcRing"><span id="fcTime">25:00</span></div>
+    <div class="row" style="justify-content:center;gap:8px"><button id="fcPlay" data-fc="play">⏸ Duraklat</button><button class="ghost" data-fc="stop">■ Bitir</button></div>
+    <p class="muted" style="margin:12px 0 0;font-size:12.5px;text-align:center">Pencereyi kapatsan da sayaç sol altta çalışmaya devam eder.</p></div>`;
+  document.body.append(el); focusTick();
+  el.onclick=async e=>{
+    const b=e.target.closest("[data-fc]"); if(e.target===el){ el.remove(); focusTick(); return; } if(!b) return; const a=b.dataset.fc;
+    if(a==="min"){ el.remove(); focusTick(); return; }
+    if(a==="play"){ if(FOCUS.running){ FOCUS.left=focusLeft(); FOCUS.running=false; } else { FOCUS.endAt=Date.now()+FOCUS.left; FOCUS.running=true; } saveFocus(); focusTick(); return; }
+    if(a==="stop"){
+      const spent=FOCUS.mode==="focus" ? FOCUS.len-focusLeft() : 0;
+      if(spent>=60e3){ if(!await askConfirm("Sayaç bitirilsin mi?", `${Math.round(spent/6e4)} dakika çalıştın; bu süre konuya eklenecek.`, "Evet, bitir", "var(--accent)")) return; const m=creditFocus(spent); toast(`✓ ${m} dk çalışma eklendi`); }
+      FOCUS=null; saveFocus(); el.remove(); focusTick();
+    }
+  };
 }
 
 // ---- Devamsızlık takibi ----
@@ -2577,6 +2762,7 @@ $("folders").addEventListener("click", e=>{
   else if(d.funpub) unpublish(state);
   else if(d.fsetup) setupWizard();
   else if(d.fgrade) openGrade();
+  else if(d.fanalysis) openAnalysis();
   else if(d.farch){ state.archived = !state.archived; if(!state.archived) navOpen=true; save(); render(); }
   else if(d.fcode) openCodeImport();
   else if(d.frename){ folderForm="rename"; confirmDel=false; renderFolders(); }
@@ -3084,6 +3270,12 @@ async function importFolderObj(f, libId){
   const ex = matchFolder({kurul_adi:f.name});
   if(ex && await askConfirm(`"${ex.name}" kurulun zaten var${ex.archived?" (📦 arşivde)":""}. Güncelleyeyim mi?`, "Evet: program, konular ve tarihler güncellenir, ilerlemen korunur"+(ex.archived?"; kurul arşivde kalır":"")+". Hayır: ayrı bir kurul olarak eklenir.", "Evet, güncelle", "var(--accent)")){ mergeFolderInto(ex, f); if(libId) ex.fromLib = libId; return ex.id; }
   root.folders.push(f); return f.id;
+}
+async function loadAddPreview(){
+  const el=$("apLib"); if(!el || !SA) return;
+  try{ const r=await fetch("/api/library",{cache:"no-store"}); const j=await r.json(); const it=j.items||[];
+    el.innerHTML = it.length ? `<b>${it.length}</b> kurul hazır · en yeni: <i>${esc(it[0].name)}</i>${it[0].school?` <span class="muted">(${esc(it[0].school)})</span>`:""}` : "Henüz paylaşılan yok — ilk sen paylaş";
+  }catch(e){ el.textContent="Şu an ulaşılamadı"; }
 }
 async function openLibrary(){
   const P=$("sharePanel"); showPanel();
