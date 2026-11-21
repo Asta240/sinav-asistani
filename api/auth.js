@@ -7,6 +7,10 @@
 // POST /api/auth {action:"setpw", code, email, password}    → eski kodlu hesaba e-posta + şifre ekle / değiştir
 // POST /api/auth {action:"google", credential, name?}       → {code} ya da {needName:true}
 // POST /api/auth {action:"linkgoogle", code, credential}    → mevcut hesaba Google bağla
+// E-posta onayı (BREVO_API_KEY + MAIL_FROM tanımlıysa): register/setpw önce {verify:true} döner, e-postaya 6 haneli kod gider.
+// POST /api/auth {action:"verify", email, vcode}            → kaydı tamamla → {code}
+// POST /api/auth {action:"verifyset", code, vcode}          → e-posta/şifre eklemeyi tamamla
+// POST /api/auth {action:"resend", email | code}            → kodu tekrar gönder
 const crypto = require("crypto");
 const { redis, newCode, CODE_RE, cleanCode, ipOf, overLimit, send, today, indexUser } = require("./_lib");
 
@@ -43,6 +47,24 @@ async function createAccount(req) {
   }
   throw { s: 500, e: "Hesap açılamadı, tekrar dene." };
 }
+// ---- e-posta gönderme (Brevo, bedava 300/gün). Anahtar yoksa onay adımı atlanır.
+const mailOn = () => !!(process.env.BREVO_API_KEY && process.env.MAIL_FROM);
+const sixDigits = () => String(crypto.randomInt(0, 1e6)).padStart(6, "0");
+async function sendCode(to, vcode, name) {
+  const html = `<div style="font-family:Arial,sans-serif;font-size:15px;color:#222"><p>Merhaba${name ? " " + name.replace(/[<>]/g, "") : ""},</p>
+    <p>Sınav Haftası Asistanı e-posta onay kodun:</p><p style="font-size:32px;font-weight:bold;letter-spacing:6px">${vcode}</p>
+    <p style="color:#666">Kod 15 dakika geçerli. Bu isteği sen yapmadıysan bu e-postayı yok sayabilirsin.</p><p>— CardiacAI</p></div>`;
+  const r = await fetch("https://api.brevo.com/v3/smtp/email", { method: "POST", headers: { "api-key": process.env.BREVO_API_KEY, "Content-Type": "application/json", accept: "application/json" },
+    body: JSON.stringify({ sender: { name: process.env.MAIL_NAME || "Sınav Haftası Asistanı", email: process.env.MAIL_FROM }, to: [{ email: to }], subject: `Onay kodun: ${vcode}`, htmlContent: html }) });
+  if (!r.ok) throw { s: 502, e: "Onay e-postası gönderilemedi, biraz sonra tekrar dene." };
+}
+async function checkPending(key, vcode) {
+  const p = JSON.parse((await redis("GET", key)) || "null");
+  if (!p) throw { s: 410, e: "Kodun süresi doldu, tekrar gönder." };
+  if ((p.tries || 0) >= 5) { await redis("DEL", key); throw { s: 429, e: "Çok fazla yanlış deneme. Baştan başla." }; }
+  if (String(vcode || "").trim() !== p.vcode) { p.tries = (p.tries || 0) + 1; await redis("SET", key, JSON.stringify(p), "EX", 900); throw { s: 400, e: "Kod yanlış." }; }
+  await redis("DEL", key); return p;
+}
 async function verifyGoogle(credential) {
   const cid = process.env.GOOGLE_CLIENT_ID; if (!cid) throw { s: 400, e: "Google girişi henüz açık değil." };
   const r = await fetch("https://oauth2.googleapis.com/tokeninfo?id_token=" + encodeURIComponent(String(credential || "")));
@@ -56,10 +78,10 @@ module.exports = async (req, res) => {
     const q = req.query || Object.fromEntries(new URL(req.url, "http://x").searchParams);
     const b = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
     if (req.method === "GET") {
-      if (q.config) return send(res, 200, { google: process.env.GOOGLE_CLIENT_ID || "" });
+      if (q.config) return send(res, 200, { google: process.env.GOOGLE_CLIENT_ID || "", mail: mailOn() });
       const code = cleanCode(q.me); if (!CODE_RE.test(code)) return send(res, 400, { error: "Geçersiz kod." });
       const u = await getUser(code) || {};
-      return send(res, 200, { email: u.email || "", hasPw: !!u.pw, google: !!u.google });
+      return send(res, 200, { email: u.email || "", hasPw: !!u.pw, google: !!u.google, verified: !!u.verified });
     }
     if (req.method !== "POST") return send(res, 405, { error: "Desteklenmeyen istek" });
     const a = b.action;
@@ -71,11 +93,47 @@ module.exports = async (req, res) => {
       if (pw.length < 6) return send(res, 400, { error: "Şifre en az 6 karakter olmalı." });
       const nf = await nameFree(n, null); if (!nf.ok) return send(res, 409, { error: nf.error, taken: nf.taken });
       if (await redis("GET", `auth:email:${email}`)) return send(res, 409, { error: "Bu e-postayla zaten bir hesap var. Giriş yap.", emailTaken: true });
+      if (mailOn()) {
+        if (await overLimit(`rl:mail:${ipOf(req)}:${today()}`, 15, 86400)) return send(res, 429, { error: "Bugün çok fazla onay e-postası istendi." });
+        const vcode = sixDigits();
+        await redis("SET", `auth:pending:${email}`, JSON.stringify({ name, pw: hashPw(pw), vcode, tries: 0 }), "EX", 900);
+        await sendCode(email, vcode, name);
+        return send(res, 200, { verify: true, email });
+      }
       const code = await createAccount(req);
-      await putUser(code, { email, pw: hashPw(pw), at: Date.now() });
+      await putUser(code, { email, pw: hashPw(pw), at: Date.now(), verified: false });
       await redis("SET", `auth:email:${email}`, code);
       await claim(code, name);
       return send(res, 200, { code });
+    }
+
+    if (a === "verify") {
+      const email = normEmail(b.email), p = await checkPending(`auth:pending:${email}`, b.vcode);
+      const nf = await nameFree(normName(p.name), null); if (!nf.ok) return send(res, 409, { error: nf.error, taken: nf.taken });
+      if (await redis("GET", `auth:email:${email}`)) return send(res, 409, { error: "Bu e-postayla zaten bir hesap var. Giriş yap.", emailTaken: true });
+      const code = await createAccount(req);
+      await putUser(code, { email, pw: p.pw, at: Date.now(), verified: true });
+      await redis("SET", `auth:email:${email}`, code);
+      await claim(code, p.name);
+      return send(res, 200, { code, name: p.name });
+    }
+    if (a === "resend") {
+      if (await overLimit(`rl:mail:${ipOf(req)}:${today()}`, 15, 86400)) return send(res, 429, { error: "Bugün çok fazla onay e-postası istendi." });
+      const key = b.code ? `auth:pendset:${cleanCode(b.code)}` : `auth:pending:${normEmail(b.email)}`;
+      const p = JSON.parse((await redis("GET", key)) || "null"); if (!p) return send(res, 410, { error: "Süre doldu, baştan başla." });
+      p.vcode = sixDigits(); p.tries = 0; await redis("SET", key, JSON.stringify(p), "EX", 900);
+      await sendCode(p.email || normEmail(b.email), p.vcode, p.name);
+      return send(res, 200, { ok: true });
+    }
+    if (a === "verifyset") {
+      const code = cleanCode(b.code); const p = await checkPending(`auth:pendset:${code}`, b.vcode);
+      const other = await redis("GET", `auth:email:${p.email}`); if (other && other !== code) return send(res, 409, { error: "Bu e-posta başka bir hesapta kayıtlı." });
+      const u = await getUser(code) || {};
+      if (u.email && u.email !== p.email && (await redis("GET", `auth:email:${u.email}`)) === code) await redis("DEL", `auth:email:${u.email}`);
+      u.email = p.email; u.pw = p.pw; u.verified = true; u.at = u.at || Date.now(); await putUser(code, u);
+      await redis("SET", `auth:email:${p.email}`, code);
+      const n = await redis("GET", `nameof:${owner(code)}`); if (n) await redis("SET", `auth:byname:${n}`, code);
+      return send(res, 200, { ok: true });
     }
 
     if (a === "login") {
@@ -94,6 +152,13 @@ module.exports = async (req, res) => {
       if (pw.length < 6) return send(res, 400, { error: "Şifre en az 6 karakter olmalı." });
       const other = await redis("GET", `auth:email:${email}`); if (other && other !== code) return send(res, 409, { error: "Bu e-posta başka bir hesapta kayıtlı." });
       const u = await getUser(code) || {};
+      if (mailOn()) {   // şifre ekleme/değiştirme her zaman e-posta koduyla onaylanır
+        if (await overLimit(`rl:mail:${ipOf(req)}:${today()}`, 15, 86400)) return send(res, 429, { error: "Bugün çok fazla onay e-postası istendi." });
+        const vcode = sixDigits();
+        await redis("SET", `auth:pendset:${code}`, JSON.stringify({ email, pw: hashPw(pw), vcode, tries: 0 }), "EX", 900);
+        await sendCode(email, vcode, "");
+        return send(res, 200, { verify: true, email });
+      }
       if (u.email && u.email !== email && (await redis("GET", `auth:email:${u.email}`)) === code) await redis("DEL", `auth:email:${u.email}`);
       u.email = email; u.pw = hashPw(pw); u.at = u.at || Date.now(); await putUser(code, u);
       await redis("SET", `auth:email:${email}`, code);
@@ -113,7 +178,7 @@ module.exports = async (req, res) => {
       const name = clipName(b.name); if (!name) return send(res, 200, { needName: true, email: g.email });
       const nf = await nameFree(normName(name), null); if (!nf.ok) return send(res, 409, { error: nf.error, taken: nf.taken });
       code = await createAccount(req);
-      await putUser(code, { email: g.email, google: g.sub, at: Date.now() });
+      await putUser(code, { email: g.email, google: g.sub, at: Date.now(), verified: true });
       if (g.email) await redis("SET", `auth:email:${g.email}`, code);
       await redis("SET", `auth:google:${g.sub}`, code);
       await claim(code, name);

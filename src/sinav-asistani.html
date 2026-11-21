@@ -796,6 +796,14 @@ const $ = id => document.getElementById(id);
 // ===== İngilizce sözlük (TR → EN). Anahtar: ekranda görünen metin (boşluklar sadeleştirilmiş).
 // {#} = sayı, {*} = herhangi bir metin. Yeni Türkçe metin eklersen buraya İngilizcesini de ekle.
 const EN = {
+  "E-posta doğrulama":"Email verification","Kayıt sırasında e-posta adresine gönderilen 6 haneli kodla adres doğrulanır.":"During sign-up, the email address is verified with a 6-digit code sent to it.",
+  "Şifre değişikliği onayı":"Password change confirmation","Şifre eklenirken veya değiştirilirken e-postaya onay kodu gönderilir.":"A confirmation code is sent by email when a password is added or changed.",
+  "Şifre tekrarı":"Password confirmation","Kayıt ve şifre değiştirme ekranlarına şifre tekrarı alanı eklendi.":"A repeat-password field was added to the sign-up and password change screens.",
+  "Şifre (tekrar)":"Password (again)","Yeni şifre (tekrar)":"New password (again)","Şifreler aynı değil.":"Passwords don't match.",
+  "📧 E-postanı onayla":"📧 Verify your email","adresine 6 haneli bir kod gönderdik. Gelmediyse spam klasörüne bak.":"— we sent a 6-digit code to this address. If it's not there, check your spam folder.",
+  "Onay kodu":"Verification code","Kodu tekrar gönder":"Resend code","Onayla":"Verify","6 haneli kodu yaz.":"Enter the 6-digit code.","Kontrol ediliyor…":"Checking…","Yeni kod gönderildi.":"A new code was sent.",
+  "Kod yanlış.":"Wrong code.","Kodun süresi doldu, tekrar gönder.":"The code expired, resend it.","Çok fazla yanlış deneme. Baştan başla.":"Too many wrong attempts. Start over.","Süre doldu, baştan başla.":"Time's up, start over.",
+  "Onay e-postası gönderilemedi, biraz sonra tekrar dene.":"Couldn't send the verification email, try again later.","Bugün çok fazla onay e-postası istendi.":"Too many verification emails requested today.",
 // --- genel / menü
 "Sınav Haftası Asistanı":"Exam Week Assistant","Sınav Haftası":"Exam Week","Asistanı":"Assistant","Sınav Haftası Asistanı ·":"Exam Week Assistant · developed by",
 "Sınav Haftası Asistanı · CardiacAI":"Exam Week Assistant · CardiacAI","Sınav Haftası Asistanı · Sürüm notları":"Exam Week Assistant · Release notes",
@@ -1252,6 +1260,10 @@ document.addEventListener("click", e=>{ const u=e.target.closest("#verFoot"); if
 // KURALLAR: yeni sürüm EN ÜSTE eklenir · bir sürümde en fazla 3 madde (4. madde yeni yama sürümü açar: v1.0.1, v1.0.2…)
 // Kullanıcı görmediği sürümü açılışta bir kez görür; "Anladım" deyince root.settings.seenVer kaydedilir (cihazlar arası).
 const UPDATE_LOG = [
+  { ver:"v1.2.1", date:"2026-11-21", items:[
+    ["YENİ","E-posta doğrulama","Kayıt sırasında e-posta adresine gönderilen 6 haneli kodla adres doğrulanır."],
+    ["DEĞİŞİKLİK","Şifre değişikliği onayı","Şifre eklenirken veya değiştirilirken e-postaya onay kodu gönderilir."],
+    ["DEĞİŞİKLİK","Şifre tekrarı","Kayıt ve şifre değiştirme ekranlarına şifre tekrarı alanı eklendi."]]},
   { ver:"v1.2.0", date:"2026-11-21", items:[
     ["YENİ","E-posta ve şifreyle giriş","Kayıt e-posta ve şifreyle yapılır; giriş için takma ad (ya da e-posta) ve şifre yeterlidir. Kodla giriş yapan eski hesaplar ana sayfadan e-posta ve şifre ekleyebilir."],
     ["YENİ","Google ile giriş","Google hesabıyla tek dokunuşla kayıt olunabilir ve giriş yapılabilir; mevcut hesaba Google bağlanabilir."],
@@ -3275,6 +3287,7 @@ function openWelcomeSA(){
       <label class="f">Takma ad<input id="wName" maxlength="24" autocomplete="nickname" placeholder="ör. Yasin" style="${box}"></label>
       <label class="f">E-posta<input id="wEmail" type="email" autocomplete="email" placeholder="ornek@mail.com" style="${box}"></label>
       <label class="f">Şifre<input id="wPw" type="password" autocomplete="new-password" placeholder="en az 6 karakter" style="${box}"></label>
+      <label class="f">Şifre (tekrar)<input id="wPw2" type="password" autocomplete="new-password" style="${box}"></label>
       <p class="muted" style="margin:6px 0 0;font-size:12.5px">Sitede takma adınla görünürsün; e-postan kimseye gösterilmez.</p>
       <button id="wRegGo" style="width:100%;margin-top:10px">Kayıt ol →</button>
       <p class="nm-err" id="wSt2" style="margin:8px 0 0"></p>
@@ -3308,14 +3321,18 @@ function openWelcomeSA(){
     if(!nm){ $("wSt2").textContent="Bir takma ad yaz."; $("wName").focus(); return; }
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){ $("wSt2").textContent="Geçerli bir e-posta yaz."; $("wEmail").focus(); return; }
     if(pw.length<6){ $("wSt2").textContent="Şifre en az 6 karakter olmalı."; $("wPw").focus(); return; }
+    if(pw!==$("wPw2").value){ $("wSt2").textContent="Şifreler aynı değil."; $("wPw2").focus(); return; }
     $("wRegGo").disabled=true; $("wSt2").textContent="Hesap açılıyor…";
-    try{ const j=await authPost({action:"register", name:nm, email:em, password:pw}); await startNewAccount(j.code, nm); }
+    try{ const j=await authPost({action:"register", name:nm, email:em, password:pw});
+      if(j.verify){ $("wRegGo").disabled=false; $("wSt2").textContent="";
+        return askVcode(j.email||em, async v=>{ const r=await authPost({action:"verify", email:em, vcode:v}); await startNewAccount(r.code, r.name||nm); }, {action:"resend", email:em}); }
+      await startNewAccount(j.code, nm); }
     catch(e){ $("wRegGo").disabled=false;
       if(e.taken){ $("wSt2").innerHTML=`“${esc(nm)}” takma adı alınmış. Senin hesabınsa <button class="link-btn" id="wToLogin" type="button">giriş yap</button>.`; $("wToLogin").onclick=()=>{ $("wId").value=nm; tab("login"); }; }
       else if(e.emailTaken){ $("wSt2").innerHTML=`Bu e-postayla zaten bir hesap var. <button class="link-btn" id="wToLogin" type="button">Giriş yap</button>`; $("wToLogin").onclick=()=>{ $("wId").value=em; tab("login"); }; }
       else $("wSt2").textContent=e.message; }
   };
-  $("wRegGo").onclick=reg; ["wName","wEmail","wPw"].forEach(id=>$(id).onkeydown=e=>{ if(e.key==="Enter") reg(); });
+  $("wRegGo").onclick=reg; ["wName","wEmail","wPw","wPw2"].forEach(id=>$(id).onkeydown=e=>{ if(e.key==="Enter") reg(); });
   // --- giriş
   const login=async()=>{
     const id=$("wId").value.trim(), pw=$("wLPw").value; if(!id||!pw){ $("wSt").textContent="Takma adını (ya da e-postanı) ve şifreni yaz."; return; }
@@ -3347,6 +3364,26 @@ function openWelcomeSA(){
   setTimeout(()=>$("wName").focus(),50);
 }
 // Eski kodlu hesaba (ya da şifre değiştirmek için) e-posta + şifre ekle; Google bağla
+// E-posta onay kodu penceresi: onVerify(kod) başarılıysa kapanır
+function askVcode(email, onVerify, resendBody){
+  const el=document.createElement("div"); el.className="modal-bg"; el.style.zIndex=95;
+  el.innerHTML=`<div class="modal confirm-box"><h2>📧 E-postanı onayla</h2>
+    <p class="muted" style="margin:0 0 10px"><b data-noi18n>${esc(email)}</b> adresine 6 haneli bir kod gönderdik. Gelmediyse spam klasörüne bak.</p>
+    <label class="f">Onay kodu<input id="vcIn" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456" style="letter-spacing:4px;font-size:20px;text-align:center"></label>
+    <p class="nm-err" id="vcSt" style="margin:8px 0 0"></p>
+    <div class="row" style="justify-content:space-between;margin-top:12px;gap:8px;flex-wrap:wrap"><button class="link-btn" data-vc="re" type="button">Kodu tekrar gönder</button>
+      <span class="row" style="gap:8px"><button class="ghost" data-vc="0">Vazgeç</button><button data-vc="1">Onayla</button></span></div></div>`;
+  document.body.append(el);
+  const go=async b=>{ const v=$("vcIn").value.replace(/\D/g,""); if(v.length!==6){ $("vcSt").textContent="6 haneli kodu yaz."; return; }
+    if(b) b.disabled=true; $("vcSt").textContent="Kontrol ediliyor…";
+    try{ await onVerify(v); el.remove(); } catch(err){ if(b) b.disabled=false; $("vcSt").textContent=err.message; } };
+  el.onclick=async e=>{ const b=e.target.closest("[data-vc]"); if(!b) return;
+    if(b.dataset.vc==="0") return el.remove();
+    if(b.dataset.vc==="re"){ b.disabled=true; try{ await authPost(resendBody); $("vcSt").textContent="Yeni kod gönderildi."; }catch(err){ $("vcSt").textContent=err.message; } setTimeout(()=>b.disabled=false,30000); return; }
+    go(b); };
+  $("vcIn").onkeydown=e=>{ if(e.key==="Enter") go(null); };
+  setTimeout(()=>$("vcIn").focus(),30);
+}
 function openSetPw(){
   const el=document.createElement("div"); el.className="modal-bg"; el.style.zIndex=85;
   const has=AUTH_ME && AUTH_ME.hasPw;
@@ -3354,6 +3391,7 @@ function openSetPw(){
     <p class="muted" style="margin:0 0 10px">${has?"Yeni e-posta ya da şifreni yaz.":"Bundan sonra kod yerine <b>takma adın + şifrenle</b> (ya da e-postanla) giriş yaparsın. Verilerin aynen kalır."}</p>
     <label class="f">E-posta<input id="spEmail" type="email" autocomplete="email" value="${esc((AUTH_ME&&AUTH_ME.email)||"")}"></label>
     <label class="f">${has?"Yeni şifre":"Şifre"}<input id="spPw" type="password" autocomplete="new-password" placeholder="en az 6 karakter"></label>
+    <label class="f">${has?"Yeni şifre (tekrar)":"Şifre (tekrar)"}<input id="spPw2" type="password" autocomplete="new-password"></label>
     <p class="nm-err" id="spSt" style="margin:8px 0 0"></p>
     <div class="row" style="justify-content:flex-end;margin-top:12px"><button class="ghost" data-sp="0">Vazgeç</button><button data-sp="1">Kaydet</button></div></div>`;
   document.body.append(el);
@@ -3361,7 +3399,11 @@ function openSetPw(){
     const em=$("spEmail").value.trim(), pw=$("spPw").value;
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){ $("spSt").textContent="Geçerli bir e-posta yaz."; return; }
     if(pw.length<6){ $("spSt").textContent="Şifre en az 6 karakter olmalı."; return; }
-    b.disabled=true; try{ await authPost({action:"setpw", code:CUR, email:em, password:pw}); el.remove(); toast("✓ E-posta ve şifre kaydedildi", `Artık “${myName()}” + şifrenle girebilirsin`); loadAuthMe(); }
+    if(pw!==$("spPw2").value){ $("spSt").textContent="Şifreler aynı değil."; return; }
+    const done=()=>{ toast("✓ E-posta ve şifre kaydedildi", `Artık “${myName()}” + şifrenle girebilirsin`); loadAuthMe(); };
+    b.disabled=true; try{ const j=await authPost({action:"setpw", code:CUR, email:em, password:pw}); el.remove();
+      if(j.verify) return askVcode(j.email||em, async v=>{ await authPost({action:"verifyset", code:CUR, vcode:v}); done(); }, {action:"resend", code:CUR});
+      done(); }
     catch(err){ b.disabled=false; $("spSt").textContent=err.message; } };
   setTimeout(()=>$("spEmail").focus(),30);
 }
