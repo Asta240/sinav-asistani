@@ -797,8 +797,9 @@ const $ = id => document.getElementById(id);
 // ===== İngilizce sözlük (TR → EN). Anahtar: ekranda görünen metin (boşluklar sadeleştirilmiş).
 // {#} = sayı, {*} = herhangi bir metin. Yeni Türkçe metin eklersen buraya İngilizcesini de ekle.
 const EN = {
+  "Eski şifre":"Old password","Eski şifreni yaz.":"Enter your old password.","Eski şifre yanlış.":"Old password is wrong.","Çok fazla deneme. Yarın tekrar dene.":"Too many attempts. Try again tomorrow.",
   "E-posta doğrulama":"Email verification","Kayıt sırasında e-posta adresine gönderilen 6 haneli kodla adres doğrulanır.":"During sign-up, the email address is verified with a 6-digit code sent to it.",
-  "Şifre değişikliği onayı":"Password change confirmation","Şifre eklenirken veya değiştirilirken e-postaya onay kodu gönderilir.":"A confirmation code is sent by email when a password is added or changed.",
+  "Şifre değişikliği onayı":"Password change confirmation","Şifre değiştirilirken eski şifre istenir; şifre eklenirken veya değiştirilirken e-postaya onay kodu gönderilir.":"A confirmation code is sent by email when a password is added or changed.",
   "Şifre tekrarı":"Password confirmation","Kayıt ve şifre değiştirme ekranlarına şifre tekrarı alanı eklendi.":"A repeat-password field was added to the sign-up and password change screens.",
   "Şifre (tekrar)":"Password (again)","Yeni şifre (tekrar)":"New password (again)","Şifreler aynı değil.":"Passwords don't match.",
   "📧 E-postanı onayla":"📧 Verify your email","adresine 6 haneli bir kod gönderdik. Gelmediyse spam klasörüne bak.":"— we sent a 6-digit code to this address. If it's not there, check your spam folder.",
@@ -1263,7 +1264,7 @@ document.addEventListener("click", e=>{ const u=e.target.closest("#verFoot"); if
 const UPDATE_LOG = [
   { ver:"v1.2.1", date:"2026-11-21", items:[
     ["YENİ","E-posta doğrulama","Kayıt sırasında e-posta adresine gönderilen 6 haneli kodla adres doğrulanır."],
-    ["DEĞİŞİKLİK","Şifre değişikliği onayı","Şifre eklenirken veya değiştirilirken e-postaya onay kodu gönderilir."],
+    ["DEĞİŞİKLİK","Şifre değişikliği onayı","Şifre değiştirilirken eski şifre istenir; şifre eklenirken veya değiştirilirken e-postaya onay kodu gönderilir."],
     ["DEĞİŞİKLİK","Şifre tekrarı","Kayıt ve şifre değiştirme ekranlarına şifre tekrarı alanı eklendi."]]},
   { ver:"v1.2.0", date:"2026-11-21", items:[
     ["YENİ","E-posta ve şifreyle giriş","Kayıt e-posta ve şifreyle yapılır; giriş için takma ad (ya da e-posta) ve şifre yeterlidir. Kodla giriş yapan eski hesaplar ana sayfadan e-posta ve şifre ekleyebilir."],
@@ -3391,6 +3392,7 @@ function openSetPw(){
   el.innerHTML=`<div class="modal confirm-box"><h2>🔐 ${has?"E-posta / şifre değiştir":"E-posta + şifre ekle"}</h2>
     <p class="muted" style="margin:0 0 10px">${has?"Yeni e-posta ya da şifreni yaz.":"Bundan sonra kod yerine <b>takma adın + şifrenle</b> (ya da e-postanla) giriş yaparsın. Verilerin aynen kalır."}</p>
     <label class="f">E-posta<input id="spEmail" type="email" autocomplete="email" value="${esc((AUTH_ME&&AUTH_ME.email)||"")}"></label>
+    ${has?`<label class="f">Eski şifre<input id="spOld" type="password" autocomplete="current-password"></label>`:""}
     <label class="f">${has?"Yeni şifre":"Şifre"}<input id="spPw" type="password" autocomplete="new-password" placeholder="en az 6 karakter"></label>
     <label class="f">${has?"Yeni şifre (tekrar)":"Şifre (tekrar)"}<input id="spPw2" type="password" autocomplete="new-password"></label>
     <p class="nm-err" id="spSt" style="margin:8px 0 0"></p>
@@ -3401,8 +3403,9 @@ function openSetPw(){
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){ $("spSt").textContent="Geçerli bir e-posta yaz."; return; }
     if(pw.length<6){ $("spSt").textContent="Şifre en az 6 karakter olmalı."; return; }
     if(pw!==$("spPw2").value){ $("spSt").textContent="Şifreler aynı değil."; return; }
+    const old=$("spOld")?$("spOld").value:""; if(has && !old){ $("spSt").textContent="Eski şifreni yaz."; $("spOld").focus(); return; }
     const done=()=>{ toast("✓ E-posta ve şifre kaydedildi", `Artık “${myName()}” + şifrenle girebilirsin`); loadAuthMe(); };
-    b.disabled=true; try{ const j=await authPost({action:"setpw", code:CUR, email:em, password:pw}); el.remove();
+    b.disabled=true; try{ const j=await authPost({action:"setpw", code:CUR, email:em, password:pw, oldPassword:old}); el.remove();
       if(j.verify) return askVcode(j.email||em, async v=>{ await authPost({action:"verifyset", code:CUR, vcode:v}); done(); }, {action:"resend", code:CUR});
       done(); }
     catch(err){ b.disabled=false; $("spSt").textContent=err.message; } };

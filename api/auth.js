@@ -152,6 +152,10 @@ module.exports = async (req, res) => {
       if (pw.length < 6) return send(res, 400, { error: "Şifre en az 6 karakter olmalı." });
       const other = await redis("GET", `auth:email:${email}`); if (other && other !== code) return send(res, 409, { error: "Bu e-posta başka bir hesapta kayıtlı." });
       const u = await getUser(code) || {};
+      if (u.pw) {   // şifre değiştirirken eski şifre şart
+        if (await overLimit(`rl:oldpw:${code}:${today()}`, 20, 86400)) return send(res, 429, { error: "Çok fazla deneme. Yarın tekrar dene." });
+        if (!checkPw(b.oldPassword || "", u.pw)) return send(res, 401, { error: "Eski şifre yanlış.", oldWrong: true });
+      }
       if (mailOn()) {   // şifre ekleme/değiştirme her zaman e-posta koduyla onaylanır
         if (await overLimit(`rl:mail:${ipOf(req)}:${today()}`, 15, 86400)) return send(res, 429, { error: "Bugün çok fazla onay e-postası istendi." });
         const vcode = sixDigits();
