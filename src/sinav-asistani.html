@@ -807,6 +807,7 @@ const $ = id => document.getElementById(id);
 // ===== İngilizce sözlük (TR → EN). Anahtar: ekranda görünen metin (boşluklar sadeleştirilmiş).
 // {#} = sayı, {*} = herhangi bir metin. Yeni Türkçe metin eklersen buraya İngilizcesini de ekle.
 const EN = {
+  "Son sayfanın hatırlanması":"Remembering the last page","Site kapatılıp yeniden açıldığında en son açık olan sayfa, kurul ve sekmeyle devam edilir.":"When the site is closed and reopened, it continues from the last open page, block and tab.",
   "👤 Misafir olarak devam et":"👤 Continue as guest","Kayıt olmadan dene. Verilerin sadece bu cihazda kalır; istediğin zaman hesap oluşturabilirsin.":"Try it without signing up. Your data stays only on this device; you can create an account any time.",
   "Hazırlanıyor…":"Preparing…","Şu an misafir girişi yapılamadı, biraz sonra tekrar dene.":"Guest sign-in isn't possible right now, try again later.",
   "👤 Misafir":"👤 Guest","Verilerin sadece bu cihazda. Hesap oluşturursan her cihazdan ulaşırsın ve kaybolmaz.":"Your data is only on this device. Create an account to reach it from any device and keep it safe.","Hesap oluştur":"Create account",
@@ -1300,6 +1301,8 @@ document.addEventListener("click", e=>{ const u=e.target.closest("#verFoot"); if
 // KURALLAR: yeni sürüm EN ÜSTE eklenir · bir sürümde en fazla 3 madde (4. madde yeni yama sürümü açar: v1.0.1, v1.0.2…)
 // Kullanıcı görmediği sürümü açılışta bir kez görür; "Anladım" deyince root.settings.seenVer kaydedilir (cihazlar arası).
 const UPDATE_LOG = [
+  { ver:"v1.2.4", date:"2026-11-26", items:[
+    ["DEĞİŞİKLİK","Son sayfanın hatırlanması","Site kapatılıp yeniden açıldığında en son açık olan sayfa, kurul ve sekmeyle devam edilir."]]},
   { ver:"v1.2.3", date:"2026-11-25", items:[
     ["YENİ","Misafir girişi","Kayıt olmadan misafir olarak devam edilebilir; misafir hesabı daha sonra takma ad, e-posta ve şifreyle kalıcı hesaba dönüştürülebilir."],
     ["YENİ","İlk kurul rehberi","Yeni kullanıcılara ilk kurullarını eklemeleri için adım adım rehber gösterilir."],
@@ -1729,12 +1732,24 @@ async function startSync(){
     }, ()=>{ syncOff=true; setSync(""); resolveSync(false); });
   }catch(e){ resolveSync(false); }
 }
-function switchTo(id){ setTimeout(()=>checkPublished(root.folders.find(f=>f.id===id)),0); view="kurul"; $("sharePanel").style.display="none"; $("homeView").style.display="none"; $("addView").style.display="none"; $("settingsView").style.display="none"; $("faqView").style.display="none"; $("updView").style.display="none"; $("notesView").style.display="none"; $("adminView").style.display="none"; $("kurulView").style.display=""; window.scrollTo({top:0}); state = root.folders.find(f=>f.id===id); root.activeId=id; weekOff=null; openForm=null; folderForm=null; confirmDel=false; $("aiOut").textContent=""; save(); render(); }
+function switchTo(id){ setTimeout(()=>checkPublished(root.folders.find(f=>f.id===id)),0); view="kurul"; $("sharePanel").style.display="none"; $("homeView").style.display="none"; $("addView").style.display="none"; $("settingsView").style.display="none"; $("faqView").style.display="none"; $("updView").style.display="none"; $("notesView").style.display="none"; $("adminView").style.display="none"; $("kurulView").style.display=""; window.scrollTo({top:0}); state = root.folders.find(f=>f.id===id); root.activeId=id; weekOff=null; openForm=null; folderForm=null; confirmDel=false; $("aiOut").textContent=""; save(); render(); saveLast(); }
 
 // ---- Görünüm: ana sayfa / kurul sayfası + yan menü ----
 let view = "home", navOpen = false, archOpen = false, tab = "today";
 function showTab(t){ tab=t; document.querySelectorAll("#kTabs [data-tab]").forEach(b=>b.classList.toggle("on", b.dataset.tab===t));
-  document.querySelectorAll(".tabpane").forEach(p=>p.style.display = p.dataset.pane===t ? "" : "none"); }
+  document.querySelectorAll(".tabpane").forEach(p=>p.style.display = p.dataset.pane===t ? "" : "none"); saveLast(); }
+// Siteyi kapatıp açınca en son açık sayfaya dön (localStorage sa-last)
+const LAST_VIEWS=["home","add","settings","faq","updates","notes","kurul"];
+function saveLast(){ if(RESTORING) return; try{ localStorage.setItem("sa-last", JSON.stringify({v:view, id:root&&root.activeId, t:tab})); }catch(e){} }
+let RESTORING=false;
+function restoreLast(){
+  let L=null; try{ L=JSON.parse(localStorage.getItem("sa-last")||"null"); }catch(e){}
+  if(!L || !LAST_VIEWS.includes(L.v) || L.v==="home") return;
+  RESTORING=true;
+  try{ if(L.v==="kurul"){ const f=(root.folders||[]).find(x=>x.id===L.id); if(f){ switchTo(f.id); if(["today","topics","program"].includes(L.t)) showTab(L.t); } }
+    else showView(L.v); }
+  finally{ RESTORING=false; saveLast(); }
+}
 document.getElementById("kTabs").addEventListener("click", e=>{ const b=e.target.closest("[data-tab]"); if(b) showTab(b.dataset.tab); });
 const createdOf = f => f.createdAt || +String(f.id).slice(0,13) || 0;
 // Kurul sıralaması: eklenme / isim / sınav tarihi / elle (sürükle-bırak)
@@ -1747,7 +1762,7 @@ function sortedFolders(){
   return arr;
 }
 function setManualOrder(ids){ const rest=sortedFolders().map(f=>f.id).filter(id=>!ids.includes(id)); root.kurulOrder=[...ids, ...rest]; root.kurulSort="manual"; save(); renderDrawer(); }
-function showView(v){ view=v; $("sharePanel").style.display="none"; $("homeView").style.display = v==="home"?"":"none"; $("addView").style.display = v==="add"?"":"none"; if(v==="add") loadAddPreview(); $("settingsView").style.display = v==="settings"?"":"none"; if(v==="settings") renderSettings(); $("faqView").style.display = v==="faq"?"":"none"; if(v==="faq") renderFaq(); $("updView").style.display = v==="updates"?"":"none"; if(v==="updates"){ markNewSeen("updlog"); renderUpdates(); } $("adminView").style.display = v==="admin"?"":"none"; if(v==="admin") renderAdmin(); $("notesView").style.display = v==="notes"?"":"none"; if(v==="notes"){ markNewSeen("notes"); renderNotes(); } $("kurulView").style.display = v==="kurul"?"":"none"; renderDrawer(); if(v==="home") renderQuote(); window.scrollTo({top:0}); }
+function showView(v){ view=v; $("sharePanel").style.display="none"; $("homeView").style.display = v==="home"?"":"none"; $("addView").style.display = v==="add"?"":"none"; if(v==="add") loadAddPreview(); $("settingsView").style.display = v==="settings"?"":"none"; if(v==="settings") renderSettings(); $("faqView").style.display = v==="faq"?"":"none"; if(v==="faq") renderFaq(); $("updView").style.display = v==="updates"?"":"none"; if(v==="updates"){ markNewSeen("updlog"); renderUpdates(); } $("adminView").style.display = v==="admin"?"":"none"; if(v==="admin") renderAdmin(); $("notesView").style.display = v==="notes"?"":"none"; if(v==="notes"){ markNewSeen("notes"); renderNotes(); } $("kurulView").style.display = v==="kurul"?"":"none"; renderDrawer(); if(v==="home") renderQuote(); window.scrollTo({top:0}); saveLast(); }
 // Menü açıkken arkadaki sayfa kaymasın (mobilde parmak menüyü kaydırsın)
 let drawerScrollY=0;
 function lockScroll(on){
@@ -3948,6 +3963,7 @@ function applyImport(){
 load(); flushSeenRibs();
 if(root && root.settings && root.settings.lang && root.settings.lang!==LANG){ LANG=root.settings.lang; try{ localStorage.setItem(LANG_KEY,LANG); }catch(e){} }
 render(); updateDirty(); updateCodeBtn(); updateLangBtn(); I18N.apply(); checkAdmin(); if(SA) authConfig().then(()=>loadAuthMe());
+if(CUR || !SA) restoreLast();
 $("deviceBtn").style.display="none";
 // Önce Claude hesabıyla kaydetmeyi dene; olmuyorsa 4 haneli kod sistemine geç
 Promise.race([syncReady, new Promise(r=>setTimeout(()=>r(false),4000))]).then(ok=>{
